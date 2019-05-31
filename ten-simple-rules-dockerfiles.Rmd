@@ -1,0 +1,57 @@
+---
+title: "Ten Simple Rules for Writing Dockerfiles for Reproducible Research"
+author:
+  - name: Daniel Nüst
+    email: daniel.nuest@uni-muenster.de
+    #affiliation: "Institute for Geoinformatics, University of Münster, Münster, Germany"
+    corresponding: daniel.nuest@uni-muenster.de
+  - name: Stephen Eglen
+    email: bob@example.com
+    affiliation: Another University
+#  - "NN (all contributors?!)"
+#  - Rule 4 of https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003858#s6 applies?
+abstract: |
+  Lorem ipsum....
+
+author_summary: |
+  Lorem ipsum....
+
+bibliography: bibliography.bib
+output: rticles::plos_article
+csl: plos.csl
+
+---
+
+_Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbiol/s/latex](http://journals.plos.org/ploscompbiol/s/latex)_
+
+# Introduction {#introduction .unnumbered}
+
+...
+
+<!-- Citations: @Figueredo:2009dg, citep: [@Figueredo:2009dg], multiple citep: [@Figueredo:2009dg; @other_2018] -->
+<!-- add " {-}" after headings to remove numbering -->
+
+# 1. {-}
+
+# 2. {-}
+
+# 3. {-}
+
+# 4. {-}
+
+# 5. {-}
+
+# 6. {-}
+
+# 7. {-}
+
+# 8. {-}
+
+# 9. {-}
+
+# 10. {-}
+
+
+# Acknowledgements {#acknowledgements .unnumbered}
+
+# References {#references .unnumbered}
