@@ -11,10 +11,10 @@ author:
 #  - "NN (all contributors?!)"
 #  - Rule 4 of https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003858#s6 applies?
 abstract: |
-  Lorem ipsum....
+  Containerisation is a useful concept for capturing the increasingly complex virtual laboratories that underpin computational sciences today.
 
 author_summary: |
-  Lorem ipsum....
+  TBD
 
 bibliography: bibliography.bib
 output: rticles::plos_article
@@ -26,31 +26,139 @@ _Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbio
 
 # Introduction {#introduction .unnumbered}
 
-...
+- containerisation is a useful and powerful to handle increasingly complex virtual laboratories for computational sciences
+- to some extent all sciences today use algorithms to analyse data
+- researchers need skills to handle virtual laboratories
+- well-defined computational environments are crucial for reproducibility
+- portable computational environments are crucial for transparency
+- containerisation can help to work towards the ideal of transparence an reproducibility
+- Docker is a common containerisation solution, widely adopted in mainstream IT and therefore widely available and support on many platforms, which makes it usable for non-IT experts in science
+- Dockerfiles are machine- and human-readable recipes for creating a container
+- In RR, Dockerfiles can document where data and code came from and likely also where a third party might still get them
+- this article takes a look at how to write a `Dockerfile` so that it facilitates a day-to-day research workflow as well as the higher goals of reproducibility
+- while you can interactively manipulate a container, you never should (`docker commit`)
+- _conventions_ lead to readability by others (potentially reuse)
 
 <!-- Citations: @Figueredo:2009dg, citep: [@Figueredo:2009dg], multiple citep: [@Figueredo:2009dg; @other_2018] -->
 <!-- add " {-}" after headings to remove numbering -->
 
-# 1. {-}
+# 1. Choose base image consciously {-}
 
-# 2. {-}
+- understand how base images work
+- use Linux distribution that supports the required software stack, and ideally that is widely used in your community
+- base images (all the way to the top) must be based on Dockerfiles themselves
+- library base images are well maintained and security tested, but alternatives might be more suitable for research purposes / RR (example `rocker/r-ver`)
+- base images that have complex software installed (e.g. ML libraries, specific BLAS library) are helpful and fine to use, just ensure there is a Dockerfile publicly available that they use (and add a link to that file in your Dockerfile)
 
-# 3. {-}
+# 2. Use version tags of base image  {-}
 
-# 4. {-}
+- _never_ `:latest`
 
-# 5. {-}
+# 3. Pin versions of system libraries {-}
 
-# 6. {-}
+- you can install specific versions of system packages with the respective package manager
+  - on apt: https://blog.backslasher.net/my-pinning-guidelines.html
+- do so if the version is relevant, e.g. to demonstrate a bug, or likely to become a problem, e.g. because of ...
+- do so if you are aware of the system library being relevant to your workflow
+- you can find out about the currently installed versions
+  - Debian/Ubuntu: `dpkg --list`
+  - Alpine: `apk -vv info|sort`
+  - CentOS: `yum list installed` or `rpm -qa`
 
-# 7. {-}
+# 4. Install versions of extension packages {-}
 
-# 8. {-}
+- install specific versions of system packages, also called version pinning
+- how to do in Python (`== x.y.z`)
+- do it in R with `versions` package, or by using MRAN (e.g. via `r-ver` image)- JavaScript?
+- Julia: `add Package@1.0` > https://julialang.github.io/Pkg.jl/v1/managing-packages/#Adding-packages-1
 
-# 9. {-}
+# 4. Do/Don't use layers {-}
 
-# 10. {-}
+- avoid them? use them?
+- have commands _in order_ of least likely to change to most likely to change > even helps readers!
+- how to access the layer commands from an existing image (`docker inspect..`)
 
+# 5. Mount, not `ADD`/`COPY`, data or your own code {-}
+
+- better mount them to have them outside of the image
+- easier access, does not require Docker knowledge by third parties to reause
+
+# 5. Use versioning and publish Dockerfile in a code repository {-}
+
+- `Dockerfile` is a plain text-based format and therefore you should put it under version control
+- add the link to the online repository to a label
+- versioning on a collaboration platform exposes your environment configuration and enables collaboration/feedback
+- you can build and run (e.g. on a test dataset!) you Dockerfile in CI (cf. automation below)
+
+# 6. Avoid `ADD` and `COPY` {-}
+
+- `ADD` may even add remote compressed files - is that alright?
+- ...
+
+# 6. Use common command-line ready installation commands
+
+- better readbiliy, potentially even performance (cf. `RUN R -e "install.packages('sf')"` vs. `RUN install.r sp`))
+
+# 6. Only switch directoryies with `WORKDIR` {-}
+
+- is is much more transparent than `cd X` or `cd ...` in `RUN` statements
+
+# 6. Use labels for relevant links and metadata {-}
+
+- advantage of labels: are structured, can be exposed by APIs, e.g. https://microbadger.com/labels
+- use namespaced-names
+- http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec
+- repository link for Dockerfile
+- author (`MAINTAINER` is deprecated)
+- license
+- usage instructions
+- https://microbadger.com/labels
+
+# 7. Use the container daily, rebuild the image weekly {-}
+
+- use the container built by the `Dockerfile` in your regular work, it is the only way to make sure it is really stable (cf. Marwick's "this container is the only way I have ever run this workflow")
+- no showstopper for using UIs (web-based, e.g. Jupyter, RStudio, but also `x11docker`)
+- during development and analysis, interactive use (e.g. R session, Jupyter Notebook) has advantages, and even the most disciplined might install a package or change a parameter manually
+- regularly delete all containers and rebuild images based on your `Dockerfile`
+- you are more likely to remember the undocumented steps if done regularly
+- increases trust in configuration, encourages effetiveness and fully scripted configuration
+
+# 8. Don't replicate configurations and scripts outside of Docker for convenience {-}
+
+- make the Dockerfile work for your day-to-day research instead of having a second set of  configurations in on the "local" machine
+- having two approaches will eventually break
+- you can install interactive UIs as part of the Dockerfile and use them just like Desktop UIs (Jupyter, RStudio, use )
+
+# 9. Know when to automate {-}
+
+- there are tools you can auto-generate a `Dockerfile`, good as a starting point
+- these are useful if you don't need very specific versions etc. and for specific use cases, e.g. a package project structure (PyPI `requirements.txt`) or reproducible document (R Markdown file)
+- they have limitations, namely ...
+- `repo2docker`, `dockter`, `containerit`
+
+# 9. Enable interactive development and one-click execution {-}
+
+- using `CMD` and `ENTRYPOINT` > give examples (see below)
+- the default execution should work headless
+  - if your workflow/sofware does not support headless execution (Excel?), switch tools
+- may also use the same `Dockerfile` for different purposes, e.g. include an app (e.g. Shiny) for interactive use by user
+
+# 10. Document reasoning and usage in comments
+
+- make the `Dockerfile` self-explanatory
+- add reasons and links to followed tutorials (failed attempts may be found in the history)
+- similar to "literate programming"
+- put `docker run` and `docker build` commands in comments at the end of the file (_may be own rule?_)
+- examples are especially crucial if you require configuration e.g. of the user
+
+# Conclusion {#conclusion .unnumbered}
+
+- reproducibility is about best efforts, not about achieving the perfect
+  - https://twitter.com/DougBlank/status/1135904909663068165?s=09
+- don't go insane, but be realistic about what might break and what is unlikely to break
+- all the rules can be broken if another way works better for _you_
+- document for your future self, provide detailed docs only if others ask for it [REF]
+- if you can't run your so
 
 # Acknowledgements {#acknowledgements .unnumbered}
 
