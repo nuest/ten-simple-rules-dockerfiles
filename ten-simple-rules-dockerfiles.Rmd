@@ -62,6 +62,9 @@ csl: plos.csl
 - can use comments to add sections to the Dockerfile to reduce the need to externalise when files get long
 - carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in onr `RUN` with `&&`
 - use `\` for newlines
+- put each dependency on it's own line
+- don't let lines get too long
+- split up an instruction (especially relevant for `RUN`) when you have to scroll to see all of it
 - use a linter to follow common practices and consistency
 - **Use comments to document decisions and usage**
   - make the `Dockerfile` self-explanatory by adding comments for specific decisions
