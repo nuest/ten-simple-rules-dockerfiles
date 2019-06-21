@@ -194,12 +194,13 @@
 % Title must be 250 characters or less.
 \begin{flushleft}
 {\Large
-\textbf\newline{How to Read a Research Compendium} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+\textbf\newline{Ten Simple Rules for Writing Dockerfiles for Reproducible Research} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
 }
 \newline
 % Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
 \\
-Daniel Nüst\textsuperscript{}\textsuperscript{*},
+Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics, University of M``unster, M''unster,
+Germany}}\textsuperscript{*},
 Stephen Eglen\textsuperscript{\getAff{Another University}}\\
 \bigskip
 \bigskip
@@ -207,65 +208,558 @@ Stephen Eglen\textsuperscript{\getAff{Another University}}\\
 \end{flushleft}
 % Please keep the abstract below 300 words
 \section*{Abstract}
-Lorem ipsum\ldots{}.
+Containerisation is a useful concept for capturing the increasingly
+complex virtual laboratories that underpin computational sciences today.
+Docker is the most widely used containerisation solution. A Docker image
+is created based on the instructions in a plain-text file in the
+\texttt{Dockerfile} format. In a scholarly context, transparency and
+support of reproducibility are most desired aspects of containers. By
+following the rules in this article researchers writing a
+\texttt{Dockerfile} can increase the changes to apply containers
+effectily in their daily work but also enable fellow researchers to
+reproduce a workflow.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLOS ONE authors please skip this step.
 % Author Summary not valid for PLOS ONE submissions.
 \section*{Author summary}
-Lorem ipsum\ldots{}.
+TBD
 
 \linenumbers
 
 % Use "Eq" instead of "Equation" for equation citations.
-\emph{Text based on plos sample manuscript, see
-\url{http://journals.plos.org/ploscompbiol/s/latex}}
-
 \hypertarget{introduction}{%
 \section*{Introduction}\label{introduction}}
 \addcontentsline{toc}{section}{Introduction}
 
-\ldots{}
+\begin{itemize}
+\tightlist
+\item
+  containerisation is a useful and powerful to handle increasingly
+  complex virtual laboratories for computational sciences
+\item
+  to some extent all sciences today use algorithms to analyse data
+\item
+  researchers need skills to handle virtual laboratories
+\item
+  well-defined computational environments are crucial for
+  reproducibility
+\item
+  portable computational environments are crucial for transparency,
+  e.g.~in peer-review
+\item
+  containerisation can help to work towards the ideal of transparence an
+  reproducibility
+\item
+  Docker is a common containerisation solution, widely adopted in
+  mainstream IT and therefore widely available and support on many
+  platforms, which makes it usable for non-IT experts in science
+\item
+  Dockerfiles are machine- and human-readable recipes for creating a
+  container
+\item
+  In RR, Dockerfiles can document where data and code came from and
+  likely also where a third party might still get them
+\item
+  this article takes a look at how to write a \texttt{Dockerfile} so
+  that it facilitates a day-to-day research workflow as well as the
+  higher goals of reproducibility
+\item
+  while you can interactively manipulate a container, you never should
+  (\texttt{docker\ commit})
+\item
+  \emph{conventions} lead to readability by others (potentially reuse)
+\end{itemize}
 
-\hypertarget{section}{%
-\section*{1.}\label{section}}
-\addcontentsline{toc}{section}{1.}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-\hypertarget{section-1}{%
-\section*{2.}\label{section-1}}
-\addcontentsline{toc}{section}{2.}
+\textbf{Box 1: Non-Docker container containerisation tools}
 
-\hypertarget{section-2}{%
-\section*{3.}\label{section-2}}
-\addcontentsline{toc}{section}{3.}
+\begin{itemize}
+\tightlist
+\item
+  Singularity can import Docker containers, though rules transferable to
+  ``the singularity recipee''
+\end{itemize}
 
-\hypertarget{section-3}{%
-\section*{4.}\label{section-3}}
-\addcontentsline{toc}{section}{4.}
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-\hypertarget{section-4}{%
-\section*{5.}\label{section-4}}
-\addcontentsline{toc}{section}{5.}
+\hypertarget{use-versioned-and-automatically-built-base-images}{%
+\section*{1. Use versioned and automatically built base
+images}\label{use-versioned-and-automatically-built-base-images}}
+\addcontentsline{toc}{section}{1. Use versioned and automatically built
+base images}
 
-\hypertarget{section-5}{%
-\section*{6.}\label{section-5}}
-\addcontentsline{toc}{section}{6.}
+\begin{itemize}
+\tightlist
+\item
+  understand how base images work
+\item
+  \emph{never} use \texttt{:latest}
+\item
+  use Linux distribution that supports the required software stack, and
+  ideally that is widely used in your community
+\item
+  base images (all the way to the top) must be based on Dockerfiles
+  themselves
+\item
+  library base images are well maintained and security tested, but
+  alternatives might be more suitable for research purposes / RR
+  (example \texttt{rocker/r-ver})
+\item
+  base images that have complex software installed (e.g.~ML libraries,
+  specific BLAS library) are helpful and fine to use, just ensure there
+  is a Dockerfile publicly available that they use (and add a link to
+  that file in your Dockerfile)
+\item
+  ideally the images are maintained by an active community/your
+  community
+\end{itemize}
 
-\hypertarget{section-6}{%
-\section*{7.}\label{section-6}}
-\addcontentsline{toc}{section}{7.}
+\hypertarget{use-indentation-newlines-and-comments-for-documentation-readability-and-structure}{%
+\section{2. Use indentation, newlines, and comments for documentation,
+readability and
+structure}\label{use-indentation-newlines-and-comments-for-documentation-readability-and-structure}}
 
-\hypertarget{section-7}{%
-\section*{8.}\label{section-7}}
-\addcontentsline{toc}{section}{8.}
+\begin{itemize}
+\tightlist
+\item
+  can use comments to add sections to the Dockerfile to reduce the need
+  to externalise when files get long
+\item
+  carefully indent commands and their arguments to make clear what
+  belongs together, especially when connecting multiple commands in onr
+  \texttt{RUN} with \texttt{\&\&}
+\item
+  use \texttt{\textbackslash{}} for newlines
+\item
+  use a linter to follow common practices and consistency
+\item
+  \textbf{Use comments to document decisions and usage}
 
-\hypertarget{section-8}{%
-\section*{9.}\label{section-8}}
-\addcontentsline{toc}{section}{9.}
+  \begin{itemize}
+  \tightlist
+  \item
+    make the \texttt{Dockerfile} self-explanatory by adding comments for
+    specific decisions
+  \item
+    add reasons and links to followed tutorials (failed attempts may be
+    found in the history)
+  \item
+    similar to ``literate programming''
+  \item
+    put \texttt{docker\ run} and \texttt{docker\ build} commands in
+    comments at the end of the file (\emph{may be own rule?}),
+    especially relevant if arguments are used
+  \item
+    examples are especially crucial if you require configuration e.g.~of
+    the user
+  \end{itemize}
+\end{itemize}
 
-\hypertarget{section-9}{%
-\section*{10.}\label{section-9}}
-\addcontentsline{toc}{section}{10.}
+\hypertarget{pin-versions}{%
+\section*{3. Pin versions}\label{pin-versions}}
+\addcontentsline{toc}{section}{3. Pin versions}
+
+\textbf{system libraries}
+
+\begin{itemize}
+\tightlist
+\item
+  you can install specific versions of system packages with the
+  respective package manager, also called version pinning
+
+  \begin{itemize}
+  \tightlist
+  \item
+    on apt: https://blog.backslasher.net/my-pinning-guidelines.html
+  \end{itemize}
+\item
+  do so if the version is relevant, e.g.~to demonstrate a bug, or likely
+  to become a problem, e.g.~because of \ldots{}
+\item
+  do so if you are aware of the system library being relevant to your
+  workflow
+\item
+  you can find out about the currently installed versions
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Debian/Ubuntu: \texttt{dpkg\ -\/-list}
+  \item
+    Alpine: \texttt{apk\ -vv\ info\textbar{}sort}
+  \item
+    CentOS: \texttt{yum\ list\ installed} or \texttt{rpm\ -qa}
+  \end{itemize}
+\item
+  \emph{installing from source} is a useful way to install very specific
+  versions, at the cost of needing build libraries (which could be
+  removed again with layered builds)
+\end{itemize}
+
+\textbf{extension packages and programming language modules}
+
+\begin{itemize}
+\tightlist
+\item
+  package managers of programming languages are a good solution to
+  install a collection of dependencies for a language
+\item
+  package managers have a CLI and can be used from \texttt{RUN} commands
+\item
+  there is a risk in outsourcing configuration to the file formats
+  supported by package managers \textgreater{} use only when direct
+  installation in Dockerfile becomes complex; example files:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Python: \texttt{requirements\ .txt}, \texttt{xxx.yml} (Conda)
+  \item
+    R: \texttt{DESCRIPTION}
+  \item
+    Java: \texttt{mvn.xml}
+  \item
+    JavaScript: \texttt{package.json} of \texttt{npm}
+  \end{itemize}
+\item
+  how to do in Python (\texttt{==\ x.y.z})
+\item
+  do it in R with \texttt{versions} package, or by using MRAN (e.g.~via
+  \texttt{r-ver} image)- JavaScript?
+\item
+  Julia: \texttt{add\ Package@1.0} \textgreater{}
+  https://julialang.github.io/Pkg.jl/v1/managing-packages/\#Adding-packages-1
+\item
+  Use common command-line ready installation commands of programming
+  languages
+
+  \begin{itemize}
+  \tightlist
+  \item
+    better readbiliy, potentially even performance
+    (\texttt{RUN\ install2.r\ sp} instead of
+    \texttt{RUN\ R\ -e\ "install.packages(\textquotesingle{}sf\textquotesingle{})"},
+    although the latter is ``base R'')
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{mount-data-and-control-code}{%
+\section*{4. Mount data and control
+code}\label{mount-data-and-control-code}}
+\addcontentsline{toc}{section}{4. Mount data and control code}
+
+\begin{itemize}
+\tightlist
+\item
+  do not use \texttt{ADD}/\texttt{COPY} to insert data or code into an
+  image
+\item
+  better mount them to have them outside of the image
+\item
+  easier access, does not require Docker knowledge by third parties to
+  reause code and data
+\item
+  be always ready to throw containers and images away
+\item
+  use the \texttt{-\/-user} option to avoid problems with file
+  permissions when mounting
+\item
+  if you have a ``stable'' published software library, install it from
+  source from the source code repo or from the software repository (so
+  that users find the project in the future)
+\end{itemize}
+
+\hypertarget{only-switch-directoryies-with-workdir}{%
+\section*{\texorpdfstring{5. Only switch directoryies with
+\texttt{WORKDIR}}{5. Only switch directoryies with WORKDIR}}\label{only-switch-directoryies-with-workdir}}
+\addcontentsline{toc}{section}{5. Only switch directoryies with
+\texttt{WORKDIR}}
+
+\begin{itemize}
+\tightlist
+\item
+  might need to move to different directories for bespoke configuration
+  or building from source
+\item
+  is is much more transparent than \texttt{cd\ X} or \texttt{cd\ ...} in
+  \texttt{RUN} statements
+\item
+  clarity most important
+\end{itemize}
+
+\hypertarget{use-labels-and-build-arguments-for-relevant-links-and-metadata}{%
+\section*{6. Use labels and build arguments for relevant links and
+metadata}\label{use-labels-and-build-arguments-for-relevant-links-and-metadata}}
+\addcontentsline{toc}{section}{6. Use labels and build arguments for
+relevant links and metadata}
+
+\begin{itemize}
+\tightlist
+\item
+  advantage of labels: are structured, can be exposed by APIs,
+  e.g.~https://microbadger.com/labels
+\item
+  use namespaced-names
+\item
+  http://label-schema.org/rc1/ respectively
+  https://github.com/opencontainers/image-spec
+\item
+  repository link for Dockerfile
+\item
+  author (\texttt{MAINTAINER} is deprecated)
+\item
+  license
+\item
+  usage instructions
+\item
+  https://microbadger.com/labels
+\item
+  DOI of research compendium (Zenodo preregister instead of GitHub
+  automatic integration)
+\item
+  \textbf{Use build arguments to capture build metadata}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    add git commit hash to label
+  \item
+    add date and time to label
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{enable-both-interactive-development-and-one-click-execution}{%
+\section*{7. Enable both interactive development and one-click
+execution}\label{enable-both-interactive-development-and-one-click-execution}}
+\addcontentsline{toc}{section}{7. Enable both interactive development
+and one-click execution}
+
+\begin{itemize}
+\tightlist
+\item
+  using \texttt{CMD} and \texttt{ENTRYPOINT} make sure that it is
+  possible to run the container interactively \textgreater{} give
+  examples (see below)
+\item
+  the default execution should either execute the workflow (headless) or
+  start an analysis environment
+
+  \begin{itemize}
+  \tightlist
+  \item
+    if your workflow/sofware does not support headless execution
+    (Excel?), switch tools
+  \item
+    or have default with UI and only document headless execution via
+    example commands
+  \end{itemize}
+\item
+  may also use the same \texttt{Dockerfile} for different purposes,
+  e.g.~include an app (e.g.~Shiny) for interactive use by user
+\item
+  document both variants with example commands
+\item
+  a headless execution can be executed in a continuous integration after
+  every project update, potentially on a test dataset for speed-up
+\end{itemize}
+
+\hypertarget{favour-clarity-over-image-size}{%
+\section*{8. Favour clarity over image
+size}\label{favour-clarity-over-image-size}}
+\addcontentsline{toc}{section}{8. Favour clarity over image size}
+
+\begin{itemize}
+\tightlist
+\item
+  don't worry about image size (i.e.~no complex RUN commands that remove
+  files rightaway) but order instructions
+\item
+  clarity more important
+\item
+  how to access the layer commands from an existing image
+  (\texttt{docker\ inspect..})
+\item
+  have commands \emph{in order} of least likely to change to most likely
+  to change \textgreater{} even helps readers!
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
+  \item
+    system libraries
+  \item
+    language-specific libraries or modules
+  \item
+    from repositories (binaries)
+  \item
+    from source
+  \item
+    own software/scripts (if not mounted)
+  \item
+    labels
+  \item
+    \texttt{RUN}/\texttt{ENTRYPOINT}
+  \end{enumerate}
+\item
+  if need be use \emph{layered builds} to only keep specific files from
+  one build step to another
+\end{itemize}
+
+\hypertarget{publish-a-dockerfile-per-project-in-a-code-repository-with-version-control}{%
+\section*{9. Publish a Dockerfile per project in a code repository with
+version
+control}\label{publish-a-dockerfile-per-project-in-a-code-repository-with-version-control}}
+\addcontentsline{toc}{section}{9. Publish a Dockerfile per project in a
+code repository with version control}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{Dockerfile} is a plain text-based format and therefore you
+  should put it under version control
+\item
+  add the link to the online repository to a label, to point back to the
+  source of the file
+\item
+  versioning on a collaboration platform exposes your environment
+  configuration and enables collaboration/feedback
+\item
+  you can build and run (e.g.~on a test dataset!) you Dockerfile in CI
+  (cf.~automation below)
+\item
+  keep \texttt{Dockerfile} in the same project with your workflow and
+  data (cf.~research compendium concept?)
+\item
+  \textbf{this should be the repository with the workflow and data}
+  (cf.~research compendium)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Use one \texttt{Dockerfile} per workflow or project and put one
+    ``thing'' in; \textbf{TO DISCUSS}: argue against the above rule and
+    recommend having a process manager and multiple processes in one
+    container
+  \item
+    start with a clean slate for a new project - shared lines are
+    quickly copied over, and Docker's build caching will bring some
+    performance
+  \item
+    allows you to quickly switch between projects and not worry about
+    breaking things you are not working on
+  \item
+    have one obvious main process per project, e.g. \texttt{R} or
+    RStudio
+  \item
+    if you have a complex set-up of several proecceses, e.g.~with a
+    database, then put it in a separate container and connect them via
+    \texttt{docker-compose}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{use-the-container-daily-rebuild-the-image-weekly}{%
+\section*{10. Use the container daily, rebuild the image
+weekly}\label{use-the-container-daily-rebuild-the-image-weekly}}
+\addcontentsline{toc}{section}{10. Use the container daily, rebuild the
+image weekly}
+
+\begin{itemize}
+\tightlist
+\item
+  use the container built by the \texttt{Dockerfile} in your regular
+  work, it is the only way to make sure it is really stable
+  (cf.~Marwick's ``this container is the only way I have ever run this
+  workflow'')
+\item
+  no showstopper for using UIs (web-based, e.g.~Jupyter, RStudio, but
+  also \texttt{x11docker})
+\item
+  during development and analysis, interactive use (e.g.~R session,
+  Jupyter Notebook) has advantages, and even the most disciplined might
+  install a package or change a parameter manually
+\item
+  regularly delete all containers and rebuild images based on your
+  \texttt{Dockerfile}
+\item
+  you are more likely to remember the undocumented steps if done
+  regularly
+\item
+  increases trust in configuration, encourages effetiveness and fully
+  scripted configuration
+\item
+  keep a \texttt{Makefile} next to the Dockerfile so you don't fall into
+  the trap of not regularly rebuilding your digital laboratory (better
+  to have build and run commands - i.e.~the usage - in two places and
+  potentially diverging than the actual \texttt{Dockerfile})
+\item
+  \textbf{Don't replicate environment configuration outside of the
+  Dockerfile for convenience}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    make the Dockerfile work for your day-to-day research instead of
+    having a second set of configurations in on the ``local'' machine
+  \item
+    having two approaches will eventually break, only a perceived
+    convenience
+  \item
+    avoid an untidy laboratory in practice behind a shiny appearance of
+    a \texttt{Dockerfile}
+  \item
+    you can install interactive UIs as part of the Dockerfile and use
+    them just like Desktop UIs (Jupyter, RStudio, use )
+  \end{itemize}
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\textbf{Box 2: Automatic generation of Dockerfiles}
+
+\begin{itemize}
+\tightlist
+\item
+  there are tools you can auto-generate a \texttt{Dockerfile}
+\item
+  can be a good as a starting point, careful to avoid a lock-in
+\item
+  they have limitations, namely \ldots{}
+\item
+  \texttt{repo2docker}, \texttt{dockter}, \texttt{containerit}
+\item
+  these are useful if you don't need very specific versions etc. and for
+  specific use cases, but sometimes requires a specific project
+  structure (PyPI \texttt{requirements.txt}) or reproducible document (R
+  Markdown file)
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\hypertarget{conclusion}{%
+\section*{Conclusion}\label{conclusion}}
+\addcontentsline{toc}{section}{Conclusion}
+
+\begin{itemize}
+\tightlist
+\item
+  reproducibility is about best efforts, not about achieving the perfect
+
+  \begin{itemize}
+  \tightlist
+  \item
+    https://twitter.com/DougBlank/status/1135904909663068165?s=09
+  \end{itemize}
+\item
+  don't go insane, but be realistic about what might break and what is
+  unlikely to break
+\item
+  all the rules can be broken if another way works better for \emph{you}
+\item
+  document for your future self, provide detailed docs only if others
+  ask for it {[}REF{]}
+\end{itemize}
 
 \hypertarget{acknowledgements}{%
 \section*{Acknowledgements}\label{acknowledgements}}
