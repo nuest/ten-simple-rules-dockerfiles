@@ -1,20 +1,277 @@
-﻿@article{Dirac1953888,
-  title   = "The lorentz transformation and absolute time",
-  journal = "Physica ",
-  volume  = "19",
-  number  = "1-–12",
-  pages   = "888--896",
-  year    = "1953",
-  doi     = "10.1016/S0031-8914(53)80099-6",
-  author  = "P.A.M. Dirac"
+@article{sandve_ten_2013,
+	title = {Ten {Simple} {Rules} for {Reproducible} {Computational} {Research}},
+	volume = {9},
+	url = {http://dx.doi.org/10.1371/journal.pcbi.1003285},
+	doi = {10.1371/journal.pcbi.1003285},
+	number = {10},
+	urldate = {2016-02-15},
+	journal = {PLoS Comput Biol},
+	author = {Sandve, Geir Kjetil and Nekrutenko, Anton and Taylor, James and Hovig, Eivind},
+	month = oct,
+	year = {2013},
+	pages = {e1003285}
 }
 
-@article{Feynman1963118,
-  title   = "The theory of a general quantum system interacting with a linear dissipative system",
-  journal = "Annals of Physics ",
-  volume  = "24",
-  pages   = "118--173",
-  year    = "1963",
-  doi     = "10.1016/0003-4916(63)90068-X",
-  author  = "R.P Feynman and F.L {Vernon Jr.}"
+@article{taschuk_ten_2017,
+	title = {Ten simple rules for making research software more robust},
+	volume = {13},
+	issn = {1553-7358},
+	url = {http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005412},
+	doi = {10.1371/journal.pcbi.1005412},
+	abstract = {Author summary Many researchers have found out the hard way that there’s a world of difference between “works for me on my machine” and “works for other people on theirs.” Many common challenges can be avoided by following a few simple rules; doing so not only improves reproducibility but can accelerate research.},
+	number = {4},
+	urldate = {2017-04-18},
+	journal = {PLOS Computational Biology},
+	author = {Taschuk, Morgan and Wilson, Greg},
+	month = apr,
+	year = {2017},
+	keywords = {Computer software, bioinformatics, Operating Systems, Reproducibility, software development, Software tools, Software Engineering, Sequence alignment},
+	pages = {e1005412}
+}
+
+@article{rule_ten_2019,
+	title = {Ten simple rules for writing and sharing computational analyses in {Jupyter} {Notebooks}},
+	volume = {15},
+	issn = {1553-7358},
+	url = {https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1007007},
+	doi = {10.1371/journal.pcbi.1007007},
+	language = {en},
+	number = {7},
+	urldate = {2019-08-01},
+	journal = {PLOS Computational Biology},
+	author = {Rule, Adam and Birmingham, Amanda and Zuniga, Cristal and Altintas, Ilkay and Huang, Shih-Cheng and Knight, Rob and Moshiri, Niema and Nguyen, Mai H. and Rosenthal, Sara Brin and Pérez, Fernando and Rose, Peter W.},
+	month = jul,
+	year = {2019},
+	keywords = {Analysts, Computer and information sciences, Computer hardware, Data processing, Ecosystems, Graphical user interfaces, Metadata, Reproducibility},
+	pages = {e1007007}
+}
+
+@article{perez-riverol_ten_2016,
+	title = {Ten {Simple} {Rules} for {Taking} {Advantage} of {Git} and {GitHub}},
+	volume = {12},
+	issn = {1553-7358},
+	url = {https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004947},
+	doi = {10.1371/journal.pcbi.1004947},
+	language = {en},
+	number = {7},
+	urldate = {2019-08-01},
+	journal = {PLOS Computational Biology},
+	author = {Perez-Riverol, Yasset and Gatto, Laurent and Wang, Rui and Sachsenberg, Timo and Uszkoreit, Julian and Leprevost, Felipe da Veiga and Fufezan, Christian and Ternent, Tobias and Eglen, Stephen J. and Katz, Daniel S. and Pollard, Tom J. and Konovalov, Alexander and Flight, Robert M. and Blin, Kai and Vizcaíno, Juan Antonio},
+	month = jul,
+	year = {2016},
+	keywords = {Bioinformatics, Control systems, Health services research, Open source software, Scientific publishing, Software development, Source code, Web-based applications},
+	pages = {e1004947}
+}
+
+@article{boettiger_introduction_2017,
+	title = {An {Introduction} to {Rocker}: {Docker} {Containers} for {R}},
+	volume = {9},
+	issn = {2073-4859},
+	shorttitle = {An {Introduction} to {Rocker}},
+	url = {https://journal.r-project.org/archive/2017/RJ-2017-065/index.html},
+	doi = {10.32614/RJ-2017-065},
+	language = {en},
+	number = {2},
+	urldate = {2019-02-05},
+	journal = {The R Journal},
+	author = {Boettiger, Carl and Eddelbuettel, Dirk},
+	year = {2017},
+	pages = {527--536}
+}
+
+@article{molenaar_klikoscientific_2018,
+	title = {Kliko—{The} scientific compute container format},
+	volume = {25},
+	issn = {2213-1337},
+	url = {http://www.sciencedirect.com/science/article/pii/S2213133717300793},
+	doi = {10.1016/j.ascom.2018.08.003},
+	abstract = {Kliko is a Docker-based container specification for running one or multiple related compute jobs. The key concepts of Kliko are the encapsulation of data processing software into a container and the formalization of the input, output and task parameters. By formalizing the parameters, the software is represented as abstract building blocks with an uniform and consistent interface. The main advantage is enhanced scriptability and empowering pipeline composition. Formalization is realized by bundling a container with a Kliko file, which describes the IO and task parameters. This Kliko container can then be opened and run by a Kliko runner. The Kliko runner will parse the Kliko definition and gather the values for these parameters, for example by requesting user input or retrieving pre-defined values from disk. Parameters can be various primitive types, for example: float, int or the path to a file. This paper will also discuss the implementation of a support library named Kliko which can be used to create Kliko containers, parse Kliko definitions, andchain Kliko containers in workflows using a workflow manager library such as Luigi. The Kliko library can be used inside the container to interact with the Kliko runner. Finally to illustrate the applicability of the Kliko definition, this paper will discuss two reference implementations based on the Kliko library: RODRIGUES, a web-based Kliko container scheduler and output visualizer specifically for astronomical data, and VerMeerKAT, a multi-container workflow data reduction pipeline which is being used as a prototype pipeline for the commissioning of the MeerKAT radio telescope. The Kliko library is open source. The documentation and source code can be found on the main website.11https://github.com/gijzelaerr/kliko..},
+	urldate = {2019-02-05},
+	journal = {Astronomy and Computing},
+	author = {Molenaar, G. and Makhathini, S. and Girard, J. N. and Smirnov, O.},
+	month = oct,
+	year = {2018},
+	keywords = {Docker, Scientific computing, Pipelines, Astronomy, Containerization, Data reduction},
+	pages = {1--9},
+	annote = {Comment: 10 pages, 4 figues}
+}
+
+@article{kurtzer_singularity_2017,
+	title = {Singularity: {Scientific} containers for mobility of compute},
+	volume = {12},
+	issn = {1932-6203},
+	shorttitle = {Singularity},
+	url = {http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0177459},
+	doi = {10.1371/journal.pone.0177459},
+	abstract = {Here we present Singularity, software developed to bring containers and reproducibility to scientific computing. Using Singularity containers, developers can work in reproducible environments of their choosing and design, and these complete environments can easily be copied and executed on other platforms. Singularity is an open source initiative that harnesses the expertise of system and software engineers and researchers alike, and integrates seamlessly into common workflows for both of these groups. As its primary use case, Singularity brings mobility of computing to both users and HPC centers, providing a secure means to capture and distribute software and compute environments. This ability to create and deploy reproducible environments across these centers, a previously unmet need, makes Singularity a game changing development for computational science.},
+	number = {5},
+	urldate = {2017-06-28},
+	journal = {PLOS ONE},
+	author = {Kurtzer, Gregory M. and Sochat, Vanessa and Bauer, Michael W.},
+	month = may,
+	year = {2017},
+	keywords = {Computer software, Operating Systems, software development, Open source software, Software tools, Research validity, Tar, Software design},
+	pages = {e0177459}
+}
+
+@article{kim_bio-docklets_2017,
+	title = {Bio-{Docklets}: {Virtualization} {Containers} for {Single}-{Step} {Execution} of {NGS} {Pipelines}.},
+	copyright = {© 2017, Posted by Cold Spring Harbor Laboratory. The copyright holder for this pre-print is the author. All rights reserved. The material may not be redistributed, re-used or adapted without the author's permission.},
+	shorttitle = {Bio-{Docklets}},
+	url = {http://www.biorxiv.org/content/early/2017/03/15/116962},
+	doi = {10.1101/116962},
+	abstract = {Background: Processing of Next-Generation Sequencing (NGS) data requires significant technical skills, involving installation, configuration, and execution of bioinformatics data pipelines, in addition to specialized post-analysis visualization and data mining software. In order to address some of these challenges, developers have leveraged virtualization containers, towards seamless deployment of preconfigured bioinformatics software and pipelines on any computational platform. Findings: We present an approach for abstracting the complex data operations of multi-step, bioinformatics pipelines for NGS data analysis. As examples, we have deployed two pipelines for RNAseq and CHIPseq, pre-configured within Docker virtualization containers we call Bio-Docklets. Each Bio-Docklet exposes a single data input and output endpoint and from a user perspective, running the pipelines is as simple as running a single bioinformatics tool. This is achieved through a ‘meta-script’ that automatically starts the Bio-Docklets, and controls the pipeline execution through the BioBlend software library and the Galaxy Application Programming Interface (API). The pipelne output is postprocessed using the Visual Omics Explorer (VOE) framework, providing interactive data visualizations that users can access through a web browser. Conclusions: The goal of our approach is to enable easy access to NGS data analysis pipelines for nonbioinformatics experts, on any computing environment whether a laboratory workstation, university computer cluster, or a cloud service provider. Besides end-users, the Bio-Docklets also enables developers to programmatically deploy and run a large number of pipeline instances for concurrent analysis of multiple datasets.},
+	language = {en},
+	urldate = {2017-07-25},
+	journal = {bioRxiv},
+	author = {Kim, Baekdoo and Ali, Thahmina A. and Lijeron, Carlos and Afgan, Enis and Krampis, Konstantinos},
+	month = mar,
+	year = {2017},
+	pages = {116962}
+}
+
+@article{emsley_framework_2018,
+	title = {A {Framework} for the {Preservation} of a {Docker} {Container} {\textbar} {International} {Journal} of {Digital} {Curation}},
+	volume = {12},
+	url = {http://www.ijdc.net/article/view/509},
+	doi = {10.2218/ijdc.v12i2.509},
+	abstract = {Reliably building and maintaining systems across environments is a continuing 
+problem. A project or experiment may run for years. Software and hardware may 
+change as can the operating system. Containerisation is a technology that is used in a variety of companies, such as Google, Amazon and IBM, in addition to scientific projects to rapidly deploy a set of services repeatably. Using Dockerfiles to ensure that a container is built repeatably, to allow conformance and easy updating when changes take place, are becoming common within projects. It's seen as part of sustainable software development. Containerisation technology occupies a dual space: it is both a repository of software and software itself. In considering Docker in this fashion, we 
+should verify that the Dockerfile can be reproduced. Using a subset of the Dockerfile specification, a domain specific language is created to ensure that Docker files can be reused at a later stage to recreate the original environment. We provide a simple framework to address the question of the preservation of containers and its environment. We present experiments on an existing Dockerfile and conclude with a discussion of future work. Taking our work, a pipeline was implemented to check that a defined Dockerfile conforms to our desired model, extracts the Docker and operating 
+system details. This will help the reproducibility of results, by creating the machine  environment and package versions. It also helps development and testing by ensuring that the system is repeatably built and that any changes in the software environment can be equally shared in the Dockerfile. This work supports not only the citation process, but also the open scientific one by providing environmental details of the work. As a 
+part of the pipeline to create the container, we capture the processes used and put them into the W3C PROV ontology. This provides the potential for providing it with a persistent identifier and traceability of the processes used to preserve the metadata. Our future work will look at the question of linking this output to a workflow ontology, to preserve the complete workflow with the commands and parameters to be given to the containers. We see this provenance as useful within the build process to provide a complete overview of the workflow.},
+	language = {en-US},
+	number = {2},
+	urldate = {2019-01-07},
+	journal = {International Journal of Digital Curation},
+	author = {Emsley, Iain and De Roure, David},
+	month = apr,
+	year = {2018},
+	keywords = {preservation, digital preservation, curation, DCC, digital curation, IJDC, International Journal of Digital Curation, UKOLN}
+}
+
+
+@article{boettiger_introduction_2015,
+	title = {An {Introduction} to {Docker} for {Reproducible} {Research}},
+	volume = {49},
+	issn = {0163-5980},
+	url = {http://doi.acm.org/10.1145/2723872.2723882},
+	doi = {10.1145/2723872.2723882},
+	abstract = {As computational work becomes more and more integral to many aspects of scientific research, computational reproducibility has become an issue of increasing importance to computer systems researchers and domain scientists alike. Though computational reproducibility seems more straight forward than replicating physical experiments, the complex and rapidly changing nature of computer environments makes being able to reproduce and extend such work a serious challenge. In this paper, I explore common reasons that code developed for one research project cannot be successfully executed or extended by subsequent researchers. I review current approaches to these issues, including virtual machines and workflow systems, and their limitations. I then examine how the popular emerging technology Docker combines several areas from systems research - such as operating system virtualization, cross-platform portability, modular re-usable elements, versioning, and a 'DevOps' philosophy, to address these challenges. I illustrate this with several examples of Docker use with a focus on the R statistical environment.},
+	number = {1},
+	urldate = {2016-06-24},
+	journal = {SIGOPS Oper. Syst. Rev.},
+	author = {Boettiger, Carl},
+	month = jan,
+	year = {2015},
+	keywords = {Computer Science - Software Engineering},
+	pages = {71--79},
+	annote = {Reasons for not publishing reproducibly:
+- lack of time
+- lack of incenitves
+- lack of familiar, intuitive tools
+- think that summaries are enough
+- does not fit into a researcher's workflow
+ 
+Technical challenges:
+- dependency hell
+- imprecise documentation
+- Code rot
+- handling and learning multiple tools
+ 
+Problem VM: Too much of a black box}
+}
+
+@article{marwick_madjebebe_2015,
+	title = {1989-excavation-report-{Madjebebe}},
+	doi = {10.6084/m9.figshare.1297059},
+	urldate = {2016-06-24},
+	author = {{Ben Marwick}},
+	year = {2015}
+}
+
+@article{knoth_reproducibility_2017,
+	title = {Reproducibility and {Practical} {Adoption} of {GEOBIA} with {Open}-{Source} {Software} in {Docker} {Containers}},
+	volume = {9},
+	copyright = {http://creativecommons.org/licenses/by/3.0/},
+	url = {http://www.mdpi.com/2072-4292/9/3/290},
+	doi = {10.3390/rs9030290},
+	abstract = {Geographic Object-Based Image Analysis (GEOBIA) mostly uses proprietary software,but the interest in Free and Open-Source Software (FOSS) for GEOBIA is growing. This interest stems not only from cost savings, but also from benefits concerning reproducibility and collaboration. Technical challenges hamper practical reproducibility, especially when multiple software packages are required to conduct an analysis. In this study, we use containerization to package a GEOBIA workflow in a well-defined FOSS environment. We explore the approach using two software stacks to perform an exemplary analysis detecting destruction of buildings in bi-temporal images of a conflict area. The analysis combines feature extraction techniques with segmentation and object-based analysis to detect changes using automatically-defined local reference values and to distinguish disappeared buildings from non-target structures. The resulting workflow is published as FOSS comprising both the model and data in a ready to use Docker image and a user interface for interaction with the containerized workflow. The presented solution advances GEOBIA in the following aspects: higher transparency of methodology; easier reuse and adaption of workflows; better transferability between operating systems; complete description of the software environment; and easy application of workflows by image analysis experts and non-experts. As a result, it promotes not only the reproducibility of GEOBIA, but also its practical adoption.},
+	language = {en},
+	number = {3},
+	urldate = {2017-03-23},
+	journal = {Remote Sensing},
+	author = {Knoth, Christian and Nüst, Daniel},
+	month = mar,
+	year = {2017},
+	keywords = {reproducible research, Docker, Reproducibility, containerization, GEOBIA, conflict monitoring, object-based image analysis, QGIS},
+	pages = {290}
+}
+
+@article{chen_open_2019,
+	title = {Open is not enough},
+	volume = {15},
+	copyright = {2018 Springer Nature Limited},
+	issn = {1745-2481},
+	url = {https://www.nature.com/articles/s41567-018-0342-2},
+	doi = {10.1038/s41567-018-0342-2},
+	abstract = {The solutions adopted by the high-energy physics community to foster reproducible research are examples of best practices that could be embraced more widely. This first experience suggests that reproducibility requires going beyond openness.},
+	language = {En},
+	number = {2},
+	urldate = {2019-02-10},
+	journal = {Nature Physics},
+	author = {Chen, Xiaoli and Dallmeier-Tiessen, Sünje and Dasler, Robin and Feger, Sebastian and Fokianos, Pamfilos and Gonzalez, Jose Benito and Hirvonsalo, Harri and Kousidis, Dinos and Lavasa, Artemis and Mele, Salvatore and Rodriguez, Diego Rodriguez and Šimko, Tibor and Smith, Tim and Trisovic, Ana and Trzcinska, Anna and Tsanaktsidis, Ioannis and Zimmermann, Markus and Cranmer, Kyle and Heinrich, Lukas and Watts, Gordon and Hildreth, Michael and Iglesias, Lara Lloret and Lassila-Perini, Kati and Neubert, Sebastian},
+	month = feb,
+	year = {2019},
+	pages = {113},
+	annote = {"Our own experience from opening up vast volumes of data is that openness cannot simply be tacked on as an afterthought at the end of the scientific endeavour. In addition, openness alone does not guarantee reproducibility or reusability, so it should not be pursued as a goal in itself. Focusing on data is also not enough: it needs to be accompanied by software, workflows and explanations, all of which need to be captured throughout the usual iterative and closed research lifecycle, ready for a timely open release with the results."}
+}
+
+@article{donoho_invitation_2010,
+	title = {An invitation to reproducible computational research},
+	volume = {11},
+	issn = {1465-4644},
+	url = {https://academic.oup.com/biostatistics/article/11/3/385/257703},
+	doi = {10.1093/biostatistics/kxq028},
+	abstract = {I am genuinely thrilled to see Biostatistics make a formal venture into computational reproducibility, and I congratulate the editors of Biostatistics on taking},
+	language = {en},
+	number = {3},
+	urldate = {2019-08-01},
+	journal = {Biostatistics},
+	author = {Donoho, David L.},
+	month = jul,
+	year = {2010},
+	pages = {385--388}
+}
+
+@misc{stark_before_2018,
+	type = {News},
+	title = {Before reproducibility must come preproducibility},
+	copyright = {2018 Nature},
+	url = {http://www.nature.com/articles/d41586-018-05256-0},
+	abstract = {Instead of arguing about whether results hold up, let’s push to provide enough information for others to repeat the experiments, says Philip Stark.},
+	language = {EN},
+	urldate = {2018-05-25},
+	journal = {Nature},
+	author = {Stark, Philip B.},
+	month = may,
+	year = {2018},
+	doi = {10.1038/d41586-018-05256-0}
+}
+
+@article{halchenko_open_2012,
+	title = {Open is {Not} {Enough}. {Let}'s {Take} the {Next} {Step}: {An} {Integrated}, {Community}-{Driven} {Computing} {Platform} for {Neuroscience}},
+	volume = {6},
+	issn = {1662-5196},
+	shorttitle = {Open is {Not} {Enough}. {Let}'s {Take} the {Next} {Step}},
+	url = {https://www.frontiersin.org/articles/10.3389/fninf.2012.00022/full},
+	doi = {10.3389/fninf.2012.00022},
+	abstract = {Open is Not Enough. Let's Take the Next Step: An Integrated, Community-Driven Computing Platform for Neuroscience},
+	language = {English},
+	urldate = {2019-08-01},
+	journal = {Frontiers in Neuroinformatics},
+	author = {Halchenko, Yaroslav O. and Hanke, Michael},
+	year = {2012},
+	keywords = {Debian, intergrated research software environment, NeuroDebian, Reproducible Research, research software maintenance}
 }
