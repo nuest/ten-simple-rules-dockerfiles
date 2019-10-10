@@ -62,11 +62,21 @@ environment that you execute your workflows in (cf. README of @marwick_madjebebe
   - VMs are not an alternative because too much of a black box
 - In RR, Dockerfiles can document where data and code came from and likely also where a third party might still get them
 
-# 1. Use versioned and automatically built base images {-}
+# 1. Don't write Dockerfiles by hand {-}
+
+- might seem counterintuitive rule
+- many cases you don't need a Dockerfile but just need a container with an environment to run your workflow
+- use a tool to generate container (via a Dockerfile) for you
+  - `repo2docker` which can automatically create a _Binder_ for you; you don't worry about the internal Dockerfile but get the container by following common practices for software packages
+  - tools follow the relevant rules below
+- writing a Dockerfile from scratch is not that simple, and even "experts" sometimes take shortcuts
+- if you're sure your needs are not served, then continue with other rules
+
+# 2. Use versioned and automatically built base images {-}
 
 - understand how base images work
 - _never_ use `:latest`
-- pick a base image with a Linux distribution that supports the required software stack, and ideally that is widely used in your community, e.g. Ubuntu for geospatial research
+- pick a base image with a Linux distribution that supports the required software stack, and ideally that is widely used in your community, e.g. Ubuntu for geospatial research, the `rocker/geospatial` image for spatial data science with R, or `jupyter/tensorflow-notebook` for machine learning with Python
 - base images (all the way to the top) must be based on Dockerfiles themselves
 - library base images are well maintained and security tested, but alternatives might be more suitable for research purposes / RR (example `rocker/r-ver`)
 - base images that have complex software installed (e.g. ML libraries, specific BLAS library) are helpful and fine to use, just ensure there is a Dockerfile publicly available that they use (and add a link to that file in your Dockerfile)
@@ -82,8 +92,9 @@ environment that you execute your workflows in (cf. README of @marwick_madjebebe
 FROM docker.io/rocker/r-ver:3.5.2
 ```
 
-# 2. Use indentation, newlines, and comments for documentation, readability and structure
+# 3. Use formatting and favour clarity
 
+- indentation, newlines, and comments for are crucial for documentation, readability and structure
 - use comments to provide a guide to others and future you, _"A Dockerfile written three months ago may just as well have been written by someone else"_ (following a common coding aphorism)
 - document for your future self first but tend to overexplain (cf. Rule 1 of @rule_ten_2019), provide extended docs if others ask for it
 - can use comments to add sections to the Dockerfile to reduce the need to externalise when files get long
@@ -113,7 +124,25 @@ RUN install2.r \
 # following commands from instructions at LINK HERE
 ```
 
-# 3. Pin versions {-}
+- clarity is always more important than brevity
+- don't worry about image size, clarity is more important (i.e. no complex RUN instructions that remove files after using rightaway)
+  - make `RUN` instructions do one thing (e.g. install one software, install many softwares from _one_ source, ...)
+  - a single `RUN` instruction should not be longer then "one page" > no scrolling
+- have commands _in order_ of least likely to change to most likely to change, it helps readers and takes advantage of build caching
+  1. system libraries (you can use comments to document which library is required by which language-specific package)
+  2. language-specific libraries or modules
+    1. from repositories (binaries)
+    2. from source
+  3. own software/scripts (if not mounted)
+  4. labels
+  5. `RUN`/`ENTRYPOINT`
+- how to access the layer commands from an existing image (`docker inspect..`)
+- Only switch directoryies with `WORKDIR` {-}
+  - might need to move to different directories for bespoke configuration or building from source
+  - is is much more transparent than `cd X` or `cd ...` in `RUN` statements
+- if need be use _layered builds_ to only keep specific files from one build step to another, e.g. for build dependencies if building software from source
+
+# 4. Pin versions {-}
 
 **system libraries**
 
@@ -143,7 +172,7 @@ RUN install2.r \
 - Use common command-line ready installation commands of programming languages
   - better readbiliy, potentially even performance (`RUN install2.r sp` instead of `RUN R -e "install.packages('sf')"`, although the latter is "base R")
   
-# 4. Mount data and control code {-}
+# 5. Mount data and control code {-}
 
 - do not use `ADD`/`COPY` to insert data or code into an image
 - better mount them to have them outside of the image
@@ -158,22 +187,29 @@ RUN install2.r \
 docker run --volume ...
 ```
 
-# 5. Use labels and build arguments for relevant links and metadata {-}
+# 6. Capture environment metadata {-}
 
-- advantage of labels: are structured, can be exposed by APIs, e.g. https://microbadger.com/labels
-- use namespaced-names
-- http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec
-- repository link for Dockerfile
-- author (`MAINTAINER` is deprecated)
-- license
-- usage instructions
-- https://microbadger.com/labels
-- DOI of research compendium (Zenodo preregister instead of GitHub automatic integration)
-- **Use build arguments to capture build metadata**
-  - add git commit hash to label
-  - add date and time to label
+Use labels and build arguments for metadata
 
-# 6. Enable interactive usage and one-click execution {-}
+- **labels**
+  - advantage of labels: are structured metadata, can be exposed by APIs, e.g. https://microbadger.com/labels
+  - use namespaced-names in labels (http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec)
+    - should we use the article to establish some core metadata fields for research? author DOI? research organisations (https://ror.org/)? funding agency/grant number?
+  - are part of the exported Docker image, mention `docker inspect`
+  - important metadata items
+    - repository link where Dockerfile is published
+    - author (`MAINTAINER` is deprecated) and contact (e.g. email, project website)
+    - license
+    - usage instructions?
+    - DOI of research compendium (Zenodo preregister instead of GitHub automatic integration?)
+  - can https://codemeta.github.io/ and https://citation-file-format.github.io/ be used/useful?
+- **build arguments**
+  - use build arguments to capture build metadata
+  - git commit hash
+  - date and timestamp
+  - clarifies if build was automated
+
+# 7. Enable interactive usage and one-click execution {-}
 
 - using `CMD` and `ENTRYPOINT` make sure that it is possible to run the container interactively _and_ as a one-click execution > give examples (see below)
 - the default execution should either execute the workflow (headless) or start an analysis environment
@@ -186,9 +222,9 @@ docker run --volume ...
 - a headless execution can be executed in a continuous integration (CI) after every project update, potentially on a test dataset for speed-up, 
 - see also Rule 7: Build a pipeline in @rule_ten_2019
 - you can also make your workflow configurable, e.g. by bespoke configuration files, environment variables passed to the container [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018]; however, know this is a trade-off from plain `Dockerfile`-based solutions, which is a proven industry standard
-- 
+- _what user should run within the Dockerfile?_
 
-# 7. End the `Dockerfile` with build and run commands
+# 8. End the `Dockerfile` with build and run commands
 
 - put `docker run` and `docker build` commands in comments at the end of the file (_may be own rule?_), especially relevant if arguments are used such as port exposure or mount points
 - should be copy-and-pasteable
@@ -202,25 +238,6 @@ docker run --volume ...
 # Extract the data:
 ##> docker cp gwf:/output/ ./output
 ```
-
-# 8. Favour clarity  {-}
-
-- don't worry about image size, clarity is more important (i.e. no complex RUN instructions that remove files after using rightaway)
-  - make `RUN` instructions do one thing (e.g. install one software, install many softwares from _one_ source, ...)
-  - a single `RUN` instruction should not be longer then "one page" > no scrolling
-- have commands _in order_ of least likely to change to most likely to change > even helps readers!
-  1. system libraries (you can use comments to document which library is required by which language-specific package)
-  2. language-specific libraries or modules
-    1. from repositories (binaries)
-    2. from source
-  3. own software/scripts (if not mounted)
-  4. labels
-  5. `RUN`/`ENTRYPOINT`
-- how to access the layer commands from an existing image (`docker inspect..`)
-- Only switch directoryies with `WORKDIR` {-}
-  - might need to move to different directories for bespoke configuration or building from source
-  - is is much more transparent than `cd X` or `cd ...` in `RUN` statements
-- if need be use _layered builds_ to only keep specific files from one build step to another, e.g. for build dependencies if building software from source
 
 # 9. Publish a Dockerfile per project in a code repository with version control {-}
 
@@ -247,6 +264,7 @@ docker run --volume ...
 
 - use the container built by the `Dockerfile` in your regular work, it is the only way to make sure it is really stable (cf. Marwick's "this container is the only way I have ever run this workflow")
 - no showstopper for using UIs (web-based, e.g. Jupyter, RStudio, but also `x11docker`)
+- you cannot expect to take a year old Docker image form the shelf and that can be extended, it will likely "run" but just as-is > need to re-build "all the time" to stay reusable; the longer you wait with trying to recompile the image the harder it will get (you don't know for which of the different reasons it fails)
 - during development and analysis, interactive use (e.g. R session, Jupyter Notebook) has advantages, and even the most disciplined might install a package or change a parameter manually
 - regularly delete all containers and rebuild images based on your `Dockerfile`
 - you are more likely to remember the undocumented steps if done regularly
