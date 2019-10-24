@@ -5,11 +5,15 @@ author:
     email: daniel.nuest@uni-muenster.de
     affiliation: "Institute for Geoinformatics, University of M\"unster, M\"unster, Germany"
     corresponding: daniel.nuest@uni-muenster.de
+    orcid: 
   - name: Stephen Eglen
-    email: bob@example.com
-    affiliation: Another University
-# - name: Remi?
-#  - "NN (all contributors?!)"
+    email: sje30@cam.ac.uk
+    affiliation: "Department of Applied Mathematics and Theoretical Physics, University of Cambridge, Cambridge, Cambridgeshire, GB"
+    orcid: 0000-0001-8607-8025
+  - name: Tim Head
+    email: betatim@gmail.com
+    affiliation: "Wild Tree Tech, Zurich, CH"
+    orcid: 0000-0003-0931-3698
 #  - Rule 4 of https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003858#s6 applies?
 abstract: |
           | Containerisation is a useful concept for capturing the increasingly complex virtual laboratories that underpin computational sciences today.
@@ -313,5 +317,7 @@ o2r by DFG
 # Contributions  {#contributions .unnumbered}
 
 DN conceived the idea, wrote the first darft, contributed to all rules.
+SE contributed to the overall structure and selected rules.
+TH contributed to the rule structure and particularly rule 1.
 
 # References {#references .unnumbered}
