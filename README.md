@@ -4,8 +4,18 @@ Ten simple rules for using Dockerfiles for reproducible research
 
 ## Run container for editing the document
 
+First, build the container. It will install the dependencies that you
+need for compiling the LaTex.
+
 ```bash
-docker run --rm -it -p 8787:8787 -e DISABLE_AUTH=true -v $(pwd):/home/rstudio/ten-simple-rules-dockerfiles rocker/verse:latest
+$ docker build -t ten-simple-rules .
+```
+
+Then run it! You'll need to set a password to login with user "rstudio."
+
+```bash
+PASSWORD=<YOUR_PASS>
+docker run --rm -it -p 8787:8787 -e PASSWORD=$PASSWORD -v $(pwd):/home/rstudio/ten-simple-rules-dockerfiles ten-simple-rules
 ```
 
 Open http://localhost:8787 to get RStudio and navigate to the directory `~/ten-simple-rules-dockerfiles` to open the `Rmd` file and start editing.

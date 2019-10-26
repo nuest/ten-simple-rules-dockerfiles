@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+*.log
 
 ten-simple-rules-dockerfiles\.pdf
 

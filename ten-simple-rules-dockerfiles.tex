@@ -201,7 +201,9 @@
 \\
 Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics, University of M``unster, M''unster,
 Germany}}\textsuperscript{*},
-Stephen Eglen\textsuperscript{\getAff{Another University}}\\
+Stephen Eglen\textsuperscript{\getAff{Department of Applied Mathematics and Theoretical Physics, University of
+Cambridge, Cambridge, Cambridgeshire, GB}},
+Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}}\\
 \bigskip
 \bigskip
 * Corresponding author: daniel.nuest@uni-muenster.de\\
@@ -209,12 +211,13 @@ Stephen Eglen\textsuperscript{\getAff{Another University}}\\
 % Please keep the abstract below 300 words
 \section*{Abstract}
 Containerisation is a useful concept for capturing the increasingly
-complex virtual laboratories that underpin computational sciences today.
-Docker is the most widely used containerisation solution. A Docker image
-is created based on the instructions in a plain-text file in the
-\texttt{Dockerfile} format. In a scholarly context, transparency and
-support of reproducibility are most desired aspects of containers. By
-following the rules in this article researchers writing a
+complex virtual laboratories that underpin computational sciences
+today.\\
+A container image is often created based on the instructions in a
+plain-text file in the \texttt{Dockerfile} format.\\
+In a scholarly context, transparency and support of reproducibility are
+most desired aspects of containers.\\
+By following the rules in this article researchers writing a
 \texttt{Dockerfile} can increase the changes to apply containers
 effectily in their daily work but also enable fellow researchers to
 reproduce a workflow.
@@ -232,62 +235,135 @@ TBD
 \section*{Introduction}\label{introduction}}
 \addcontentsline{toc}{section}{Introduction}
 
+Containerisation is a useful and powerful to handle increasingly complex
+virtual laboratories for computational sciences {[}1{]}. To some extent
+all sciences today use algorithms to analyse data {[}REF{]}, so the
+majority of esearchers need skills to handle virtual laboratories to
+ensure understandability and reproducibility. This documentation and
+transparency concerns both authors and their own work, but also
+collaborators, reviewers, and new colleagues, to avoid needless
+duplication of work and brain-drain {[}REF{]}. A core aspect of thorough
+documentation are well-defined computational environments and following
+best practices from software development {[}2{]}. Containerisation can
+help with these needs. It provides portable computational environments
+that are built from human and machine readable instructions and are thus
+well documented and usable by many. These environments can then
+\emph{host} executable and human-readable notebooks with the scientific
+analyses {[}3{]} and make sharing of properly reproducible workflows
+(cf.~Rule 10 of {[}4{]}) much easier as the environments can closely
+resemble the original researchers virtual laboratory.
+
+While there are a few tutorials for using containers for reproducible
+research,\footnote{https://nuest.github.io/docker-reproducible-research/,
+  https://chapmandu2.github.io/post/2018/05/26/reproducible-data-science-environments-with-docker/,
+  https://reproducible-analysis-workshop.readthedocs.io/en/latest/8.Intro-Docker.html}
+there is no extensive examination how to write the actual instructions
+to create the containers. Several platforms for facilitating
+reproducible research are built on top of containers {[}5--9{]}, but
+usually and intentionally hide this complexity from the researcher. Not
+everybody needs to understand and write Dockerfiles, as is reflected in
+rule 1. However, as one can argue that \emph{``the number of unique
+reserach environments approximates the number of researchers''} {[}9{]},
+the researchers who do need to craft their own environment definition
+should follow practices taking into account the scientific context. Such
+practices are not part of generic Docker tutorials and are not present
+in existing Dockerfiles often used as templates. The differences and
+potential obstacles are not obvious, especially for researchers who
+don't have software development experience.
+
+This article takes a look at how to write a \texttt{Dockerfile} so that
+it facilitates a day-to-day research workflow as well as the higher
+goals of reproducibility. A commitment to transparent, open and
+reproducible workflows can be put to life by using containers based on
+\texttt{Dockerfile}s every day, not as an afterthought triggered by a
+publication (cf.~thoughts on openness as an afterthought by {[}10{]} and
+on computational reproducibility by {[}11{]}). By following the
+\emph{conventions} layed out in these ten rules, authors ensure
+readability by others and ideally subsequent reuse and collaboration.
+
+\hypertarget{docker}{%
+\subsection*{Docker}\label{docker}}
+\addcontentsline{toc}{subsection}{Docker}
+
 \begin{itemize}
 \tightlist
-\item
-  containerisation is a useful and powerful to handle increasingly
-  complex virtual laboratories for computational sciences
-\item
-  to some extent all sciences today use algorithms to analyse data
-\item
-  researchers need skills to handle virtual laboratories
-\item
-  well-defined computational environments are crucial for
-  reproducibility
-\item
-  portable computational environments are crucial for transparency,
-  e.g.~in peer-review
-\item
-  containerisation can help to work towards the ideal of transparence an
-  reproducibility
 \item
   Docker is a common containerisation solution, widely adopted in
   mainstream IT and therefore widely available and support on many
   platforms, which makes it usable for non-IT experts in science
 \item
-  Dockerfiles are machine- and human-readable recipes for creating a
-  container
+  \texttt{Dockerfile}s are machine- and human-readable recipes for
+  creating a container
+\item
+  Other containerisation tools also support the \texttt{Dockerfile}
+  format:
+  \href{https://podman.io/}{podman}/\href{https://github.com/containers/buildah}{buildah},
+  \href{https://github.com/GoogleContainerTools/kaniko}{kaniko},
+  \href{https://github.com/genuinetools/img}{img}, or
+  \href{https://github.com/moby/buildkit}{buildkit}; Singularity
+  {[}12{]} can import Docker containers and has it's own ``singularity
+  recipee'', to which the rules here are transferable
+\item
+  {[}13{]} lists reasons for not publishing reproducibly include lack of
+  time \& incentives and unfittingness for a researcher's workflow, and
+  gives technical challenges of virtual laboratories, namely dependency
+  hell, imprecise documentation, code rot, and handling/learning
+  multiple tools
+
+  \begin{itemize}
+  \tightlist
+  \item
+    learn to write a \texttt{Dockerfile} with this article and use it as
+    the \emph{only} environment that you execute your workflows in
+    (cf.~README of {[}14{]}), then it will not be extra work
+    \textgreater{} \emph{``I developed and tested the package on this
+    Docker container, so this is the only platform that I'm confident it
+    works on, and so recommend to anyone wanting to use this package to
+    generate the vignette, etc.''}
+  \item
+    VMs are not an alternative because too much of a black box
+  \end{itemize}
 \item
   In RR, Dockerfiles can document where data and code came from and
   likely also where a third party might still get them
-\item
-  this article takes a look at how to write a \texttt{Dockerfile} so
-  that it facilitates a day-to-day research workflow as well as the
-  higher goals of reproducibility
-\item
-  while you can interactively manipulate a container, you never should
-  (\texttt{docker\ commit})
-\item
-  \emph{conventions} lead to readability by others (potentially reuse)
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
-\textbf{Box 1: Non-Docker container containerisation tools}
+\hypertarget{dont-write-dockerfiles-by-hand}{%
+\section*{1. Don't write Dockerfiles by
+hand}\label{dont-write-dockerfiles-by-hand}}
+\addcontentsline{toc}{section}{1. Don't write Dockerfiles by hand}
 
 \begin{itemize}
 \tightlist
 \item
-  Singularity can import Docker containers, though rules transferable to
-  ``the singularity recipee''
+  might seem counterintuitive rule
+\item
+  many cases you don't need a Dockerfile but just need a container with
+  an environment to run your workflow
+\item
+  use a tool to generate container (via a Dockerfile) for you
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{repo2docker} which can automatically create a \emph{Binder}
+    for you; you don't worry about the internal Dockerfile but get the
+    container by following common practices for software packages
+  \item
+    tools follow the relevant rules below
+  \end{itemize}
+\item
+  writing a Dockerfile from scratch is not that simple, and even
+  ``experts'' sometimes take shortcuts
+\item
+  if you're sure your needs are not served, then continue with other
+  rules
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
 \hypertarget{use-versioned-and-automatically-built-base-images}{%
-\section*{1. Use versioned and automatically built base
+\section*{2. Use versioned and automatically built base
 images}\label{use-versioned-and-automatically-built-base-images}}
-\addcontentsline{toc}{section}{1. Use versioned and automatically built
+\addcontentsline{toc}{section}{2. Use versioned and automatically built
 base images}
 
 \begin{itemize}
@@ -297,8 +373,11 @@ base images}
 \item
   \emph{never} use \texttt{:latest}
 \item
-  use Linux distribution that supports the required software stack, and
-  ideally that is widely used in your community
+  pick a base image with a Linux distribution that supports the required
+  software stack, and ideally that is widely used in your community,
+  e.g.~Ubuntu for geospatial research, the \texttt{rocker/geospatial}
+  image for spatial data science with R, or
+  \texttt{jupyter/tensorflow-notebook} for machine learning with Python
 \item
   base images (all the way to the top) must be based on Dockerfiles
   themselves
@@ -312,26 +391,76 @@ base images}
   is a Dockerfile publicly available that they use (and add a link to
   that file in your Dockerfile)
 \item
-  ideally the images are maintained by an active community/your
-  community
+  ideally the images are maintained by an active community/\emph{your
+  community}
+\item
+  existing communities
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \href{https://www.rocker-project.org/}{Rocker} for R {[}1{]}
+  \item
+    \href{https://bioconductor.org/help/docker/}{Docker containers for
+    Bioconductor} for bioinformatics
+  \item
+    \href{https://hub.docker.com/_/neurodebian}{NeuroDebian images} for
+    neuroscience {[}15{]}
+  \item
+    {[}Jupyter Docker
+    Stacks{]}(https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html
+    for Notebook-based computing
+  \item
+    \href{https://hub.docker.com/r/taverna/taverna-server}{Taverna
+    Server} for running Taverna workflows
+  \end{itemize}
 \end{itemize}
 
-\hypertarget{use-indentation-newlines-and-comments-for-documentation-readability-and-structure}{%
-\section{2. Use indentation, newlines, and comments for documentation,
-readability and
-structure}\label{use-indentation-newlines-and-comments-for-documentation-readability-and-structure}}
+\begin{verbatim}
+FROM docker.io/rocker/r-ver:3.5.2
+\end{verbatim}
+
+\hypertarget{use-formatting-and-favour-clarity}{%
+\section{3. Use formatting and favour
+clarity}\label{use-formatting-and-favour-clarity}}
 
 \begin{itemize}
 \tightlist
 \item
+  indentation, newlines, and comments for are crucial for documentation,
+  readability and structure
+\item
+  use comments to provide a guide to others and future you, \emph{``A
+  Dockerfile written three months ago may just as well have been written
+  by someone else''} (following a common coding aphorism)
+\item
+  document for your future self first but tend to overexplain (cf.~Rule
+  1 of {[}3{]}), provide extended docs if others ask for it
+\item
   can use comments to add sections to the Dockerfile to reduce the need
   to externalise when files get long
+
+  \begin{itemize}
+  \tightlist
+  \item
+    modularisation is a two-edged sword (point out
+    \href{https://www.mankier.com/1/podman-build}{\texttt{podman}'s
+    \texttt{\#include} directive}?)
+  \end{itemize}
 \item
   carefully indent commands and their arguments to make clear what
   belongs together, especially when connecting multiple commands in onr
   \texttt{RUN} with \texttt{\&\&}
 \item
   use \texttt{\textbackslash{}} for newlines
+\item
+  put each dependency on it's own line, makes it easier to spot changes
+  in version control
+\item
+  don't let lines get too long
+\item
+  split up an instruction (especially relevant for \texttt{RUN}) when
+  you have to scroll to see all of it
 \item
   use a linter to follow common practices and consistency
 \item
@@ -348,18 +477,88 @@ structure}\label{use-indentation-newlines-and-comments-for-documentation-readabi
   \item
     similar to ``literate programming''
   \item
-    put \texttt{docker\ run} and \texttt{docker\ build} commands in
-    comments at the end of the file (\emph{may be own rule?}),
-    especially relevant if arguments are used
-  \item
-    examples are especially crucial if you require configuration e.g.~of
-    the user
+    include commands that did \emph{not} work, especially if they seem
+    simpler, so you're not falling into the same trap twice
   \end{itemize}
 \end{itemize}
 
+\begin{verbatim}
+# apt-get install specific version
+
+# RUN command spreading several lines
+RUN install2.r \
+  fortunes \
+  here
+
+# this library must be installed from source to get version newer than in sources
+
+# following commands from instructions at LINK HERE
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  clarity is always more important than brevity
+\item
+  don't worry about image size, clarity is more important (i.e.~no
+  complex RUN instructions that remove files after using rightaway)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    make \texttt{RUN} instructions do one thing (e.g.~install one
+    software, install many softwares from \emph{one} source, \ldots{})
+  \item
+    a single \texttt{RUN} instruction should not be longer then ``one
+    page'' \textgreater{} no scrolling
+  \end{itemize}
+\item
+  have commands \emph{in order} of least likely to change to most likely
+  to change, it helps readers and takes advantage of build caching
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
+  \item
+    system libraries (you can use comments to document which library is
+    required by which language-specific package)
+  \item
+    language-specific libraries or modules
+  \item
+    from repositories (binaries)
+  \item
+    from source
+  \item
+    own software/scripts (if not mounted)
+  \item
+    labels
+  \item
+    \texttt{RUN}/\texttt{ENTRYPOINT}
+  \end{enumerate}
+\item
+  how to access the layer commands from an existing image
+  (\texttt{docker\ inspect..})
+\item
+  Only switch directoryies with \texttt{WORKDIR} \{-\}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    might need to move to different directories for bespoke
+    configuration or building from source
+  \item
+    is is much more transparent than \texttt{cd\ X} or \texttt{cd\ ...}
+    in \texttt{RUN} statements
+  \end{itemize}
+\item
+  if need be use \emph{layered builds} to only keep specific files from
+  one build step to another, e.g.~for build dependencies if building
+  software from source
+\end{itemize}
+
 \hypertarget{pin-versions}{%
-\section*{3. Pin versions}\label{pin-versions}}
-\addcontentsline{toc}{section}{3. Pin versions}
+\section*{4. Pin versions}\label{pin-versions}}
+\addcontentsline{toc}{section}{4. Pin versions}
 
 \textbf{system libraries}
 
@@ -395,7 +594,7 @@ structure}\label{use-indentation-newlines-and-comments-for-documentation-readabi
 \item
   \emph{installing from source} is a useful way to install very specific
   versions, at the cost of needing build libraries (which could be
-  removed again with layered builds)
+  removed again with build stages, but that's advanced)
 \end{itemize}
 
 \textbf{extension packages and programming language modules}
@@ -407,6 +606,10 @@ structure}\label{use-indentation-newlines-and-comments-for-documentation-readabi
   install a collection of dependencies for a language
 \item
   package managers have a CLI and can be used from \texttt{RUN} commands
+\item
+  freezing the environment,
+  cf.~https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html
+  cited by {[}3{]}
 \item
   there is a risk in outsourcing configuration to the file formats
   supported by package managers \textgreater{} use only when direct
@@ -446,9 +649,9 @@ structure}\label{use-indentation-newlines-and-comments-for-documentation-readabi
 \end{itemize}
 
 \hypertarget{mount-data-and-control-code}{%
-\section*{4. Mount data and control
+\section*{5. Mount data and control
 code}\label{mount-data-and-control-code}}
-\addcontentsline{toc}{section}{4. Mount data and control code}
+\addcontentsline{toc}{section}{5. Mount data and control code}
 
 \begin{itemize}
 \tightlist
@@ -461,7 +664,8 @@ code}\label{mount-data-and-control-code}}
   easier access, does not require Docker knowledge by third parties to
   reause code and data
 \item
-  be always ready to throw containers and images away
+  mounting ensures you are always ready to throw containers and even
+  images away
 \item
   use the \texttt{-\/-user} option to avoid problems with file
   permissions when mounting
@@ -469,79 +673,97 @@ code}\label{mount-data-and-control-code}}
   if you have a ``stable'' published software library, install it from
   source from the source code repo or from the software repository (so
   that users find the project in the future)
+\item
+  how to mount the data can be put in the example commands (see 4.)
+\item
+  prefer the long versions of CLI parameters for readability
 \end{itemize}
 
-\hypertarget{only-switch-directoryies-with-workdir}{%
-\section*{\texorpdfstring{5. Only switch directoryies with
-\texttt{WORKDIR}}{5. Only switch directoryies with WORKDIR}}\label{only-switch-directoryies-with-workdir}}
-\addcontentsline{toc}{section}{5. Only switch directoryies with
-\texttt{WORKDIR}}
+\begin{verbatim}
+docker run --volume ...
+\end{verbatim}
+
+\hypertarget{capture-environment-metadata}{%
+\section*{6. Capture environment
+metadata}\label{capture-environment-metadata}}
+\addcontentsline{toc}{section}{6. Capture environment metadata}
+
+Use labels and build arguments for metadata
 
 \begin{itemize}
 \tightlist
 \item
-  might need to move to different directories for bespoke configuration
-  or building from source
-\item
-  is is much more transparent than \texttt{cd\ X} or \texttt{cd\ ...} in
-  \texttt{RUN} statements
-\item
-  clarity most important
-\end{itemize}
-
-\hypertarget{use-labels-and-build-arguments-for-relevant-links-and-metadata}{%
-\section*{6. Use labels and build arguments for relevant links and
-metadata}\label{use-labels-and-build-arguments-for-relevant-links-and-metadata}}
-\addcontentsline{toc}{section}{6. Use labels and build arguments for
-relevant links and metadata}
-
-\begin{itemize}
-\tightlist
-\item
-  advantage of labels: are structured, can be exposed by APIs,
-  e.g.~https://microbadger.com/labels
-\item
-  use namespaced-names
-\item
-  http://label-schema.org/rc1/ respectively
-  https://github.com/opencontainers/image-spec
-\item
-  repository link for Dockerfile
-\item
-  author (\texttt{MAINTAINER} is deprecated)
-\item
-  license
-\item
-  usage instructions
-\item
-  https://microbadger.com/labels
-\item
-  DOI of research compendium (Zenodo preregister instead of GitHub
-  automatic integration)
-\item
-  \textbf{Use build arguments to capture build metadata}
+  \textbf{labels}
 
   \begin{itemize}
   \tightlist
   \item
-    add git commit hash to label
+    advantage of labels: are structured metadata, can be exposed by
+    APIs, e.g.~https://microbadger.com/labels
   \item
-    add date and time to label
+    use namespaced-names in labels (http://label-schema.org/rc1/
+    respectively https://github.com/opencontainers/image-spec)
+
+    \begin{itemize}
+    \tightlist
+    \item
+      should we use the article to establish some core metadata fields
+      for research? author DOI? research organisations
+      (https://ror.org/)? funding agency/grant number?
+    \end{itemize}
+  \item
+    are part of the exported Docker image, mention
+    \texttt{docker\ inspect}
+  \item
+    important metadata items
+
+    \begin{itemize}
+    \tightlist
+    \item
+      repository link where Dockerfile is published
+    \item
+      author (\texttt{MAINTAINER} is deprecated) and contact
+      (e.g.~email, project website)
+    \item
+      license
+    \item
+      usage instructions?
+    \item
+      DOI of research compendium (Zenodo preregister instead of GitHub
+      automatic integration?)
+    \end{itemize}
+  \item
+    can https://codemeta.github.io/ and
+    https://citation-file-format.github.io/ be used/useful?
+  \end{itemize}
+\item
+  \textbf{build arguments}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    use build arguments to capture build metadata
+  \item
+    git commit hash
+  \item
+    date and timestamp
+  \item
+    clarifies if build was automated
   \end{itemize}
 \end{itemize}
 
-\hypertarget{enable-both-interactive-development-and-one-click-execution}{%
-\section*{7. Enable both interactive development and one-click
-execution}\label{enable-both-interactive-development-and-one-click-execution}}
-\addcontentsline{toc}{section}{7. Enable both interactive development
-and one-click execution}
+\hypertarget{enable-interactive-usage-and-one-click-execution}{%
+\section*{7. Enable interactive usage and one-click
+execution}\label{enable-interactive-usage-and-one-click-execution}}
+\addcontentsline{toc}{section}{7. Enable interactive usage and one-click
+execution}
 
 \begin{itemize}
 \tightlist
 \item
   using \texttt{CMD} and \texttt{ENTRYPOINT} make sure that it is
-  possible to run the container interactively \textgreater{} give
-  examples (see below)
+  possible to run the container interactively \emph{and} as a one-click
+  execution \textgreater{} give examples (see below)
 \item
   the default execution should either execute the workflow (headless) or
   start an analysis environment
@@ -559,53 +781,56 @@ and one-click execution}
   may also use the same \texttt{Dockerfile} for different purposes,
   e.g.~include an app (e.g.~Shiny) for interactive use by user
 \item
+  if you want to expose a user interface \textbf{use the browser} on and
+  exposed port, unless you're using an existing Desktop you, then you
+  can use \texttt{x11docker} {[}{]}
+\item
+  one useful alternative: Notebook user interfaces in the browser
+  (Jupyter, RStudio)
+\item
   document both variants with example commands
 \item
-  a headless execution can be executed in a continuous integration after
-  every project update, potentially on a test dataset for speed-up
+  a headless execution can be executed in a continuous integration (CI)
+  after every project update, potentially on a test dataset for
+  speed-up,
+\item
+  see also Rule 7: Build a pipeline in {[}3{]}
+\item
+  you can also make your workflow configurable, e.g.~by bespoke
+  configuration files, environment variables passed to the container
+  {[}16{]}, or special Docker-based wrappers such as Kliko {[}17{]};
+  however, know this is a trade-off from plain \texttt{Dockerfile}-based
+  solutions, which is a proven industry standard
+\item
+  \emph{what user should run within the Dockerfile?}
 \end{itemize}
 
-\hypertarget{favour-clarity-over-image-size}{%
-\section*{8. Favour clarity over image
-size}\label{favour-clarity-over-image-size}}
-\addcontentsline{toc}{section}{8. Favour clarity over image size}
+\hypertarget{end-the-dockerfile-with-build-and-run-commands}{%
+\section{\texorpdfstring{8. End the \texttt{Dockerfile} with build and
+run
+commands}{8. End the Dockerfile with build and run commands}}\label{end-the-dockerfile-with-build-and-run-commands}}
 
 \begin{itemize}
 \tightlist
 \item
-  don't worry about image size (i.e.~no complex RUN commands that remove
-  files rightaway) but order instructions
+  put \texttt{docker\ run} and \texttt{docker\ build} commands in
+  comments at the end of the file (\emph{may be own rule?}), especially
+  relevant if arguments are used such as port exposure or mount points
 \item
-  clarity more important
+  should be copy-and-pasteable
 \item
-  how to access the layer commands from an existing image
-  (\texttt{docker\ inspect..})
-\item
-  have commands \emph{in order} of least likely to change to most likely
-  to change \textgreater{} even helps readers!
-
-  \begin{enumerate}
-  \def\labelenumi{\arabic{enumi}.}
-  \tightlist
-  \item
-    system libraries
-  \item
-    language-specific libraries or modules
-  \item
-    from repositories (binaries)
-  \item
-    from source
-  \item
-    own software/scripts (if not mounted)
-  \item
-    labels
-  \item
-    \texttt{RUN}/\texttt{ENTRYPOINT}
-  \end{enumerate}
-\item
-  if need be use \emph{layered builds} to only keep specific files from
-  one build step to another
+  use multiple comment characters to make clear what is command and what
+  is documentation
 \end{itemize}
+
+\begin{verbatim}
+# Build the images with
+##> docker build --tag great_workflow .
+# Run the image:
+##> docker run --it --port 80:80 --volume ./input:/input --name gwf great_workflow
+# Extract the data:
+##> docker cp gwf:/output/ ./output
+\end{verbatim}
 
 \hypertarget{publish-a-dockerfile-per-project-in-a-code-repository-with-version-control}{%
 \section*{9. Publish a Dockerfile per project in a code repository with
@@ -619,6 +844,16 @@ code repository with version control}
 \item
   \texttt{Dockerfile} is a plain text-based format and therefore you
   should put it under version control
+\item
+  just as code, the \texttt{Dockerfile} should be for humans to
+  understand and just incidentally for machines to be interpretable
+  (qoute Abelson? see also
+  https://www.quora.com/How-true-is-Programs-are-meant-to-be-read-by-humans-and-only-incidentally-for-computers-to-execute)
+\item
+  using and publishing a \texttt{Dockerfile} to create a container will
+  increase chances of preservation (cf. {[}18{]})
+\item
+  Consult Ten Simple Rules paper by Perez-Riverol et al. {[}19{]}
 \item
   add the link to the online repository to a label, to point back to the
   source of the file
@@ -657,6 +892,18 @@ code repository with version control}
     database, then put it in a separate container and connect them via
     \texttt{docker-compose}
   \end{itemize}
+\item
+  use git commit messages extensively to describe the reasons behind
+  changes; the messages may even contain failed attempts/commands
+\item
+  add a clear license
+\item
+  publish the image of the workflow to a suitable repository (where it
+  gets a DOI) at the time of publication of the workflow
+\item
+  you may use multiple containers and \texttt{Dockerfiles} for complex
+  workflows (cf. {[}20{]}) but then you're probably out of scope of this
+  article
 \end{itemize}
 
 \hypertarget{use-the-container-daily-rebuild-the-image-weekly}{%
@@ -675,6 +922,12 @@ image weekly}
 \item
   no showstopper for using UIs (web-based, e.g.~Jupyter, RStudio, but
   also \texttt{x11docker})
+\item
+  you cannot expect to take a year old Docker image form the shelf and
+  that can be extended, it will likely ``run'' but just as-is
+  \textgreater{} need to re-build ``all the time'' to stay reusable; the
+  longer you wait with trying to recompile the image the harder it will
+  get (you don't know for which of the different reasons it fails)
 \item
   during development and analysis, interactive use (e.g.~R session,
   Jupyter Notebook) has advantages, and even the most disciplined might
@@ -712,11 +965,17 @@ image weekly}
     you can install interactive UIs as part of the Dockerfile and use
     them just like Desktop UIs (Jupyter, RStudio, use )
   \end{itemize}
+\item
+  if you can, get a colleague to run the workflow for you, or even
+  better switch Dockerfiles and give feedback - this gives both of you
+  an extra layer of confidence
+\item
+  add a CRON job that deletes the image every week?
 \end{itemize}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-\textbf{Box 2: Automatic generation of Dockerfiles}
+\textbf{Box: Automatic generation of Dockerfiles}
 
 \begin{itemize}
 \tightlist
@@ -737,37 +996,174 @@ image weekly}
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
+\hypertarget{example-dockerfiles}{%
+\section{Example Dockerfiles}\label{example-dockerfiles}}
+
+To demonstrate the 10 rules, we have a git repository with example
+\texttt{Dockerfile}s, some of which we took from public repositories and
+updated to adhere to the rules (\texttt{Dockerfile.before} and
+\texttt{Dockerfile.after}).
+
 \hypertarget{conclusion}{%
 \section*{Conclusion}\label{conclusion}}
 \addcontentsline{toc}{section}{Conclusion}
 
-\begin{itemize}
-\tightlist
-\item
-  reproducibility is about best efforts, not about achieving the perfect
-
-  \begin{itemize}
-  \tightlist
-  \item
-    https://twitter.com/DougBlank/status/1135904909663068165?s=09
-  \end{itemize}
-\item
-  don't go insane, but be realistic about what might break and what is
-  unlikely to break
-\item
-  all the rules can be broken if another way works better for \emph{you}
-\item
-  document for your future self, provide detailed docs only if others
-  ask for it {[}REF{]}
-\end{itemize}
+Reproducibility in research is an endeavour of best efforts, not about
+achieving the perfect solution, as that is probably not achievable or
+changing over time. This article provides guidance for using
+\texttt{Dockerfile}s in computational/computer-based research to work
+towards a ``time capsule'' (see
+https://twitter.com/DougBlank/status/1135904909663068165?s=09) that
+given some expertise and the right tools can be used to come as close as
+possible to the original virtual laboratory used for a specific. Such an
+increase in transparency and conscious effort is valuable for the
+creators of analyses, even if the capsule decays over time. The effort
+should also be valued by others and may change the way scholars
+collaborate and communicate (cf.~notion of ``preproducibility'' by
+{[}21{]}) So please, don't go insane with writing \texttt{Dockerfile}s,
+but be realistic about what might break and what is unlikely to break.
+In a similar vein, these rules may be broken if another way works better
+for \emph{your use case}. The rules in this article help you mastering
+the \texttt{Dockerfile} format for research and provide a solid basis
+for engaging in more complex but also in simpler assisted usage of
+containers (cf.~Box: Aumatic Generation). Corner cases aside, share and
+exchange your \texttt{Dockerfile} freely and collaborate in your
+community to spread the knowledge about containers as a tool for
+research. Together you can develop common practices or even shared base
+images (exemplified by communities listed in Rule 1).
 
 \hypertarget{acknowledgements}{%
 \section*{Acknowledgements}\label{acknowledgements}}
 \addcontentsline{toc}{section}{Acknowledgements}
 
+o2r by DFG
+
+\hypertarget{contributions}{%
+\section*{Contributions}\label{contributions}}
+\addcontentsline{toc}{section}{Contributions}
+
+DN conceived the idea, wrote the first darft, contributed to all rules.
+SE contributed to the overall structure and selected rules. TH
+contributed to the rule structure and particularly rule 1.
+
 \hypertarget{references}{%
 \section*{References}\label{references}}
 \addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\leavevmode\hypertarget{ref-boettiger_introduction_2017}{}%
+1. Boettiger C, Eddelbuettel D. An Introduction to Rocker: Docker
+Containers for R. The R Journal. 2017;9: 527--536.
+doi:\href{https://doi.org/10.32614/RJ-2017-065}{10.32614/RJ-2017-065}
+
+\leavevmode\hypertarget{ref-taschuk_ten_2017}{}%
+2. Taschuk M, Wilson G. Ten simple rules for making research software
+more robust. PLOS Computational Biology. 2017;13: e1005412.
+doi:\href{https://doi.org/10.1371/journal.pcbi.1005412}{10.1371/journal.pcbi.1005412}
+
+\leavevmode\hypertarget{ref-rule_ten_2019}{}%
+3. Rule A, Birmingham A, Zuniga C, Altintas I, Huang S-C, Knight R, et
+al. Ten simple rules for writing and sharing computational analyses in
+Jupyter Notebooks. PLOS Computational Biology. 2019;15: e1007007.
+doi:\href{https://doi.org/10.1371/journal.pcbi.1007007}{10.1371/journal.pcbi.1007007}
+
+\leavevmode\hypertarget{ref-sandve_ten_2013}{}%
+4. Sandve GK, Nekrutenko A, Taylor J, Hovig E. Ten Simple Rules for
+Reproducible Computational Research. PLoS Comput Biol. 2013;9: e1003285.
+doi:\href{https://doi.org/10.1371/journal.pcbi.1003285}{10.1371/journal.pcbi.1003285}
+
+\leavevmode\hypertarget{ref-brinckman_computing_2018}{}%
+5. Brinckman A, Chard K, Gaffney N, Hategan M, Jones MB, Kowalik K, et
+al. Computing environments for reproducibility: Capturing the ``Whole
+Tale''. Future Generation Computer Systems. 2018;
+doi:\href{https://doi.org/10.1016/j.future.2017.12.029}{10.1016/j.future.2017.12.029}
+
+\leavevmode\hypertarget{ref-code_ocean_2019}{}%
+6. Code Ocean {[}Internet{]}. 2019. Available:
+\url{https://codeocean.com/}
+
+\leavevmode\hypertarget{ref-simko_reana_2019}{}%
+7. Šimko T, Heinrich L, Hirvonsalo H, Kousidis D, Rodríguez D. REANA: A
+System for Reusable Research Data Analyses. EPJ Web of Conferences.
+2019;214: 06034.
+doi:\href{https://doi.org/10.1051/epjconf/201921406034}{10.1051/epjconf/201921406034}
+
+\leavevmode\hypertarget{ref-jupyter_binder_2018}{}%
+8. Jupyter P, Bussonnier M, Forde J, Freeman J, Granger B, Head T, et
+al. Binder 2.0 - Reproducible, interactive, sharable environments for
+science at scale. Proceedings of the 17th Python in Science Conference.
+2018; 113--120.
+doi:\href{https://doi.org/10.25080/Majora-4af1f417-011}{10.25080/Majora-4af1f417-011}
+
+\leavevmode\hypertarget{ref-nust_opening_2017}{}%
+9. Nüst D, Konkol M, Pebesma E, Kray C, Schutzeichel M, Przibytzin H, et
+al. Opening the Publication Process with Executable Research Compendia.
+D-Lib Magazine. 2017;23.
+doi:\href{https://doi.org/10.1045/january2017-nuest}{10.1045/january2017-nuest}
+
+\leavevmode\hypertarget{ref-chen_open_2019}{}%
+10. Chen X, Dallmeier-Tiessen S, Dasler R, Feger S, Fokianos P, Gonzalez
+JB, et al. Open is not enough. Nature Physics. 2019;15: 113.
+doi:\href{https://doi.org/10.1038/s41567-018-0342-2}{10.1038/s41567-018-0342-2}
+
+\leavevmode\hypertarget{ref-donoho_invitation_2010}{}%
+11. Donoho DL. An invitation to reproducible computational research.
+Biostatistics. 2010;11: 385--388.
+doi:\href{https://doi.org/10.1093/biostatistics/kxq028}{10.1093/biostatistics/kxq028}
+
+\leavevmode\hypertarget{ref-kurtzer_singularity_2017}{}%
+12. Kurtzer GM, Sochat V, Bauer MW. Singularity: Scientific containers
+for mobility of compute. PLOS ONE. 2017;12: e0177459.
+doi:\href{https://doi.org/10.1371/journal.pone.0177459}{10.1371/journal.pone.0177459}
+
+\leavevmode\hypertarget{ref-boettiger_introduction_2015}{}%
+13. Boettiger C. An Introduction to Docker for Reproducible Research.
+SIGOPS Oper Syst Rev. 2015;49: 71--79.
+doi:\href{https://doi.org/10.1145/2723872.2723882}{10.1145/2723872.2723882}
+
+\leavevmode\hypertarget{ref-marwick_madjebebe_2015}{}%
+14. Ben Marwick. 1989-excavation-report-Madjebebe. 2015;
+doi:\href{https://doi.org/10.6084/m9.figshare.1297059}{10.6084/m9.figshare.1297059}
+
+\leavevmode\hypertarget{ref-halchenko_open_2012}{}%
+15. Halchenko YO, Hanke M. Open is Not Enough. Let's Take the Next Step:
+An Integrated, Community-Driven Computing Platform for Neuroscience.
+Frontiers in Neuroinformatics. 2012;6.
+doi:\href{https://doi.org/10.3389/fninf.2012.00022}{10.3389/fninf.2012.00022}
+
+\leavevmode\hypertarget{ref-knoth_reproducibility_2017}{}%
+16. Knoth C, Nüst D. Reproducibility and Practical Adoption of GEOBIA
+with Open-Source Software in Docker Containers. Remote Sensing. 2017;9:
+290. doi:\href{https://doi.org/10.3390/rs9030290}{10.3390/rs9030290}
+
+\leavevmode\hypertarget{ref-molenaar_klikoscientific_2018}{}%
+17. Molenaar G, Makhathini S, Girard JN, Smirnov O. Kliko---The
+scientific compute container format. Astronomy and Computing. 2018;25:
+1--9.
+doi:\href{https://doi.org/10.1016/j.ascom.2018.08.003}{10.1016/j.ascom.2018.08.003}
+
+\leavevmode\hypertarget{ref-emsley_framework_2018}{}%
+18. Emsley I, De Roure D. A Framework for the Preservation of a Docker
+Container International Journal of Digital Curation. International
+Journal of Digital Curation. 2018;12.
+doi:\href{https://doi.org/10.2218/ijdc.v12i2.509}{10.2218/ijdc.v12i2.509}
+
+\leavevmode\hypertarget{ref-perez-riverol_ten_2016}{}%
+19. Perez-Riverol Y, Gatto L, Wang R, Sachsenberg T, Uszkoreit J,
+Leprevost F da V, et al. Ten Simple Rules for Taking Advantage of Git
+and GitHub. PLOS Computational Biology. 2016;12: e1004947.
+doi:\href{https://doi.org/10.1371/journal.pcbi.1004947}{10.1371/journal.pcbi.1004947}
+
+\leavevmode\hypertarget{ref-kim_bio-docklets_2017}{}%
+20. Kim B, Ali TA, Lijeron C, Afgan E, Krampis K. Bio-Docklets:
+Virtualization Containers for Single-Step Execution of NGS Pipelines.
+bioRxiv. 2017; 116962.
+doi:\href{https://doi.org/10.1101/116962}{10.1101/116962}
+
+\leavevmode\hypertarget{ref-stark_before_2018}{}%
+21. Stark PB. Before reproducibility must come preproducibility
+{[}Internet{]}. Nature. 2018.
+doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0}
 
 \nolinenumbers
 
