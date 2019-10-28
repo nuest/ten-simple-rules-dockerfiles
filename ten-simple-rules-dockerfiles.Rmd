@@ -282,7 +282,6 @@ Use labels and build arguments for metadata
 - if you can, get a colleague to run the workflow for you, or even better switch Dockerfiles and give feedback - this gives both of you an extra layer of confidence
 - add a CRON job that deletes the image every week?
 
-----------
 
 **Box: Automatic generation of Dockerfiles**
 
@@ -292,7 +291,6 @@ Use labels and build arguments for metadata
 - `repo2docker`, `dockter`, `containerit`
 - these are useful if you don't need very specific versions etc. and for specific use cases, but sometimes requires a specific project structure (PyPI `requirements.txt`) or reproducible document (R Markdown file)
 
-----------
 
 # Example Dockerfiles
 
