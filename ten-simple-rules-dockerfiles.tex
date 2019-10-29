@@ -201,6 +201,7 @@
 \\
 Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics, University of M``unster, M''unster,
 Germany}}\textsuperscript{*},
+Vanessa Sochat\textsuperscript{\getAff{Stanford Research Comuting Center, Stanford University, Stanford, CA, US}},
 Stephen Eglen\textsuperscript{\getAff{Department of Applied Mathematics and Theoretical Physics, University of
 Cambridge, Cambridge, Cambridgeshire, GB}},
 Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}}\\
@@ -210,17 +211,16 @@ Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}}\\
 \end{flushleft}
 % Please keep the abstract below 300 words
 \section*{Abstract}
-Containerisation is a useful concept for capturing the increasingly
-complex virtual laboratories that underpin computational sciences
-today.\\
-A container image is often created based on the instructions in a
-plain-text file in the \texttt{Dockerfile} format.\\
-In a scholarly context, transparency and support of reproducibility are
-most desired aspects of containers.\\
-By following the rules in this article researchers writing a
-\texttt{Dockerfile} can increase the changes to apply containers
-effectily in their daily work but also enable fellow researchers to
-reproduce a workflow.
+Containers are greatly improving computational science by packaging
+software and data dependencies. In a scholarly context, transparency and
+support of reproducibility are the largest drivers for using these
+containers. It follows that choices that are made with respect to
+building containers can make or break its reproducibility. The build for
+the container image is often created based on the instructions in a
+plain-text file. For example, one such container technology, Docker,
+provides instructions using a \texttt{Dockerfile}. By following the
+rules in this article researchers writing a \texttt{Dockerfile} can
+effectively build and distribute containers.
 
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLOS ONE authors please skip this step.
@@ -235,49 +235,44 @@ TBD
 \section*{Introduction}\label{introduction}}
 \addcontentsline{toc}{section}{Introduction}
 
-Containerisation is a useful and powerful to handle increasingly complex
-virtual laboratories for computational sciences {[}1{]}. To some extent
-all sciences today use algorithms to analyse data {[}REF{]}, so the
-majority of esearchers need skills to handle virtual laboratories to
-ensure understandability and reproducibility. This documentation and
-transparency concerns both authors and their own work, but also
-collaborators, reviewers, and new colleagues, to avoid needless
-duplication of work and brain-drain {[}REF{]}. A core aspect of thorough
-documentation are well-defined computational environments and following
-best practices from software development {[}2{]}. Containerisation can
-help with these needs. It provides portable computational environments
-that are built from human and machine readable instructions and are thus
-well documented and usable by many. These environments can then
-\emph{host} executable and human-readable notebooks with the scientific
-analyses {[}3{]} and make sharing of properly reproducible workflows
-(cf.~Rule 10 of {[}4{]}) much easier as the environments can closely
-resemble the original researchers virtual laboratory.
+With access to version control systems {[}REF GITHUB, GITLAB, etc.{]} it
+has become increasingly easy to not only share algorithms, but also
+instructions for building and testing. Within this content, it is
+suggested to include instructions for building containers to package
+software and data dependencies {[}1{]}. By way of providing these
+instructions along with thorough documentation, it's much more likely to
+be able to reproduce an analysis workflow. A container is a portabal,
+encapsulated environment that is built from human and machine readable
+instructions. For example, containers have been created to host
+scientific notebooks {[}2{]}, and share reproducible workflows (cf.~Rule
+10 of {[}3{]}).
 
-While there are a few tutorials for using containers for reproducible
+While there are several tutorials for using containers for reproducible
 research,\footnote{https://nuest.github.io/docker-reproducible-research/,
   https://chapmandu2.github.io/post/2018/05/26/reproducible-data-science-environments-with-docker/,
   https://reproducible-analysis-workshop.readthedocs.io/en/latest/8.Intro-Docker.html}
-there is no extensive examination how to write the actual instructions
-to create the containers. Several platforms for facilitating
-reproducible research are built on top of containers {[}5--9{]}, but
-usually and intentionally hide this complexity from the researcher. Not
-everybody needs to understand and write Dockerfiles, as is reflected in
-rule 1. However, as one can argue that \emph{``the number of unique
-reserach environments approximates the number of researchers''} {[}9{]},
-the researchers who do need to craft their own environment definition
-should follow practices taking into account the scientific context. Such
-practices are not part of generic Docker tutorials and are not present
-in existing Dockerfiles often used as templates. The differences and
-potential obstacles are not obvious, especially for researchers who
-don't have software development experience.
+there is no extensive examination for how to write the actual
+instructions to create the containers. Several platforms for
+facilitating reproducible research are built on top of containers
+{[}4--8{]}, but they hide any complexity from the researcher. While not
+everybody needs to understand and write Dockerfiles, as \emph{``the
+number of unique research environments approximates the number of
+researchers''} {[}8{]}, the researchers who do need to craft their own
+environment definition should follow good practices. Such practices are
+not part of generic Docker tutorials and are not present in existing
+Dockerfiles often used as templates. The differences and potential
+obstacles are not obvious, especially for researchers who don't have
+software development experience.
 
-This article takes a look at how to write a \texttt{Dockerfile} so that
-it facilitates a day-to-day research workflow as well as the higher
-goals of reproducibility. A commitment to transparent, open and
-reproducible workflows can be put to life by using containers based on
-\texttt{Dockerfile}s every day, not as an afterthought triggered by a
-publication (cf.~thoughts on openness as an afterthought by {[}10{]} and
-on computational reproducibility by {[}11{]}). By following the
+While there are many different container technologies, this article
+focuses on Docker {[}REF{]} as it is the most commonly used {[}REF{]}.
+The goal at hand is to write a \texttt{Dockerfile} so that it best
+facilitates interactive development and research as well as the higher
+goals of reproducibility. A daily commitment to these general practices
+can ensure that workflows are reproducible, and generation of a
+container is not an afterthought triggered by a publication
+(cf.~thoughts on openness as an afterthought by {[}9{]} and on
+computational reproducibility by {[}10{]}). By following the
 \emph{conventions} layed out in these ten rules, authors ensure
 readability by others and ideally subsequent reuse and collaboration.
 
@@ -301,10 +296,10 @@ readability by others and ideally subsequent reuse and collaboration.
   \href{https://github.com/GoogleContainerTools/kaniko}{kaniko},
   \href{https://github.com/genuinetools/img}{img}, or
   \href{https://github.com/moby/buildkit}{buildkit}; Singularity
-  {[}12{]} can import Docker containers and has it's own ``singularity
+  {[}11{]} can import Docker containers and has it's own ``singularity
   recipee'', to which the rules here are transferable
 \item
-  {[}13{]} lists reasons for not publishing reproducibly include lack of
+  {[}12{]} lists reasons for not publishing reproducibly include lack of
   time \& incentives and unfittingness for a researcher's workflow, and
   gives technical challenges of virtual laboratories, namely dependency
   hell, imprecise documentation, code rot, and handling/learning
@@ -315,7 +310,7 @@ readability by others and ideally subsequent reuse and collaboration.
   \item
     learn to write a \texttt{Dockerfile} with this article and use it as
     the \emph{only} environment that you execute your workflows in
-    (cf.~README of {[}14{]}), then it will not be extra work
+    (cf.~README of {[}13{]}), then it will not be extra work
     \textgreater{} \emph{``I developed and tested the package on this
     Docker container, so this is the only platform that I'm confident it
     works on, and so recommend to anyone wanting to use this package to
@@ -405,7 +400,7 @@ base images}
     Bioconductor} for bioinformatics
   \item
     \href{https://hub.docker.com/_/neurodebian}{NeuroDebian images} for
-    neuroscience {[}15{]}
+    neuroscience {[}14{]}
   \item
     {[}Jupyter Docker
     Stacks{]}(https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html
@@ -435,7 +430,7 @@ clarity}\label{use-formatting-and-favour-clarity}}
   by someone else''} (following a common coding aphorism)
 \item
   document for your future self first but tend to overexplain (cf.~Rule
-  1 of {[}3{]}), provide extended docs if others ask for it
+  1 of {[}2{]}), provide extended docs if others ask for it
 \item
   can use comments to add sections to the Dockerfile to reduce the need
   to externalise when files get long
@@ -609,7 +604,7 @@ RUN install2.r \
 \item
   freezing the environment,
   cf.~https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html
-  cited by {[}3{]}
+  cited by {[}2{]}
 \item
   there is a risk in outsourcing configuration to the file formats
   supported by package managers \textgreater{} use only when direct
@@ -794,11 +789,11 @@ execution}
   after every project update, potentially on a test dataset for
   speed-up,
 \item
-  see also Rule 7: Build a pipeline in {[}3{]}
+  see also Rule 7: Build a pipeline in {[}2{]}
 \item
   you can also make your workflow configurable, e.g.~by bespoke
   configuration files, environment variables passed to the container
-  {[}16{]}, or special Docker-based wrappers such as Kliko {[}17{]};
+  {[}15{]}, or special Docker-based wrappers such as Kliko {[}16{]};
   however, know this is a trade-off from plain \texttt{Dockerfile}-based
   solutions, which is a proven industry standard
 \item
@@ -851,9 +846,9 @@ code repository with version control}
   https://www.quora.com/How-true-is-Programs-are-meant-to-be-read-by-humans-and-only-incidentally-for-computers-to-execute)
 \item
   using and publishing a \texttt{Dockerfile} to create a container will
-  increase chances of preservation (cf. {[}18{]})
+  increase chances of preservation (cf. {[}17{]})
 \item
-  Consult Ten Simple Rules paper by Perez-Riverol et al. {[}19{]}
+  Consult Ten Simple Rules paper by Perez-Riverol et al. {[}18{]}
 \item
   add the link to the online repository to a label, to point back to the
   source of the file
@@ -902,7 +897,7 @@ code repository with version control}
   gets a DOI) at the time of publication of the workflow
 \item
   you may use multiple containers and \texttt{Dockerfiles} for complex
-  workflows (cf. {[}20{]}) but then you're probably out of scope of this
+  workflows (cf. {[}19{]}) but then you're probably out of scope of this
   article
 \end{itemize}
 
@@ -973,8 +968,6 @@ image weekly}
   add a CRON job that deletes the image every week?
 \end{itemize}
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
-
 \textbf{Box: Automatic generation of Dockerfiles}
 
 \begin{itemize}
@@ -993,8 +986,6 @@ image weekly}
   structure (PyPI \texttt{requirements.txt}) or reproducible document (R
   Markdown file)
 \end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
 \hypertarget{example-dockerfiles}{%
 \section{Example Dockerfiles}\label{example-dockerfiles}}
@@ -1020,7 +1011,7 @@ increase in transparency and conscious effort is valuable for the
 creators of analyses, even if the capsule decays over time. The effort
 should also be valued by others and may change the way scholars
 collaborate and communicate (cf.~notion of ``preproducibility'' by
-{[}21{]}) So please, don't go insane with writing \texttt{Dockerfile}s,
+{[}20{]}) So please, don't go insane with writing \texttt{Dockerfile}s,
 but be realistic about what might break and what is unlikely to break.
 In a similar vein, these rules may be broken if another way works better
 for \emph{your use case}. The rules in this article help you mastering
@@ -1056,112 +1047,107 @@ contributed to the rule structure and particularly rule 1.
 Containers for R. The R Journal. 2017;9: 527--536.
 doi:\href{https://doi.org/10.32614/RJ-2017-065}{10.32614/RJ-2017-065}
 
-\leavevmode\hypertarget{ref-taschuk_ten_2017}{}%
-2. Taschuk M, Wilson G. Ten simple rules for making research software
-more robust. PLOS Computational Biology. 2017;13: e1005412.
-doi:\href{https://doi.org/10.1371/journal.pcbi.1005412}{10.1371/journal.pcbi.1005412}
-
 \leavevmode\hypertarget{ref-rule_ten_2019}{}%
-3. Rule A, Birmingham A, Zuniga C, Altintas I, Huang S-C, Knight R, et
+2. Rule A, Birmingham A, Zuniga C, Altintas I, Huang S-C, Knight R, et
 al. Ten simple rules for writing and sharing computational analyses in
 Jupyter Notebooks. PLOS Computational Biology. 2019;15: e1007007.
 doi:\href{https://doi.org/10.1371/journal.pcbi.1007007}{10.1371/journal.pcbi.1007007}
 
 \leavevmode\hypertarget{ref-sandve_ten_2013}{}%
-4. Sandve GK, Nekrutenko A, Taylor J, Hovig E. Ten Simple Rules for
+3. Sandve GK, Nekrutenko A, Taylor J, Hovig E. Ten Simple Rules for
 Reproducible Computational Research. PLoS Comput Biol. 2013;9: e1003285.
 doi:\href{https://doi.org/10.1371/journal.pcbi.1003285}{10.1371/journal.pcbi.1003285}
 
 \leavevmode\hypertarget{ref-brinckman_computing_2018}{}%
-5. Brinckman A, Chard K, Gaffney N, Hategan M, Jones MB, Kowalik K, et
+4. Brinckman A, Chard K, Gaffney N, Hategan M, Jones MB, Kowalik K, et
 al. Computing environments for reproducibility: Capturing the ``Whole
 Tale''. Future Generation Computer Systems. 2018;
 doi:\href{https://doi.org/10.1016/j.future.2017.12.029}{10.1016/j.future.2017.12.029}
 
 \leavevmode\hypertarget{ref-code_ocean_2019}{}%
-6. Code Ocean {[}Internet{]}. 2019. Available:
+5. Code Ocean {[}Internet{]}. 2019. Available:
 \url{https://codeocean.com/}
 
 \leavevmode\hypertarget{ref-simko_reana_2019}{}%
-7. Šimko T, Heinrich L, Hirvonsalo H, Kousidis D, Rodríguez D. REANA: A
+6. Šimko T, Heinrich L, Hirvonsalo H, Kousidis D, Rodríguez D. REANA: A
 System for Reusable Research Data Analyses. EPJ Web of Conferences.
 2019;214: 06034.
 doi:\href{https://doi.org/10.1051/epjconf/201921406034}{10.1051/epjconf/201921406034}
 
 \leavevmode\hypertarget{ref-jupyter_binder_2018}{}%
-8. Jupyter P, Bussonnier M, Forde J, Freeman J, Granger B, Head T, et
+7. Jupyter P, Bussonnier M, Forde J, Freeman J, Granger B, Head T, et
 al. Binder 2.0 - Reproducible, interactive, sharable environments for
 science at scale. Proceedings of the 17th Python in Science Conference.
 2018; 113--120.
 doi:\href{https://doi.org/10.25080/Majora-4af1f417-011}{10.25080/Majora-4af1f417-011}
 
 \leavevmode\hypertarget{ref-nust_opening_2017}{}%
-9. Nüst D, Konkol M, Pebesma E, Kray C, Schutzeichel M, Przibytzin H, et
+8. Nüst D, Konkol M, Pebesma E, Kray C, Schutzeichel M, Przibytzin H, et
 al. Opening the Publication Process with Executable Research Compendia.
 D-Lib Magazine. 2017;23.
 doi:\href{https://doi.org/10.1045/january2017-nuest}{10.1045/january2017-nuest}
 
 \leavevmode\hypertarget{ref-chen_open_2019}{}%
-10. Chen X, Dallmeier-Tiessen S, Dasler R, Feger S, Fokianos P, Gonzalez
+9. Chen X, Dallmeier-Tiessen S, Dasler R, Feger S, Fokianos P, Gonzalez
 JB, et al. Open is not enough. Nature Physics. 2019;15: 113.
 doi:\href{https://doi.org/10.1038/s41567-018-0342-2}{10.1038/s41567-018-0342-2}
 
 \leavevmode\hypertarget{ref-donoho_invitation_2010}{}%
-11. Donoho DL. An invitation to reproducible computational research.
+10. Donoho DL. An invitation to reproducible computational research.
 Biostatistics. 2010;11: 385--388.
 doi:\href{https://doi.org/10.1093/biostatistics/kxq028}{10.1093/biostatistics/kxq028}
 
 \leavevmode\hypertarget{ref-kurtzer_singularity_2017}{}%
-12. Kurtzer GM, Sochat V, Bauer MW. Singularity: Scientific containers
+11. Kurtzer GM, Sochat V, Bauer MW. Singularity: Scientific containers
 for mobility of compute. PLOS ONE. 2017;12: e0177459.
 doi:\href{https://doi.org/10.1371/journal.pone.0177459}{10.1371/journal.pone.0177459}
 
 \leavevmode\hypertarget{ref-boettiger_introduction_2015}{}%
-13. Boettiger C. An Introduction to Docker for Reproducible Research.
+12. Boettiger C. An Introduction to Docker for Reproducible Research.
 SIGOPS Oper Syst Rev. 2015;49: 71--79.
 doi:\href{https://doi.org/10.1145/2723872.2723882}{10.1145/2723872.2723882}
 
 \leavevmode\hypertarget{ref-marwick_madjebebe_2015}{}%
-14. Ben Marwick. 1989-excavation-report-Madjebebe. 2015;
+13. Ben Marwick. 1989-excavation-report-Madjebebe. 2015;
 doi:\href{https://doi.org/10.6084/m9.figshare.1297059}{10.6084/m9.figshare.1297059}
 
 \leavevmode\hypertarget{ref-halchenko_open_2012}{}%
-15. Halchenko YO, Hanke M. Open is Not Enough. Let's Take the Next Step:
+14. Halchenko YO, Hanke M. Open is Not Enough. Let's Take the Next Step:
 An Integrated, Community-Driven Computing Platform for Neuroscience.
 Frontiers in Neuroinformatics. 2012;6.
 doi:\href{https://doi.org/10.3389/fninf.2012.00022}{10.3389/fninf.2012.00022}
 
 \leavevmode\hypertarget{ref-knoth_reproducibility_2017}{}%
-16. Knoth C, Nüst D. Reproducibility and Practical Adoption of GEOBIA
+15. Knoth C, Nüst D. Reproducibility and Practical Adoption of GEOBIA
 with Open-Source Software in Docker Containers. Remote Sensing. 2017;9:
 290. doi:\href{https://doi.org/10.3390/rs9030290}{10.3390/rs9030290}
 
 \leavevmode\hypertarget{ref-molenaar_klikoscientific_2018}{}%
-17. Molenaar G, Makhathini S, Girard JN, Smirnov O. Kliko---The
+16. Molenaar G, Makhathini S, Girard JN, Smirnov O. Kliko---The
 scientific compute container format. Astronomy and Computing. 2018;25:
 1--9.
 doi:\href{https://doi.org/10.1016/j.ascom.2018.08.003}{10.1016/j.ascom.2018.08.003}
 
 \leavevmode\hypertarget{ref-emsley_framework_2018}{}%
-18. Emsley I, De Roure D. A Framework for the Preservation of a Docker
+17. Emsley I, De Roure D. A Framework for the Preservation of a Docker
 Container International Journal of Digital Curation. International
 Journal of Digital Curation. 2018;12.
 doi:\href{https://doi.org/10.2218/ijdc.v12i2.509}{10.2218/ijdc.v12i2.509}
 
 \leavevmode\hypertarget{ref-perez-riverol_ten_2016}{}%
-19. Perez-Riverol Y, Gatto L, Wang R, Sachsenberg T, Uszkoreit J,
+18. Perez-Riverol Y, Gatto L, Wang R, Sachsenberg T, Uszkoreit J,
 Leprevost F da V, et al. Ten Simple Rules for Taking Advantage of Git
 and GitHub. PLOS Computational Biology. 2016;12: e1004947.
 doi:\href{https://doi.org/10.1371/journal.pcbi.1004947}{10.1371/journal.pcbi.1004947}
 
 \leavevmode\hypertarget{ref-kim_bio-docklets_2017}{}%
-20. Kim B, Ali TA, Lijeron C, Afgan E, Krampis K. Bio-Docklets:
+19. Kim B, Ali TA, Lijeron C, Afgan E, Krampis K. Bio-Docklets:
 Virtualization Containers for Single-Step Execution of NGS Pipelines.
 bioRxiv. 2017; 116962.
 doi:\href{https://doi.org/10.1101/116962}{10.1101/116962}
 
 \leavevmode\hypertarget{ref-stark_before_2018}{}%
-21. Stark PB. Before reproducibility must come preproducibility
+20. Stark PB. Before reproducibility must come preproducibility
 {[}Internet{]}. Nature. 2018.
 doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0}
 

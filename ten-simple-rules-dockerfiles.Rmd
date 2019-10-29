@@ -6,6 +6,10 @@ author:
     affiliation: "Institute for Geoinformatics, University of M\"unster, M\"unster, Germany"
     corresponding: daniel.nuest@uni-muenster.de
     orcid: 
+  - name: Vanessa Sochat
+    email: vsochat@stanford.edu
+    affiliation: "Stanford Research Comuting Center, Stanford University, Stanford, CA, US"
+    orcid: 0000-0002-4387-3819
   - name: Stephen Eglen
     email: sje30@cam.ac.uk
     affiliation: "Department of Applied Mathematics and Theoretical Physics, University of Cambridge, Cambridge, Cambridgeshire, GB"
@@ -15,11 +19,8 @@ author:
     affiliation: "Wild Tree Tech, Zurich, CH"
     orcid: 0000-0003-0931-3698
 #  - Rule 4 of https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003858#s6 applies?
-abstract: |
-          | Containerisation is a useful concept for capturing the increasingly complex virtual laboratories that underpin computational sciences today.
-          | A container image is often created based on the instructions in a plain-text file in the `Dockerfile` format.
-          | In a scholarly context, transparency and support of reproducibility are most desired aspects of containers.
-          | By following the rules in this article researchers writing a `Dockerfile` can increase the changes to apply containers effectily in their daily work but also enable fellow researchers to reproduce a workflow.
+abstract: Containers are greatly improving computational science by packaging software and data dependencies. In a scholarly context, transparency and support of reproducibility are the largest drivers for using these containers. It follows that choices that are made with respect to building containers can make or break its reproducibility. The build for the container image is often created based on the instructions in a plain-text file. For example, one such container technology, Docker, provides instructions using a `Dockerfile`. By following the rules in this article researchers writing a `Dockerfile` can effectively build and distribute containers.
+
 author_summary: |
   TBD
 bibliography: bibliography.bib
@@ -34,57 +35,57 @@ csl: plos.csl
 
 # Introduction {#introduction .unnumbered}
 
-Containerisation is a useful and powerful to handle increasingly complex virtual laboratories for computational sciences [@boettiger_introduction_2017].
-To some extent all sciences today use algorithms to analyse data [REF], so the majority of esearchers need skills to handle virtual laboratories to ensure understandability and reproducibility.
-This documentation and transparency concerns both authors and their own work, but also collaborators, reviewers, and new colleagues, to avoid needless duplication of work and brain-drain [REF].
-A core aspect of thorough documentation are well-defined computational environments and following best practices from software development [@taschuk_ten_2017].
-Containerisation can help with these needs.
-It provides portable computational environments that are built from human and machine readable instructions and are thus well documented and usable by many.
-These environments can then _host_ executable and human-readable notebooks with the scientific analyses [@rule_ten_2019] and make sharing of properly reproducible workflows (cf. Rule 10 of @sandve_ten_2013) much easier as the environments can closely resemble the original researchers virtual laboratory.
+With access to version control systems [REF GITHUB, GITLAB, etc.] it has become increasingly easy to not only share algorithms, but also instructions for building and testing.
+Within this content, it is suggested to include instructions for building containers to package software and data dependencies [@boettiger_introduction_2017].
+By way of providing these instructions along with thorough documentation, it's much more likely to be able to reproduce an analysis workflow.
+A container is a portabal, encapsulated environment that is built from human and machine readable instructions.
+For example, containers have been created to host scientific notebooks [@rule_ten_2019], and share reproducible workflows (cf. Rule 10 of @sandve_ten_2013).
+<!-- the virtual laboratory reference isn't great, I removed it-->
 
-While there are a few tutorials for using containers for reproducible research [^1], there is no extensive examination how to write the actual instructions to create the containers.
-Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but usually and intentionally hide this complexity from the researcher.
-Not everybody needs to understand and write Dockerfiles, as is reflected in rule 1.
-However, as one can argue that _"the number of unique reserach environments approximates the number of researchers"_ [@nust_opening_2017], the researchers who do need to craft their own environment definition should follow practices taking into account the scientific context.
+While there are several tutorials for using containers for reproducible research [^1], there is no extensive examination for how to write the actual instructions to create the containers.
+Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide any complexity from the researcher.
+While not everybody needs to understand and write Dockerfiles, as _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], the researchers who do need to craft their own environment definition should follow good practices.
 Such practices are not part of generic Docker tutorials and are not present in existing Dockerfiles often used as templates.
 The differences and potential obstacles are not obvious, especially for researchers who don't have software development experience.
 
-This article takes a look at how to write a `Dockerfile` so that it facilitates a day-to-day research workflow as well as the higher goals of reproducibility. A commitment to transparent, open and reproducible workflows can be put to life by using containers based on `Dockerfile`s every day, not as an afterthought triggered by a publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
+While there are many different container technologies, this article focuses on Docker [REF] as it is the most commonly used [REF]. 
+The goal at hand is to write a `Dockerfile` so that it best facilitates interactive development and research as well as the higher goals of reproducibility. 
+A daily commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not an afterthought triggered by a publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 By following the _conventions_ layed out in these ten rules, authors ensure readability by others and ideally subsequent reuse and collaboration.
 
 [^1]: https://nuest.github.io/docker-reproducible-research/, https://chapmandu2.github.io/post/2018/05/26/reproducible-data-science-environments-with-docker/, https://reproducible-analysis-workshop.readthedocs.io/en/latest/8.Intro-Docker.html
 
 ## Docker {#docker .unnumbered}
 
-- Docker is a common containerisation solution, widely adopted in mainstream IT and therefore widely available and support on many platforms, which makes it usable for non-IT experts in science
-- `Dockerfile`s are machine- and human-readable recipes for creating a container
-- Other containerisation tools also support the `Dockerfile` format: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah), [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), or [buildkit](https://github.com/moby/buildkit); Singularity [@kurtzer_singularity_2017] can import Docker containers and has it's own "singularity recipee", to which the rules here are transferable
-- @boettiger_introduction_2015 lists reasons for not publishing reproducibly include lack of time & incentives and unfittingness for a researcher's workflow, and gives technical challenges of virtual laboratories, namely dependency hell, imprecise documentation, code rot, and handling/learning multiple tools
-  - learn to write a `Dockerfile` with this article and use it as the _only_
+- Docker is a container technology that is widely adopted and supported on many platforms, and has become highly useful in science.
+- `Dockerfile`s are machine- and human-readable recipes for creating containers.
+- Other container technologies that support the `Dockerfile` format include: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah), [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), or [buildkit](https://github.com/moby/buildkit); Singularity [@kurtzer_singularity_2017] can import Docker containers and has it's own "singularity recipe", to which the rules here are transferable to some extent.
+- @boettiger_introduction_2015 lists reasons for not publishing reproducibly including lack of time & incentives and unfittingness for a researcher's workflow, and gives technical challenges maintaining software, namely dependency hell, imprecise documentation, code rot, and handling/learning multiple tools
+- learn to write a `Dockerfile` with this article and use it as the _only_
 environment that you execute your workflows in (cf. README of @marwick_madjebebe_2015), then it will not be extra work
     > _"I developed and tested the package on this Docker container, so this is the only platform that I'm confident it works on, and so recommend to anyone wanting to use this package to generate the vignette, etc."_
   - VMs are not an alternative because too much of a black box
 - In RR, Dockerfiles can document where data and code came from and likely also where a third party might still get them
 
-# 1. Don't write Dockerfiles by hand {-}
+# 1. Use tools to assist with Dockerfile generation. {-}
 
-- might seem counterintuitive rule
-- many cases you don't need a Dockerfile but just need a container with an environment to run your workflow
-- use a tool to generate container (via a Dockerfile) for you
-  - `repo2docker` which can automatically create a _Binder_ for you; you don't worry about the internal Dockerfile but get the container by following common practices for software packages
-  - tools follow the relevant rules below
-- writing a Dockerfile from scratch is not that simple, and even "experts" sometimes take shortcuts
-- if you're sure your needs are not served, then continue with other rules
+- Writing a Dockerfile from scratch is not that simple, and even "experts" sometimes take shortcuts.
+- Thus, it's a good strategy to first look to tools that can help to generate a Dockerfile for you. Such tools have likely thought about and implemented good practices.
+- Start with your use case, and determine if there is an already existing container base you can use. For interactive development, you can readily find many containers that come installed with the dependencies that you need. For many cases you don't need a Dockerfile but just need a container with an environment to run your workflow
+- In the case that there is a well maintained tool [REF repo2docker] that can assist you with making a specific kind of Dockerfile, use it. Ensure that it's providing you a file with an up to date base image that has the most recent security fixes.
+- Don't be afraid to add labels [REF] to the generated Dockerfile to define metadata for your analyses, if relevant.
+- If you find that you must write a Dockerfile from scratch, be sure to follow the other rules.
 
 # 2. Use versioned and automatically built base images {-}
 
-- understand how base images work
-- _never_ use `:latest`
+- understand how base images work, along with tags
+- base images (all the way to the top) must be based on Dockerfiles themselves up to an abstract base called `scratch`
+- library base images are well maintained and security tested, but alternatives might be more suitable for research or development (example `rocker/r-ver`)
+- _never_ use `:latest` or a tag that indicates a development container (e.g., `dev`, `devel`, or `nightly`)
 - pick a base image with a Linux distribution that supports the required software stack, and ideally that is widely used in your community, e.g. Ubuntu for geospatial research, the `rocker/geospatial` image for spatial data science with R, or `jupyter/tensorflow-notebook` for machine learning with Python
-- base images (all the way to the top) must be based on Dockerfiles themselves
-- library base images are well maintained and security tested, but alternatives might be more suitable for research purposes / RR (example `rocker/r-ver`)
-- base images that have complex software installed (e.g. ML libraries, specific BLAS library) are helpful and fine to use, just ensure there is a Dockerfile publicly available that they use (and add a link to that file in your Dockerfile)
-- ideally the images are maintained by an active community/_your community_
+- think about container size. If you need to built smaller containers, consider a busybox [REF] base or a multi-stage build [REF]. Smaller images often are indicated by having `slim` or `minimal` as part of the tag.
+- base images that have complex software installed (e.g. ML libraries, specific BLAS library) are helpful and fine to use, and to not rely on a third party or other individual to maintain the recipe and container, you should copy the Dockerfile to your own repository, and also provide a deployment for it via your own automated build. Trusting that the third party Dockerfile will persist for your analyses is not a good thing to do.
+- ideally the images are maintained by an active community/_your community_, except in the case of the previous point and you are comfortable maintaining yourself.
 - existing communities
   - [Rocker](https://www.rocker-project.org/) for R [@boettiger_introduction_2017]
   - [Docker containers for Bioconductor](https://bioconductor.org/help/docker/) for bioinformatics
@@ -96,19 +97,19 @@ environment that you execute your workflows in (cf. README of @marwick_madjebebe
 FROM docker.io/rocker/r-ver:3.5.2
 ```
 
-# 3. Use formatting and favour clarity
+# 3. Use formatting and favor clarity
 
-- indentation, newlines, and comments for are crucial for documentation, readability and structure
-- use comments to provide a guide to others and future you, _"A Dockerfile written three months ago may just as well have been written by someone else"_ (following a common coding aphorism)
-- document for your future self first but tend to overexplain (cf. Rule 1 of @rule_ten_2019), provide extended docs if others ask for it
-- can use comments to add sections to the Dockerfile to reduce the need to externalise when files get long
-  - modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?)
+- indentation, newlines, and comments are crucial for documentation, readability and structure
+- Labels [REF] can provide human and machine readable documentation about software
+- use comments to provide a guide to others and future you. For example, it's helpful to provide commented lines to show how to build and run the image. Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
+- Always add a complete section in a README alongside the Dockerfile for exactly how to build, run, and otherwise interact with the container. If the container is provided on Docker Hub, you should direct the user to it.
+- modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?) <!--I don't understand this point-->
 - carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in onr `RUN` with `&&`
 - use `\` for newlines
-- put each dependency on it's own line, makes it easier to spot changes in version control
+- put each dependency on it's own line to make it easier to spot changes in version control
 - don't let lines get too long
 - split up an instruction (especially relevant for `RUN`) when you have to scroll to see all of it
-- use a linter to follow common practices and consistency
+- use a linter to follow common practices and consistency <!-- suggestion??-->
 - **Use comments to document decisions and usage**
   - make the `Dockerfile` self-explanatory by adding comments for specific decisions
   - add reasons and links to followed tutorials (failed attempts may be found in the history)
