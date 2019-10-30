@@ -179,11 +179,11 @@ RUN install2.r \
   
 # 5. Mount data and control code {-}
 
-- do not use `ADD`/`COPY` to insert data or code into an image
-- better mount them to have them outside of the image
+The addition of data or code into the container using `ADD`/`COPY` is highly dependent on your use case. For example, small data files and software that is essential for the function of a container to distribute a reproducible analysis is essential to add. However, if the container is intended to be used as an interactive environment, you should refain from adding it to the container, and instead bind the files from the outside of the container. This also ensures that data persists when the container instance or image is removed from your system. When you do this, in the case that you will likely save as a root user from inside the container, you should be careful about file permissions. To avoid problems when mounting, Docker has provided a `--user` option that you should use. Without this option, there can be unexpected issues with permissions. For example, writing a new file from inside the container will be owned by user "root" on your host. In that many applications generate log and other output files during runtime, be cautious about what volumes are bound to the host.
+
+The other logical case to bind mount code is when your data is very large (usually over hundreds of GB) or has limited access. For example, a private dataset with personal health information (PHI) should never be added to a container. In these cases, you should provide clear instructions to the user in the README for how to obtain actual or dummy data.
+
 - easier access, does not require Docker knowledge by third parties to reause code and data
-- mounting ensures you are always ready to throw containers and even images away
-- use the `--user` option to avoid problems with file permissions when mounting
 - if you have a "stable" published software library, install it from source from the source code repo or from the software repository (so that users find the project in the future)
 - how to mount the data can be put in the example commands (see 4.)
 - prefer the long versions of CLI parameters for readability

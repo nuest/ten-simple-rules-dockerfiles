@@ -283,38 +283,37 @@ readability by others and ideally subsequent reuse and collaboration.
 \begin{itemize}
 \tightlist
 \item
-  Docker is a common containerisation solution, widely adopted in
-  mainstream IT and therefore widely available and support on many
-  platforms, which makes it usable for non-IT experts in science
+  Docker is a container technology that is widely adopted and supported
+  on many platforms, and has become highly useful in science.
 \item
   \texttt{Dockerfile}s are machine- and human-readable recipes for
-  creating a container
+  creating containers.
 \item
-  Other containerisation tools also support the \texttt{Dockerfile}
-  format:
+  Other container technologies that support the \texttt{Dockerfile}
+  format include:
   \href{https://podman.io/}{podman}/\href{https://github.com/containers/buildah}{buildah},
   \href{https://github.com/GoogleContainerTools/kaniko}{kaniko},
   \href{https://github.com/genuinetools/img}{img}, or
   \href{https://github.com/moby/buildkit}{buildkit}; Singularity
   {[}11{]} can import Docker containers and has it's own ``singularity
-  recipee'', to which the rules here are transferable
+  recipe'', to which the rules here are transferable to some extent.
 \item
-  {[}12{]} lists reasons for not publishing reproducibly include lack of
-  time \& incentives and unfittingness for a researcher's workflow, and
-  gives technical challenges of virtual laboratories, namely dependency
+  {[}12{]} lists reasons for not publishing reproducibly including lack
+  of time \& incentives and unfittingness for a researcher's workflow,
+  and gives technical challenges maintaining software, namely dependency
   hell, imprecise documentation, code rot, and handling/learning
   multiple tools
+\item
+  learn to write a \texttt{Dockerfile} with this article and use it as
+  the \emph{only} environment that you execute your workflows in
+  (cf.~README of {[}13{]}), then it will not be extra work
+  \textgreater{} \emph{``I developed and tested the package on this
+  Docker container, so this is the only platform that I'm confident it
+  works on, and so recommend to anyone wanting to use this package to
+  generate the vignette, etc.''}
 
   \begin{itemize}
   \tightlist
-  \item
-    learn to write a \texttt{Dockerfile} with this article and use it as
-    the \emph{only} environment that you execute your workflows in
-    (cf.~README of {[}13{]}), then it will not be extra work
-    \textgreater{} \emph{``I developed and tested the package on this
-    Docker container, so this is the only platform that I'm confident it
-    works on, and so recommend to anyone wanting to use this package to
-    generate the vignette, etc.''}
   \item
     VMs are not an alternative because too much of a black box
   \end{itemize}
@@ -323,36 +322,38 @@ readability by others and ideally subsequent reuse and collaboration.
   likely also where a third party might still get them
 \end{itemize}
 
-\hypertarget{dont-write-dockerfiles-by-hand}{%
-\section*{1. Don't write Dockerfiles by
-hand}\label{dont-write-dockerfiles-by-hand}}
-\addcontentsline{toc}{section}{1. Don't write Dockerfiles by hand}
+\hypertarget{use-tools-to-assist-with-dockerfile-generation.}{%
+\section*{1. Use tools to assist with Dockerfile
+generation.}\label{use-tools-to-assist-with-dockerfile-generation.}}
+\addcontentsline{toc}{section}{1. Use tools to assist with Dockerfile
+generation.}
 
 \begin{itemize}
 \tightlist
 \item
-  might seem counterintuitive rule
+  Writing a Dockerfile from scratch is not that simple, and even
+  ``experts'' sometimes take shortcuts.
 \item
-  many cases you don't need a Dockerfile but just need a container with
-  an environment to run your workflow
+  Thus, it's a good strategy to first look to tools that can help to
+  generate a Dockerfile for you. Such tools have likely thought about
+  and implemented good practices.
 \item
-  use a tool to generate container (via a Dockerfile) for you
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \texttt{repo2docker} which can automatically create a \emph{Binder}
-    for you; you don't worry about the internal Dockerfile but get the
-    container by following common practices for software packages
-  \item
-    tools follow the relevant rules below
-  \end{itemize}
+  Start with your use case, and determine if there is an already
+  existing container base you can use. For interactive development, you
+  can readily find many containers that come installed with the
+  dependencies that you need. For many cases you don't need a Dockerfile
+  but just need a container with an environment to run your workflow
 \item
-  writing a Dockerfile from scratch is not that simple, and even
-  ``experts'' sometimes take shortcuts
+  In the case that there is a well maintained tool {[}REF repo2docker{]}
+  that can assist you with making a specific kind of Dockerfile, use it.
+  Ensure that it's providing you a file with an up to date base image
+  that has the most recent security fixes.
 \item
-  if you're sure your needs are not served, then continue with other
-  rules
+  Don't be afraid to add labels {[}REF{]} to the generated Dockerfile to
+  define metadata for your analyses, if relevant.
+\item
+  If you find that you must write a Dockerfile from scratch, be sure to
+  follow the other rules.
 \end{itemize}
 
 \hypertarget{use-versioned-and-automatically-built-base-images}{%
@@ -364,9 +365,18 @@ base images}
 \begin{itemize}
 \tightlist
 \item
-  understand how base images work
+  understand how base images work, along with tags
 \item
-  \emph{never} use \texttt{:latest}
+  base images (all the way to the top) must be based on Dockerfiles
+  themselves up to an abstract base called \texttt{scratch}
+\item
+  library base images are well maintained and security tested, but
+  alternatives might be more suitable for research or development
+  (example \texttt{rocker/r-ver})
+\item
+  \emph{never} use \texttt{:latest} or a tag that indicates a
+  development container (e.g., \texttt{dev}, \texttt{devel}, or
+  \texttt{nightly})
 \item
   pick a base image with a Linux distribution that supports the required
   software stack, and ideally that is widely used in your community,
@@ -374,20 +384,22 @@ base images}
   image for spatial data science with R, or
   \texttt{jupyter/tensorflow-notebook} for machine learning with Python
 \item
-  base images (all the way to the top) must be based on Dockerfiles
-  themselves
-\item
-  library base images are well maintained and security tested, but
-  alternatives might be more suitable for research purposes / RR
-  (example \texttt{rocker/r-ver})
+  think about container size. If you need to built smaller containers,
+  consider a busybox {[}REF{]} base or a multi-stage build {[}REF{]}.
+  Smaller images often are indicated by having \texttt{slim} or
+  \texttt{minimal} as part of the tag.
 \item
   base images that have complex software installed (e.g.~ML libraries,
-  specific BLAS library) are helpful and fine to use, just ensure there
-  is a Dockerfile publicly available that they use (and add a link to
-  that file in your Dockerfile)
+  specific BLAS library) are helpful and fine to use, and to not rely on
+  a third party or other individual to maintain the recipe and
+  container, you should copy the Dockerfile to your own repository, and
+  also provide a deployment for it via your own automated build.
+  Trusting that the third party Dockerfile will persist for your
+  analyses is not a good thing to do.
 \item
   ideally the images are maintained by an active community/\emph{your
-  community}
+  community}, except in the case of the previous point and you are
+  comfortable maintaining yourself.
 \item
   existing communities
 
@@ -415,33 +427,33 @@ base images}
 FROM docker.io/rocker/r-ver:3.5.2
 \end{verbatim}
 
-\hypertarget{use-formatting-and-favour-clarity}{%
-\section{3. Use formatting and favour
-clarity}\label{use-formatting-and-favour-clarity}}
+\hypertarget{use-formatting-and-favor-clarity}{%
+\section{3. Use formatting and favor
+clarity}\label{use-formatting-and-favor-clarity}}
 
 \begin{itemize}
 \tightlist
 \item
-  indentation, newlines, and comments for are crucial for documentation,
+  indentation, newlines, and comments are crucial for documentation,
   readability and structure
 \item
-  use comments to provide a guide to others and future you, \emph{``A
+  Labels {[}REF{]} can provide human and machine readable documentation
+  about software
+\item
+  use comments to provide a guide to others and future you. For example,
+  it's helpful to provide commented lines to show how to build and run
+  the image. Following a common coding aphorism, we might say \emph{``A
   Dockerfile written three months ago may just as well have been written
-  by someone else''} (following a common coding aphorism)
+  by someone else''}.
 \item
-  document for your future self first but tend to overexplain (cf.~Rule
-  1 of {[}2{]}), provide extended docs if others ask for it
+  Always add a complete section in a README alongside the Dockerfile for
+  exactly how to build, run, and otherwise interact with the container.
+  If the container is provided on Docker Hub, you should direct the user
+  to it.
 \item
-  can use comments to add sections to the Dockerfile to reduce the need
-  to externalise when files get long
-
-  \begin{itemize}
-  \tightlist
-  \item
-    modularisation is a two-edged sword (point out
-    \href{https://www.mankier.com/1/podman-build}{\texttt{podman}'s
-    \texttt{\#include} directive}?)
-  \end{itemize}
+  modularisation is a two-edged sword (point out
+  \href{https://www.mankier.com/1/podman-build}{\texttt{podman}'s
+  \texttt{\#include} directive}?) 
 \item
   carefully indent commands and their arguments to make clear what
   belongs together, especially when connecting multiple commands in onr
@@ -449,7 +461,7 @@ clarity}\label{use-formatting-and-favour-clarity}}
 \item
   use \texttt{\textbackslash{}} for newlines
 \item
-  put each dependency on it's own line, makes it easier to spot changes
+  put each dependency on it's own line to make it easier to spot changes
   in version control
 \item
   don't let lines get too long
@@ -457,7 +469,7 @@ clarity}\label{use-formatting-and-favour-clarity}}
   split up an instruction (especially relevant for \texttt{RUN}) when
   you have to scroll to see all of it
 \item
-  use a linter to follow common practices and consistency
+  use a linter to follow common practices and consistency 
 \item
   \textbf{Use comments to document decisions and usage}
 
@@ -648,22 +660,36 @@ RUN install2.r \
 code}\label{mount-data-and-control-code}}
 \addcontentsline{toc}{section}{5. Mount data and control code}
 
+The addition of data or code into the container using
+\texttt{ADD}/\texttt{COPY} is highly dependent on your use case. For
+example, small data files and software that is essential for the
+function of a container to distribute a reproducible analysis is
+essential to add. However, if the container is intended to be used as an
+interactive environment, you should refain from adding it to the
+container, and instead bind the files from the outside of the container.
+This also ensures that data persists when the container instance or
+image is removed from your system. When you do this, in the case that
+you will likely save as a root user from inside the container, you
+should be careful about file permissions. To avoid problems when
+mounting, Docker has provided a \texttt{-\/-user} option that you should
+use. Without this option, there can be unexpected issues with
+permissions. For example, writing a new file from inside the container
+will be owned by user ``root'' on your host. In that many applications
+generate log and other output files during runtime, be cautious about
+what volumes are bound to the host.
+
+The other logical case to bind mount code is when your data is very
+large (usually over hundreds of GB) or has limited access. For example,
+a private dataset with personal health information (PHI) should never be
+added to a container. In these cases, you should provide clear
+instructions to the user in the README for how to obtain actual or dummy
+data.
+
 \begin{itemize}
 \tightlist
 \item
-  do not use \texttt{ADD}/\texttt{COPY} to insert data or code into an
-  image
-\item
-  better mount them to have them outside of the image
-\item
   easier access, does not require Docker knowledge by third parties to
   reause code and data
-\item
-  mounting ensures you are always ready to throw containers and even
-  images away
-\item
-  use the \texttt{-\/-user} option to avoid problems with file
-  permissions when mounting
 \item
   if you have a ``stable'' published software library, install it from
   source from the source code repo or from the software repository (so
