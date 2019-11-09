@@ -169,6 +169,46 @@
 \newcommand{\lorem}{{\bf LOREM}}
 \newcommand{\ipsum}{{\bf IPSUM}}
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
 
 
@@ -280,47 +320,37 @@ readability by others and ideally subsequent reuse and collaboration.
 \subsection*{Docker}\label{docker}}
 \addcontentsline{toc}{subsection}{Docker}
 
-\begin{itemize}
-\tightlist
-\item
-  Docker is a container technology that is widely adopted and supported
-  on many platforms, and has become highly useful in science.
-\item
-  \texttt{Dockerfile}s are machine- and human-readable recipes for
-  creating containers.
-\item
-  Other container technologies that support the \texttt{Dockerfile}
-  format include:
-  \href{https://podman.io/}{podman}/\href{https://github.com/containers/buildah}{buildah},
-  \href{https://github.com/GoogleContainerTools/kaniko}{kaniko},
-  \href{https://github.com/genuinetools/img}{img}, or
-  \href{https://github.com/moby/buildkit}{buildkit}; Singularity
-  {[}11{]} can import Docker containers and has it's own ``singularity
-  recipe'', to which the rules here are transferable to some extent.
-\item
-  {[}12{]} lists reasons for not publishing reproducibly including lack
-  of time \& incentives and unfittingness for a researcher's workflow,
-  and gives technical challenges maintaining software, namely dependency
-  hell, imprecise documentation, code rot, and handling/learning
-  multiple tools
-\item
-  learn to write a \texttt{Dockerfile} with this article and use it as
-  the \emph{only} environment that you execute your workflows in
-  (cf.~README of {[}13{]}), then it will not be extra work
-  \textgreater{} \emph{``I developed and tested the package on this
-  Docker container, so this is the only platform that I'm confident it
-  works on, and so recommend to anyone wanting to use this package to
-  generate the vignette, etc.''}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    VMs are not an alternative because too much of a black box
-  \end{itemize}
-\item
-  In RR, Dockerfiles can document where data and code came from and
-  likely also where a third party might still get them
-\end{itemize}
+Docker is a container technology that is widely adopted and supported on
+many platforms, and has become highly useful in science. They are
+distinct from virtual machines (VM), or hypervisors as they don't
+emulate hardware, and thus require the same system resources. To build
+Docker containers, we write text files that follow a particular format
+called \texttt{Dockerfile}s. \texttt{Dockerfile}s are machine- and
+human-readable recipes for creating containers. While Docker was the
+original technology to support this format, other container technologies
+have developed around the format (and thus support it) including:
+\href{https://podman.io/}{podman}/\href{https://github.com/containers/buildah}{buildah}
+supported by RedHat,
+\href{https://github.com/GoogleContainerTools/kaniko}{kaniko},
+\href{https://github.com/genuinetools/img}{img}, and
+\href{https://github.com/moby/buildkit}{buildkit}. The Singularity
+container software {[}11{]} is optimized for high performance computing
+and although it uses it's own ``Singularity recipe'' format, it can
+import Docker containers directly from a Docker registry. Although the
+Singularity recipe format is different, the rules here are transferable
+to some extent. While some {[}12{]} can argue for reasons to not publish
+reproducibly (lack of time \& incentives and unfittingness for a
+researcher's workflow) and there are substantial technical challenges to
+maintain software and documentation, providing a \texttt{Dockerfile} or
+pre-built Docker container should become an increasingly easier task for
+the average researcher. If a researcher is able to find or create
+containers or \texttt{Dockerfile}s to address their most common use
+cases, then arguably it will not be extra work after this initial
+set(cf.~README of {[}13{]}). In fact, the \texttt{Dockerfile} itself can
+be used as documentation to clearly show from where data and code was
+derived, and consequently where a third party might obtain them again.
+Importantly, the researcher should clearly state the platforms (by way
+of one or more Docker containers) have been tested on.
 
 \hypertarget{use-tools-to-assist-with-dockerfile-generation.}{%
 \section*{1. Use tools to assist with Dockerfile
@@ -328,33 +358,52 @@ generation.}\label{use-tools-to-assist-with-dockerfile-generation.}}
 \addcontentsline{toc}{section}{1. Use tools to assist with Dockerfile
 generation.}
 
-\begin{itemize}
-\tightlist
-\item
-  Writing a Dockerfile from scratch is not that simple, and even
-  ``experts'' sometimes take shortcuts.
-\item
-  Thus, it's a good strategy to first look to tools that can help to
-  generate a Dockerfile for you. Such tools have likely thought about
-  and implemented good practices.
-\item
-  Start with your use case, and determine if there is an already
-  existing container base you can use. For interactive development, you
-  can readily find many containers that come installed with the
-  dependencies that you need. For many cases you don't need a Dockerfile
-  but just need a container with an environment to run your workflow
-\item
-  In the case that there is a well maintained tool {[}REF repo2docker{]}
-  that can assist you with making a specific kind of Dockerfile, use it.
-  Ensure that it's providing you a file with an up to date base image
-  that has the most recent security fixes.
-\item
-  Don't be afraid to add labels {[}REF{]} to the generated Dockerfile to
-  define metadata for your analyses, if relevant.
-\item
-  If you find that you must write a Dockerfile from scratch, be sure to
-  follow the other rules.
-\end{itemize}
+Writing a Dockerfile from scratch is not that simple, and even
+``experts'' sometimes take shortcuts. Thus, it's a good strategy to
+first look to tools that can help to generate a Dockerfile for you. Such
+tools have likely thought about and implemented good practices. It's
+always a good practice to start with your specific use case. You would
+first want to determine if there is an already existing container base
+that you can use, and in this case, use it and add to your software
+documentation instructions for doing so. As an example, you might be
+doing some kind of interactive development. For interactive development
+environments such as notebooks and development servers or databases, you
+can readily find many containers that come installed with the software
+that you need. In the case that there isn't an existing container for
+your needs, you might next look to well-maintained tools to help with
+\texttt{Dockerfile} generation. Well maintained means that recent
+container bases are used, likely from the Docker library, to ensure that
+the container has the most recent security fixes for the operating
+system in question. As an example, repo2docker {[}REF repo2docker{]} is
+a tool that is maintained by Jupyter Labs that can help to transform a
+repository in the format of some known kind of package (notebook,
+Python, R, etc.) into a container. As an example, we might install
+\texttt{jupyter-repo2docker} and then run it against a repository with a
+\texttt{requirements.txt} file, an indication of being a Python package.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{jupyter-repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
+\end{Highlighting}
+\end{Shaded}
+
+The resulting container image would install the dependencies listed in
+the requirements file, along with providing an entrypoint to run a
+notebook server to easily interact with any previously existing
+notebooks in the container. A precaution that needs to be taken is that
+the default command above will create a home for the current user,
+meaning that the container itself wouldn't be ideal to share, but rather
+any researchers interested in interaction with the code inside should
+build their own container. For this reason, it's good practice to look
+at any help command provided by the tool and check for configuration
+options for user names, user ids, and similar. It's also recommended (if
+you are able) to add custom labels to your container build to define
+metadata for your analyses, if relevant. The container should be built
+to be optimized for its use case, whether it is intended to be shared or
+used by a single user. However, in the case that a tool or interactive
+container environment is not available, you will likely need to write a
+\texttt{Dockerfile} from scratch. In this case, proceed with following
+the remaining rules to write your \texttt{Dockerfile}.
 
 \hypertarget{use-versioned-and-automatically-built-base-images}{%
 \section*{2. Use versioned and automatically built base
@@ -362,69 +411,74 @@ images}\label{use-versioned-and-automatically-built-base-images}}
 \addcontentsline{toc}{section}{2. Use versioned and automatically built
 base images}
 
+It's good practice to use base images that are maintained by the Docker
+library. While some organizations can be trustworthy in terms of
+content, and reliable to update containers with security fixes (e.g.,
+\texttt{rocker/r-ver}), for most individual accounts that build
+containers, it's likely that containers will not be updated regularly. A
+good understanding of how base images and tags work is helpful in this
+case, as the tag that you choose has implications for your container
+build. You should know how to start with a \texttt{Dockerfile}, and use
+\texttt{FROM} statements to trace all the way up to the original
+container base, an abstract base called \texttt{scratch}. Doing this
+kind of trace is essential to be able to be aware of all of the steps
+that were taken to generate your container. A tag like \texttt{latest}
+is good in that security fixes and updates are likely present, however
+in that it's a moving target, it's more likely that an updated base
+could break your software. Other tags that should be avoided are
+\texttt{dev}, \texttt{devel}, or \texttt{nightly} that may provide
+possibly unstable versions of the software. As an example, the Python
+container on Docker Hub will be released with new versions of Python. If
+you build a container with \texttt{python:latest} that only supports
+Python version 3, when the base is updated to Python 4 it's likely that
+your software won't work as expected. In this case, a tag like
+\texttt{python:3.5} might be a good choice. When you choose a base
+image, choose one with a Linux distribution that supports the software
+stack you are using, and also take into account the bases that are
+widely used by your community. As an example, Ubuntu is heavily used for
+geospatial research, and so the \texttt{rocker/geospatial} image would
+be a good choice for spatial data science with R, or
+\texttt{jupyter/tensorflow-notebook} could be a good choice for machine
+learning with Python. Especially when data is involved, containers can
+grow quickly in size, and you should keep this in mind. If you need to
+built smaller containers, consider a busybox {[}REF{]} base or a
+multi-stage build {[}REF{]}. Smaller images often are indicated by
+having \texttt{slim} or \texttt{minimal} as part of the tag. Also take
+into account the libraries that you need. Base images that have complex
+software installed (e.g.~machine learning libraries, specific BLAS
+library) are helpful and fine to use. To not rely on a third party or
+other individual to maintain the recipe and container, you should copy
+the Dockerfile to your own repository, and also provide a deployment for
+it via your own automated build. Trusting that the third party
+Dockerfile will persist for your analyses is a risky thing to do. For
+the new user, a potential list of existing communities with regular
+builds and updates includes:
+
 \begin{itemize}
 \tightlist
 \item
-  understand how base images work, along with tags
+  \href{https://www.rocker-project.org/}{Rocker} for R {[}1{]}
 \item
-  base images (all the way to the top) must be based on Dockerfiles
-  themselves up to an abstract base called \texttt{scratch}
+  \href{https://bioconductor.org/help/docker/}{Docker containers for
+  Bioconductor} for bioinformatics
 \item
-  library base images are well maintained and security tested, but
-  alternatives might be more suitable for research or development
-  (example \texttt{rocker/r-ver})
+  \href{https://hub.docker.com/_/neurodebian}{NeuroDebian images} for
+  neuroscience {[}14{]}
 \item
-  \emph{never} use \texttt{:latest} or a tag that indicates a
-  development container (e.g., \texttt{dev}, \texttt{devel}, or
-  \texttt{nightly})
+  {[}Jupyter Docker
+  Stacks{]}(https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html
+  for Notebook-based computing
 \item
-  pick a base image with a Linux distribution that supports the required
-  software stack, and ideally that is widely used in your community,
-  e.g.~Ubuntu for geospatial research, the \texttt{rocker/geospatial}
-  image for spatial data science with R, or
-  \texttt{jupyter/tensorflow-notebook} for machine learning with Python
-\item
-  think about container size. If you need to built smaller containers,
-  consider a busybox {[}REF{]} base or a multi-stage build {[}REF{]}.
-  Smaller images often are indicated by having \texttt{slim} or
-  \texttt{minimal} as part of the tag.
-\item
-  base images that have complex software installed (e.g.~ML libraries,
-  specific BLAS library) are helpful and fine to use, and to not rely on
-  a third party or other individual to maintain the recipe and
-  container, you should copy the Dockerfile to your own repository, and
-  also provide a deployment for it via your own automated build.
-  Trusting that the third party Dockerfile will persist for your
-  analyses is not a good thing to do.
-\item
-  ideally the images are maintained by an active community/\emph{your
-  community}, except in the case of the previous point and you are
-  comfortable maintaining yourself.
-\item
-  existing communities
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \href{https://www.rocker-project.org/}{Rocker} for R {[}1{]}
-  \item
-    \href{https://bioconductor.org/help/docker/}{Docker containers for
-    Bioconductor} for bioinformatics
-  \item
-    \href{https://hub.docker.com/_/neurodebian}{NeuroDebian images} for
-    neuroscience {[}14{]}
-  \item
-    {[}Jupyter Docker
-    Stacks{]}(https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html
-    for Notebook-based computing
-  \item
-    \href{https://hub.docker.com/r/taverna/taverna-server}{Taverna
-    Server} for running Taverna workflows
-  \end{itemize}
+  \href{https://hub.docker.com/r/taverna/taverna-server}{Taverna Server}
+  for running Taverna workflows
 \end{itemize}
 
+For example, here is how we would use a base image \texttt{r-ver} with
+tag \texttt{3.5.2} from the \texttt{rocker} organization on Docker Hub
+(\texttt{docker.io})
+
 \begin{verbatim}
-FROM docker.io/rocker/r-ver:3.5.2
+FROM rocker/r-ver:3.5.2
 \end{verbatim}
 
 \hypertarget{use-formatting-and-favor-clarity}{%
