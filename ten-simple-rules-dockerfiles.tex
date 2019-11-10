@@ -450,9 +450,9 @@ library) are helpful and fine to use. To not rely on a third party or
 other individual to maintain the recipe and container, you should copy
 the Dockerfile to your own repository, and also provide a deployment for
 it via your own automated build. Trusting that the third party
-Dockerfile will persist for your analyses is a risky thing to do. For
-the new user, a potential list of existing communities with regular
-builds and updates includes:
+\texttt{Dockerfile} will persist for your analyses is a risky thing to
+do. For the new user, a potential list of existing communities with
+regular builds and updates includes:
 
 \begin{itemize}
 \tightlist
@@ -485,63 +485,54 @@ FROM rocker/r-ver:3.5.2
 \section{3. Use formatting and favor
 clarity}\label{use-formatting-and-favor-clarity}}
 
-\begin{itemize}
-\tightlist
-\item
-  indentation, newlines, and comments are crucial for documentation,
-  readability and structure
-\item
-  Labels {[}REF{]} can provide human and machine readable documentation
-  about software
-\item
-  use comments to provide a guide to others and future you. For example,
-  it's helpful to provide commented lines to show how to build and run
-  the image. Following a common coding aphorism, we might say \emph{``A
-  Dockerfile written three months ago may just as well have been written
-  by someone else''}.
-\item
-  Always add a complete section in a README alongside the Dockerfile for
-  exactly how to build, run, and otherwise interact with the container.
-  If the container is provided on Docker Hub, you should direct the user
-  to it.
-\item
-  modularisation is a two-edged sword (point out
-  \href{https://www.mankier.com/1/podman-build}{\texttt{podman}'s
-  \texttt{\#include} directive}?) 
-\item
-  carefully indent commands and their arguments to make clear what
-  belongs together, especially when connecting multiple commands in onr
-  \texttt{RUN} with \texttt{\&\&}
-\item
-  use \texttt{\textbackslash{}} for newlines
-\item
-  put each dependency on it's own line to make it easier to spot changes
-  in version control
-\item
-  don't let lines get too long
-\item
-  split up an instruction (especially relevant for \texttt{RUN}) when
-  you have to scroll to see all of it
-\item
-  use a linter to follow common practices and consistency 
-\item
-  \textbf{Use comments to document decisions and usage}
+It's good practice to think of the \texttt{Dockerfile} as being human
+\emph{and} machine readable. This means that you should use indentation,
+newlines, and comments to make your \texttt{Dockerfile}s well documented
+and give them readability. Specifically, carefully indent commands and
+their arguments to make clear what belongs together, especially when
+connecting multiple commands in onr \texttt{RUN} with \texttt{\&\&}. Use
+\texttt{\textbackslash{}} to break a single command into multiple lines
+to ensure that no single line gets too long, and use long versions of
+parameters for readability (e.g., \texttt{-\/-input} instead of
+\texttt{-i}). When you need to change a directory, use \texttt{WORKDIR}
+to not only create the directory if it doesn't exist, but to persist the
+change across multiple \texttt{RUN} lines. As you are writing the
+\texttt{Dockerfile}, put yourself in the shoes of the next user of it.
+Are the choices made and commands being executed clear, or is further
+comment warranted? When appropriate, you can add links to discussion in
+version control or issues, or comments about specific usage and
+decisions. Dependencies can be grouped in this fashion to make it easier
+to spot changes in version control. It can even be helpful to include
+comments about possibly more intuitive commands that did not work so you
+do not fall into the same trap twice. If you find that you need to
+remember an undocumented step, that's an indication that it should be
+documented. Labels {[}REF{]} are useful to provide a more structured
+form of documentation about software. For example, software versions,
+maintainer contact information, along with vendor specific metadata are
+commonly seen. Comments can also provide a helpful guide to others and a
+future you. As an example, it's helpful to provide commented lines with
+\texttt{docker\ build} and \texttt{docker\ run} to show how to build and
+run the image. These comments can be especially relevant if volume
+mounts or ports are important for using the container, and by putting
+them at the end of the file, they are more likely to be seen and easy to
+copy paste after a container build. Here is an example of a commented
+section to show build and usage.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    make the \texttt{Dockerfile} self-explanatory by adding comments for
-    specific decisions
-  \item
-    add reasons and links to followed tutorials (failed attempts may be
-    found in the history)
-  \item
-    similar to ``literate programming''
-  \item
-    include commands that did \emph{not} work, especially if they seem
-    simpler, so you're not falling into the same trap twice
-  \end{itemize}
-\end{itemize}
+\begin{verbatim}
+# Build the images with
+##> docker build --tag great_workflow .
+# Run the image:
+##> docker run --it --port 80:80 --volume ./input:/input --name gwf great_workflow
+# Extract the data:
+##> docker cp gwf:/output/ ./output
+\end{verbatim}
+
+If you were to discover a previously written \texttt{Dockerfile} and not
+remember the container identifier you used, it would be represented in
+the \texttt{Dockerfile}. Following a common coding aphorism, we might
+say \emph{``A Dockerfile written three months ago may just as well have
+been written by someone else''}. Here is an example of various kinds of
+comments that might be useful for a \texttt{Dockerfile}:
 
 \begin{verbatim}
 # apt-get install specific version
@@ -556,137 +547,153 @@ RUN install2.r \
 # following commands from instructions at LINK HERE
 \end{verbatim}
 
+Clarity is always more important than brevity. For example, if your
+container uses a script to run a complex install routine, instead of
+removing it from the container upon completion, you should keep the
+script in the container for a future user to inspect. Generally, try to
+design the \texttt{RUN} statements so that each performs one scoped
+action (e.g., clone of a repository to compile and install a package).
+If a \texttt{RUN} statement is longer than a page and requires
+scrolling, this may be challenging for the next reader to digest, and
+you should consider splitting it up into several. When you install
+several system libraries, it's good practice to add comments about why
+the dependencies are needed. This way, if a piece of software is removed
+from the container, it will be easier to remove the system dependencies
+that are no longer needed. If you intend to build the image more than
+once (perhaps during development) and can take advantage of build
+caching {[}REF{]} you should list commands \emph{in order} of least
+likely to change to most likely to change. If a step is being cached
+(e.g., install from a remote resource or a file that gets cached) you
+can use the \texttt{-\/-no-cache} flag during build to force a re-build
+of all layers. A recommended ordering based on this metric might be:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  system libraries
+\item
+  language-specific libraries or modules 1. from repositories (binaries)
+  2. from source
+\item
+  own software/scripts (if not mounted)
+\item
+  labels
+\item
+  \texttt{RUN}/\texttt{ENTRYPOINT}
+\end{enumerate}
+
+Finally, as a supplement to content inside the \texttt{Dockerfile}, it's
+good practice to also write a section in a README alongside the
+Dockerfile for exactly how to build, run, and otherwise interact with
+the container. If the container is provided on Docker Hub, you should
+direct the user to it.
+
 \begin{itemize}
 \tightlist
 \item
-  clarity is always more important than brevity
-\item
-  don't worry about image size, clarity is more important (i.e.~no
-  complex RUN instructions that remove files after using rightaway)
-
-  \begin{itemize}
-  \tightlist
-  \item
-    make \texttt{RUN} instructions do one thing (e.g.~install one
-    software, install many softwares from \emph{one} source, \ldots{})
-  \item
-    a single \texttt{RUN} instruction should not be longer then ``one
-    page'' \textgreater{} no scrolling
-  \end{itemize}
-\item
-  have commands \emph{in order} of least likely to change to most likely
-  to change, it helps readers and takes advantage of build caching
-
-  \begin{enumerate}
-  \def\labelenumi{\arabic{enumi}.}
-  \tightlist
-  \item
-    system libraries (you can use comments to document which library is
-    required by which language-specific package)
-  \item
-    language-specific libraries or modules
-  \item
-    from repositories (binaries)
-  \item
-    from source
-  \item
-    own software/scripts (if not mounted)
-  \item
-    labels
-  \item
-    \texttt{RUN}/\texttt{ENTRYPOINT}
-  \end{enumerate}
-\item
   how to access the layer commands from an existing image
-  (\texttt{docker\ inspect..})
-\item
-  Only switch directoryies with \texttt{WORKDIR} \{-\}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    might need to move to different directories for bespoke
-    configuration or building from source
-  \item
-    is is much more transparent than \texttt{cd\ X} or \texttt{cd\ ...}
-    in \texttt{RUN} statements
-  \end{itemize}
+  (\texttt{docker\ inspect..}) 
 \item
   if need be use \emph{layered builds} to only keep specific files from
   one build step to another, e.g.~for build dependencies if building
-  software from source
+  software from source 
+\item
+  modularisation is a two-edged sword (point out
+  \href{https://www.mankier.com/1/podman-build}{\texttt{podman}'s
+  \texttt{\#include} directive}?) 
+\item
+  use a linter to follow common practices and consistency 
 \end{itemize}
 
 \hypertarget{pin-versions}{%
 \section*{4. Pin versions}\label{pin-versions}}
 \addcontentsline{toc}{section}{4. Pin versions}
 
+The reproducibility of your \texttt{Dockerfile} is heavily dependent on
+how well you define versions for dependencies inside.
+
 \textbf{system libraries}
+
+System library versions can largely come from the base image tag that
+you choose to use (e.g., \texttt{ubuntu:18.04}) however, you can also
+install specific versions of system packages with the respective package
+manager. This practice is called version pinning (e.g., on apt on apt:
+https://blog.backslasher.net/my-pinning-guidelines.html). Version
+pinning is good practice if the version is relevant. For example, you
+might want to demonstrate a bug, prevent a bug in an updated version, or
+pin a working version if you suspect an update could lead to a problem.
+Generally, system libraries are more stable than software modules
+supporting analysis scripts, but in some cases they can be highly
+relevant to your workflow. \emph{Installing from source} is a useful way
+to install very specific versions, however it comes at the cost of
+needing build libraries. Here is how you might go about listing the
+currently installed versions of software on your system:
 
 \begin{itemize}
 \tightlist
 \item
-  you can install specific versions of system packages with the
-  respective package manager, also called version pinning
-
-  \begin{itemize}
-  \tightlist
-  \item
-    on apt: https://blog.backslasher.net/my-pinning-guidelines.html
-  \end{itemize}
+  Debian/Ubuntu: \texttt{dpkg\ -\/-list}
 \item
-  do so if the version is relevant, e.g.~to demonstrate a bug, or likely
-  to become a problem, e.g.~because of \ldots{}
+  Alpine: \texttt{apk\ -vv\ info\textbar{}sort}
 \item
-  do so if you are aware of the system library being relevant to your
-  workflow
-\item
-  you can find out about the currently installed versions
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Debian/Ubuntu: \texttt{dpkg\ -\/-list}
-  \item
-    Alpine: \texttt{apk\ -vv\ info\textbar{}sort}
-  \item
-    CentOS: \texttt{yum\ list\ installed} or \texttt{rpm\ -qa}
-  \end{itemize}
-\item
-  \emph{installing from source} is a useful way to install very specific
-  versions, at the cost of needing build libraries (which could be
-  removed again with build stages, but that's advanced)
+  CentOS: \texttt{yum\ list\ installed} or \texttt{rpm\ -qa}
 \end{itemize}
 
 \textbf{extension packages and programming language modules}
 
+In the case of needing to install packages or dependencies for a
+specific language, package managers are a good option. Package managers
+generally provide reliable mirrors or endpoints to download software,
+and many packages are tested before release. Most package managers have
+a client (CLI) interface that can easily be used from \texttt{RUN}
+commands in your \texttt{Dockerfile}, along with various flavors of
+``freeze'' commands that can output a text file listing all software
+packages and versions
+(cf.~https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html
+cited by {[}2{]}) The biggest risk with using package managers with
+respect to \texttt{Dockerfile}s is outsourcing configuration to file
+formats that are supported. As an example, here are configuration files
+supported by commonly used languages in scientific programming:
+
 \begin{itemize}
 \tightlist
 \item
-  package managers of programming languages are a good solution to
-  install a collection of dependencies for a language
+  Python: \texttt{requirements\ .txt}, \texttt{xxx.yml} (Conda)
 \item
-  package managers have a CLI and can be used from \texttt{RUN} commands
+  R: \texttt{DESCRIPTION}
 \item
-  freezing the environment,
-  cf.~https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html
-  cited by {[}2{]}
+  Java: \texttt{mvn.xml}
 \item
-  there is a risk in outsourcing configuration to the file formats
-  supported by package managers \textgreater{} use only when direct
-  installation in Dockerfile becomes complex; example files:
+  JavaScript: \texttt{package.json} of \texttt{npm}
+\end{itemize}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Python: \texttt{requirements\ .txt}, \texttt{xxx.yml} (Conda)
-  \item
-    R: \texttt{DESCRIPTION}
-  \item
-    Java: \texttt{mvn.xml}
-  \item
-    JavaScript: \texttt{package.json} of \texttt{npm}
-  \end{itemize}
+In all of the above, the user would be required to inspect the file or
+the build to see what is installed. In some cases (e.g., conda) the
+package manager is also able to make decisions about versions to
+install, which is likely to lead to a non-reproducible build. For this
+reason, in the case of having few packages, it is suggested to write the
+install steps and versions directly into the \texttt{Dockerfile}. For
+example, the \texttt{RUN} statement here:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{RUN}\NormalTok{ pip install geopy==1.20.0 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \ExtensionTok{pip}\NormalTok{ install uszipcode==0.2.2}
+\end{Highlighting}
+\end{Shaded}
+
+serves as more clear documentation in a \texttt{Dockerfile} than a
+requirements.txt file that lists the same:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{RUN}\NormalTok{ pip install -r requirements.txt}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
 \item
   how to do in Python (\texttt{==\ x.y.z})
 \item
@@ -730,14 +737,12 @@ use. Without this option, there can be unexpected issues with
 permissions. For example, writing a new file from inside the container
 will be owned by user ``root'' on your host. In that many applications
 generate log and other output files during runtime, be cautious about
-what volumes are bound to the host.
-
-The other logical case to bind mount code is when your data is very
-large (usually over hundreds of GB) or has limited access. For example,
-a private dataset with personal health information (PHI) should never be
-added to a container. In these cases, you should provide clear
-instructions to the user in the README for how to obtain actual or dummy
-data.
+what volumes are bound to the host. The other logical case to bind mount
+code is when your data is very large (usually over hundreds of GB) or
+has limited access. For example, a private dataset with personal health
+information (PHI) should never be added to a container. In these cases,
+you should provide clear instructions to the user in the README for how
+to obtain actual or dummy data.
 
 \begin{itemize}
 \tightlist
@@ -750,8 +755,6 @@ data.
   that users find the project in the future)
 \item
   how to mount the data can be put in the example commands (see 4.)
-\item
-  prefer the long versions of CLI parameters for readability
 \end{itemize}
 
 \begin{verbatim}
@@ -763,68 +766,73 @@ docker run --volume ...
 metadata}\label{capture-environment-metadata}}
 \addcontentsline{toc}{section}{6. Capture environment metadata}
 
-Use labels and build arguments for metadata
+Labels and build arguments can be very helpful to both provide metadata
+and allow for customization of a build.
 
 \begin{itemize}
 \tightlist
 \item
   \textbf{labels}
+\end{itemize}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    advantage of labels: are structured metadata, can be exposed by
-    APIs, e.g.~https://microbadger.com/labels
-  \item
-    use namespaced-names in labels (http://label-schema.org/rc1/
-    respectively https://github.com/opencontainers/image-spec)
+Labels serve as structured metadata that can be exposed by APIs (e.g.,
+https://microbadger.com/labels) along with tools to inspect the
+container binaries (e.g., \texttt{docker\ inspect}). Namespaced
+conventions have been developed (http://label-schema.org/rc1/
+respectively https://github.com/opencontainers/image-spec) to help
+standardize across container tools. Important metadata attributes to
+include as labels would include any of the following:
 
-    \begin{itemize}
-    \tightlist
-    \item
-      should we use the article to establish some core metadata fields
-      for research? author DOI? research organisations
-      (https://ror.org/)? funding agency/grant number?
-    \end{itemize}
-  \item
-    are part of the exported Docker image, mention
-    \texttt{docker\ inspect}
-  \item
-    important metadata items
+\begin{itemize}
+\tightlist
+\item
+  Research organizations (https://ror.org/)
+\item
+  Funding agency/grant number
+\item
+  DOI of research compendium
+\item
+  Author DOIs (e.g., Zenodo or other)
+\item
+  repository link where Dockerfile is published
+\item
+  author (\texttt{MAINTAINER} is deprecated) and contact (e.g.~email,
+  project website)
+\item
+  license
+\end{itemize}
 
-    \begin{itemize}
-    \tightlist
-    \item
-      repository link where Dockerfile is published
-    \item
-      author (\texttt{MAINTAINER} is deprecated) and contact
-      (e.g.~email, project website)
-    \item
-      license
-    \item
-      usage instructions?
-    \item
-      DOI of research compendium (Zenodo preregister instead of GitHub
-      automatic integration?)
-    \end{itemize}
-  \item
-    can https://codemeta.github.io/ and
-    https://citation-file-format.github.io/ be used/useful?
-  \end{itemize}
+There are several projects (https://codemeta.github.io/,
+https://citation-file-format.github.io/) focused around metadata
+citation, and you should consider using one if it seems appropriate for
+your use case.
+
+\begin{itemize}
+\tightlist
 \item
   \textbf{build arguments}
+\end{itemize}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    use build arguments to capture build metadata
-  \item
-    git commit hash
-  \item
-    date and timestamp
-  \item
-    clarifies if build was automated
-  \end{itemize}
+Build arguments can provide metadata and also allow for customization of
+a build. As an example, the following build argument would default to
+\texttt{1.0.0} but allow the user to change it with
+\texttt{-\/-build-arg\ MYVERSION=2.0.0}
+
+\begin{verbatim}
+ARG MYVERSION=1.0.0
+\end{verbatim}
+
+Along with specifying versions, environment, or timestamp, build
+arguments can be useful to provide the context of the build (e.g.,
+production, development, automated or not). Examples of build arguments
+that are useful to include to describe a container are:
+
+\begin{itemize}
+\tightlist
+\item
+  git commit hash
+\item
+  date and timestamp
 \end{itemize}
 
 \hypertarget{enable-interactive-usage-and-one-click-execution}{%
@@ -833,79 +841,80 @@ execution}\label{enable-interactive-usage-and-one-click-execution}}
 \addcontentsline{toc}{section}{7. Enable interactive usage and one-click
 execution}
 
+The success of a container can sometimes come down to how well it
+exposes it's usage and software to the user: a function that comes down
+to the \texttt{CMD} and \texttt{ENTRYPOINT}. By using \texttt{CMD} and
+\texttt{ENTRYPOINT}, you can use automated and manual testing to ensure
+that it is possible to run the container interactively \emph{and} given
+that execution is done incorrectly or has an error, a suitable help or
+error message is shown to assist the user. A possible weakness with
+using containers is the limitation on only providing one entrypoint,
+however tools (e.g., The Scientific Filesystem REF
+academic.oup.com/gigascience/article/7/5/giy023/4931737) have been
+developed to expose multiple entrypoints, environments, help messages,
+labels, and even install sequences. It's considered good practice to
+have an entrypoint that meets the user expectations. For example, a
+container known to be a workflow should execute the workflow, or spit
+out usage for how to do so. An interactive container should spin up an
+analysis environment, ensuring to print to the screen the ports that are
+being used (that need to be bound to the host) along with any login
+credentials needed. A workflow that does not support headless execution
+is arguably not ideal for a container, and you should consider switching
+tools. Using a browser to expose a user interface (e.g, RStudio,
+Jupyter, web tools) on a particular port is a commonly done practice,
+and for systems without native \texttt{x11} support, \texttt{x11docker}
+is recommended {[}REF{]}. Otherwise, you would need to clearly document
+how the user can start and control the graphical interfaces provided
+inside. However, headless execution is ideal in that it can be tested
+headlessly, either by starting or interacting with the container and
+checking for successful responses (e.g., 200) from endpoints provided,
+or by using a controller such as Selenium {[}REF{]}. To support both
+``one click execution'' and to allow for custom configuration, it's
+helpful to provide users with a configuration file, or allow for
+settings to be expressed via environment variables {[}15{]}, or special
+Docker-based wrappers such as Kliko {[}16{]}
+
 \begin{itemize}
 \tightlist
-\item
-  using \texttt{CMD} and \texttt{ENTRYPOINT} make sure that it is
-  possible to run the container interactively \emph{and} as a one-click
-  execution \textgreater{} give examples (see below)
-\item
-  the default execution should either execute the workflow (headless) or
-  start an analysis environment
-
-  \begin{itemize}
-  \tightlist
-  \item
-    if your workflow/sofware does not support headless execution
-    (Excel?), switch tools
-  \item
-    or have default with UI and only document headless execution via
-    example commands
-  \end{itemize}
 \item
   may also use the same \texttt{Dockerfile} for different purposes,
   e.g.~include an app (e.g.~Shiny) for interactive use by user
 \item
-  if you want to expose a user interface \textbf{use the browser} on and
-  exposed port, unless you're using an existing Desktop you, then you
-  can use \texttt{x11docker} {[}{]}
-\item
-  one useful alternative: Notebook user interfaces in the browser
-  (Jupyter, RStudio)
-\item
-  document both variants with example commands
-\item
-  a headless execution can be executed in a continuous integration (CI)
-  after every project update, potentially on a test dataset for
-  speed-up,
-\item
   see also Rule 7: Build a pipeline in {[}2{]}
 \item
-  you can also make your workflow configurable, e.g.~by bespoke
-  configuration files, environment variables passed to the container
-  {[}15{]}, or special Docker-based wrappers such as Kliko {[}16{]};
-  however, know this is a trade-off from plain \texttt{Dockerfile}-based
-  solutions, which is a proven industry standard
-\item
-  \emph{what user should run within the Dockerfile?}
+  \emph{what user should run within the Dockerfile?} 
 \end{itemize}
 
-\hypertarget{end-the-dockerfile-with-build-and-run-commands}{%
-\section{\texorpdfstring{8. End the \texttt{Dockerfile} with build and
-run
-commands}{8. End the Dockerfile with build and run commands}}\label{end-the-dockerfile-with-build-and-run-commands}}
+\hypertarget{establish-templates-for-new-projects}{%
+\section{8. Establish templates for new
+projects}\label{establish-templates-for-new-projects}}
 
-\begin{itemize}
-\tightlist
-\item
-  put \texttt{docker\ run} and \texttt{docker\ build} commands in
-  comments at the end of the file (\emph{may be own rule?}), especially
-  relevant if arguments are used such as port exposure or mount points
-\item
-  should be copy-and-pasteable
-\item
-  use multiple comment characters to make clear what is command and what
-  is documentation
-\end{itemize}
-
-\begin{verbatim}
-# Build the images with
-##> docker build --tag great_workflow .
-# Run the image:
-##> docker run --it --port 80:80 --volume ./input:/input --name gwf great_workflow
-# Extract the data:
-##> docker cp gwf:/output/ ./output
-\end{verbatim}
+It's likely going to be the case that you develop interactive
+environments, servers, or workflows that are similar in nature. In this
+case, you should consider adopting a standard workflow that will give
+you a clean slate for a new project. As an example, cookie cutter
+templates (e.g., https://github.com/cookiecutter/cookiecutter) and
+project starter kits can provide files, directory organization, and
+build instructions that include basic steps for getting started. A good
+project template should get you started with a template for
+documentation, setting up testing via continuous integration, building a
+container, and even choosing a license. In the case of using a common
+\texttt{Dockerfile} or base, Docker's build caching will take shared
+lines into account and speed up build time. It also must be noted that
+developing or working on projects with containers, period, allows you to
+easily switch between isolated project environments. At most, if a port
+is shared by two projects, you would simply need to stop the container
+and restart when you are ready to work again. In the case of more
+complex web applications that require application and web servers,
+databases, and workers or messenging, the entire infrastructure can
+easily be brought up or down with a tool like \texttt{docker-compose}
+{[}REF{]}. \texttt{docker-compose} also allows definition of services
+via it's own \texttt{docker-compose.yml}, ranging from mounted volumes,
+to permissions, environment, and ports. Part of this project template
+should be a protocol for publishing the container image to a suitable
+container registry, and taking into consideration of how the code can be
+given a DOI or proper publication (e.g., Zenodo, Journal of Open Source
+Software).
 
 \hypertarget{publish-a-dockerfile-per-project-in-a-code-repository-with-version-control}{%
 \section*{9. Publish a Dockerfile per project in a code repository with
@@ -914,72 +923,32 @@ control}\label{publish-a-dockerfile-per-project-in-a-code-repository-with-versio
 \addcontentsline{toc}{section}{9. Publish a Dockerfile per project in a
 code repository with version control}
 
-\begin{itemize}
-\tightlist
-\item
-  \texttt{Dockerfile} is a plain text-based format and therefore you
-  should put it under version control
-\item
-  just as code, the \texttt{Dockerfile} should be for humans to
-  understand and just incidentally for machines to be interpretable
-  (qoute Abelson? see also
-  https://www.quora.com/How-true-is-Programs-are-meant-to-be-read-by-humans-and-only-incidentally-for-computers-to-execute)
-\item
-  using and publishing a \texttt{Dockerfile} to create a container will
-  increase chances of preservation (cf. {[}17{]})
-\item
-  Consult Ten Simple Rules paper by Perez-Riverol et al. {[}18{]}
-\item
-  add the link to the online repository to a label, to point back to the
-  source of the file
-\item
-  versioning on a collaboration platform exposes your environment
-  configuration and enables collaboration/feedback
-\item
-  you can build and run (e.g.~on a test dataset!) you Dockerfile in CI
-  (cf.~automation below)
-\item
-  keep \texttt{Dockerfile} in the same project with your workflow and
-  data (cf.~research compendium concept?)
-\item
-  \textbf{this should be the repository with the workflow and data}
-  (cf.~research compendium)
+The \texttt{Dockerfile} is a plain text-based format and thus fits
+nicely into a version control system. You should tend to include
+\texttt{Dockerfile}s alongside your code as a way to quickly build your
+software, and show visitors of the repository how it's built (qoute
+Abelson? see also
+https://www.quora.com/How-true-is-Programs-are-meant-to-be-read-by-humans-and-only-incidentally-for-computers-to-execute)/,
+and as mentioned previously, the \texttt{Dockerfile} itself can then
+link back to the repository. Take advantage of git commit messages to
+keep a record of notes alongside changes to your files. Versioning and
+publishing on a collaboration platform is also beneficial in that is
+enables collaboration and makes it easy to solicit feedback. Version
+control providers (e.g., GitHub, GitLab) also make it easy to connect to
+or use embedded continuous integration (CI) services to test and deploy
+your containers and software. While it's not always possible to keep
+datasets alongside code, in the case of smaller ones, it can be very
+useful to keep your \texttt{Dockerfile} alongside both the code and data
+(cf.~research compendium concept?). While there are exceptions to the
+rule (cf. {[}17{]}), it's generally a simple and clear approach to
+provide one Dockerfile per project. If you find that you need to provide
+more than one, consider if it's possible to use build arguments to flip
+between states (e.g., development vs.~production) or if it's possible to
+separate tools into different repositories. In fact, using and
+publishing a \texttt{Dockerfile} to create a container has been shown to
+increase chances of preservation of your work (cf. {[}18{]})
 
-  \begin{itemize}
-  \tightlist
-  \item
-    Use one \texttt{Dockerfile} per workflow or project and put one
-    ``thing'' in; \textbf{TO DISCUSS}: argue against the above rule and
-    recommend having a process manager and multiple processes in one
-    container
-  \item
-    start with a clean slate for a new project - shared lines are
-    quickly copied over, and Docker's build caching will bring some
-    performance
-  \item
-    allows you to quickly switch between projects and not worry about
-    breaking things you are not working on
-  \item
-    have one obvious main process per project, e.g. \texttt{R} or
-    RStudio
-  \item
-    if you have a complex set-up of several proecceses, e.g.~with a
-    database, then put it in a separate container and connect them via
-    \texttt{docker-compose}
-  \end{itemize}
-\item
-  use git commit messages extensively to describe the reasons behind
-  changes; the messages may even contain failed attempts/commands
-\item
-  add a clear license
-\item
-  publish the image of the workflow to a suitable repository (where it
-  gets a DOI) at the time of publication of the workflow
-\item
-  you may use multiple containers and \texttt{Dockerfiles} for complex
-  workflows (cf. {[}19{]}) but then you're probably out of scope of this
-  article
-\end{itemize}
+Consult Ten Simple Rules paper by Perez-Riverol et al. {[}19{]}
 
 \hypertarget{use-the-container-daily-rebuild-the-image-weekly}{%
 \section*{10. Use the container daily, rebuild the image
@@ -987,66 +956,47 @@ weekly}\label{use-the-container-daily-rebuild-the-image-weekly}}
 \addcontentsline{toc}{section}{10. Use the container daily, rebuild the
 image weekly}
 
-\begin{itemize}
-\tightlist
-\item
-  use the container built by the \texttt{Dockerfile} in your regular
-  work, it is the only way to make sure it is really stable
-  (cf.~Marwick's ``this container is the only way I have ever run this
-  workflow'')
-\item
-  no showstopper for using UIs (web-based, e.g.~Jupyter, RStudio, but
-  also \texttt{x11docker})
-\item
-  you cannot expect to take a year old Docker image form the shelf and
-  that can be extended, it will likely ``run'' but just as-is
-  \textgreater{} need to re-build ``all the time'' to stay reusable; the
-  longer you wait with trying to recompile the image the harder it will
-  get (you don't know for which of the different reasons it fails)
-\item
-  during development and analysis, interactive use (e.g.~R session,
-  Jupyter Notebook) has advantages, and even the most disciplined might
-  install a package or change a parameter manually
-\item
-  regularly delete all containers and rebuild images based on your
-  \texttt{Dockerfile}
-\item
-  you are more likely to remember the undocumented steps if done
-  regularly
-\item
-  increases trust in configuration, encourages effetiveness and fully
-  scripted configuration
-\item
-  keep a \texttt{Makefile} next to the Dockerfile so you don't fall into
-  the trap of not regularly rebuilding your digital laboratory (better
-  to have build and run commands - i.e.~the usage - in two places and
-  potentially diverging than the actual \texttt{Dockerfile})
-\item
-  \textbf{Don't replicate environment configuration outside of the
-  Dockerfile for convenience}
+A container that is not regularly rebuilt risks not getting essential
+security updates, and serving as a risk for its users. If you are using
+a container built by a \texttt{Dockerfile} regularity in your work, it's
+recommended to set up continuous deployment, or a strategy to ensure
+that the container is regularly built and tested. While there is no
+hardened rule, it would be good practice to rebuild a container every
+once or two weeks that you use on a daily basis. In an idealistic world,
+containers that we built years ago should rebuild seamlessly, but this
+isn't the case, especially with rapidly changing technology relevant to
+machine learning and data science. It can almost be guaranteed that the
+longer that you wait to recompile the image, the harder it will become.
+If you are using an interactive container and find that you need to
+manually installed a package or change a parameter, it would be best
+practice to add this dependency to the container and rebuild it. If the
+container is linked to an automated build provided by a version control
+service, simply pushing the \texttt{Dockerfile} to the service can
+easily trigger the build. Docker images and layers can exhaust system
+resources, so it's good practice to regularly do
+\texttt{system\ prune\ -\/-all} that will clean up stopped and unused
+containers, volumes, and networks. If you want to regularly prune unused
+container resources, you might even consider adding a cron job {[}REF{]}
+to do it. After a prune is performed, it would follow naturally to
+rebuild a container for local usage, or to pull it again from a newly
+built registry image. In the case of needing more setup or configuration
+than building the container, it's good practice to provide a
+\texttt{Makefile} alongside your container. You generally should not
+rely on undocumented steps or manual, extra commands to be run on the
+local machine. A fully scripted configuration makes it easier for both
+you and future users, and can increase trust in your workflow. Finally,
+for a sanity check it can be helpful to ask a colleague to interact with
+your workflow or container.
 
-  \begin{itemize}
-  \tightlist
-  \item
-    make the Dockerfile work for your day-to-day research instead of
-    having a second set of configurations in on the ``local'' machine
-  \item
-    having two approaches will eventually break, only a perceived
-    convenience
-  \item
-    avoid an untidy laboratory in practice behind a shiny appearance of
-    a \texttt{Dockerfile}
-  \item
-    you can install interactive UIs as part of the Dockerfile and use
-    them just like Desktop UIs (Jupyter, RStudio, use )
-  \end{itemize}
-\item
-  if you can, get a colleague to run the workflow for you, or even
-  better switch Dockerfiles and give feedback - this gives both of you
-  an extra layer of confidence
-\item
-  add a CRON job that deletes the image every week?
-\end{itemize}
+in your regular work, it is the only way to make sure it is really
+stable (cf.~Marwick's ``this container is the only way I have ever run
+this workflow'') - no showstopper for using UIs (web-based,
+e.g.~Jupyter, RStudio, but also \texttt{x11docker}) - \textbf{Don't
+replicate environment configuration outside of the Dockerfile for
+convenience} - avoid an untidy laboratory in practice behind a shiny
+appearance of a \texttt{Dockerfile} - you can install interactive UIs as
+part of the Dockerfile and use them just like Desktop UIs (Jupyter,
+RStudio, use )
 
 \textbf{Box: Automatic generation of Dockerfiles}
 
@@ -1084,19 +1034,19 @@ achieving the perfect solution, as that is probably not achievable or
 changing over time. This article provides guidance for using
 \texttt{Dockerfile}s in computational/computer-based research to work
 towards a ``time capsule'' (see
-https://twitter.com/DougBlank/status/1135904909663068165?s=09) that
-given some expertise and the right tools can be used to come as close as
-possible to the original virtual laboratory used for a specific. Such an
-increase in transparency and conscious effort is valuable for the
-creators of analyses, even if the capsule decays over time. The effort
-should also be valued by others and may change the way scholars
-collaborate and communicate (cf.~notion of ``preproducibility'' by
-{[}20{]}) So please, don't go insane with writing \texttt{Dockerfile}s,
-but be realistic about what might break and what is unlikely to break.
-In a similar vein, these rules may be broken if another way works better
-for \emph{your use case}. The rules in this article help you mastering
-the \texttt{Dockerfile} format for research and provide a solid basis
-for engaging in more complex but also in simpler assisted usage of
+https://twitter.com/DougBlank/status/1135904909663068165?s=09) which,
+given some expertise and the right tools, can be used to come as close
+as possible to the original workflow. Even if such a capsule decays over
+time, the effort to create it provides incredibly useful and valuable
+transparency for the project. The effort should also be valued by others
+and may change the way scholars collaborate and communicate (cf.~notion
+of ``preproducibility'' by {[}20{]}) So please, don't go insane with
+writing \texttt{Dockerfile}s, but be realistic about what might break
+and what is unlikely to break, and make a best effort. In a similar
+vein, these rules may be broken if another way works better for
+\emph{your use case}. The rules in this article help you mastering the
+\texttt{Dockerfile} format for research and provide a solid basis for
+engaging in more complex but also in simpler assisted usage of
 containers (cf.~Box: Aumatic Generation). Corner cases aside, share and
 exchange your \texttt{Dockerfile} freely and collaborate in your
 community to spread the knowledge about containers as a tool for
@@ -1114,8 +1064,9 @@ o2r by DFG
 \addcontentsline{toc}{section}{Contributions}
 
 DN conceived the idea, wrote the first darft, contributed to all rules.
-SE contributed to the overall structure and selected rules. TH
-contributed to the rule structure and particularly rule 1.
+VS converted first draft bullet points into full sentences, contributed
+to all rules. SE contributed to the overall structure and selected
+rules. TH contributed to the rule structure and particularly rule 1.
 
 \hypertarget{references}{%
 \section*{References}\label{references}}
@@ -1208,23 +1159,23 @@ scientific compute container format. Astronomy and Computing. 2018;25:
 1--9.
 doi:\href{https://doi.org/10.1016/j.ascom.2018.08.003}{10.1016/j.ascom.2018.08.003}
 
+\leavevmode\hypertarget{ref-kim_bio-docklets_2017}{}%
+17. Kim B, Ali TA, Lijeron C, Afgan E, Krampis K. Bio-Docklets:
+Virtualization Containers for Single-Step Execution of NGS Pipelines.
+bioRxiv. 2017; 116962.
+doi:\href{https://doi.org/10.1101/116962}{10.1101/116962}
+
 \leavevmode\hypertarget{ref-emsley_framework_2018}{}%
-17. Emsley I, De Roure D. A Framework for the Preservation of a Docker
+18. Emsley I, De Roure D. A Framework for the Preservation of a Docker
 Container International Journal of Digital Curation. International
 Journal of Digital Curation. 2018;12.
 doi:\href{https://doi.org/10.2218/ijdc.v12i2.509}{10.2218/ijdc.v12i2.509}
 
 \leavevmode\hypertarget{ref-perez-riverol_ten_2016}{}%
-18. Perez-Riverol Y, Gatto L, Wang R, Sachsenberg T, Uszkoreit J,
+19. Perez-Riverol Y, Gatto L, Wang R, Sachsenberg T, Uszkoreit J,
 Leprevost F da V, et al. Ten Simple Rules for Taking Advantage of Git
 and GitHub. PLOS Computational Biology. 2016;12: e1004947.
 doi:\href{https://doi.org/10.1371/journal.pcbi.1004947}{10.1371/journal.pcbi.1004947}
-
-\leavevmode\hypertarget{ref-kim_bio-docklets_2017}{}%
-19. Kim B, Ali TA, Lijeron C, Afgan E, Krampis K. Bio-Docklets:
-Virtualization Containers for Single-Step Execution of NGS Pipelines.
-bioRxiv. 2017; 116962.
-doi:\href{https://doi.org/10.1101/116962}{10.1101/116962}
 
 \leavevmode\hypertarget{ref-stark_before_2018}{}%
 20. Stark PB. Before reproducibility must come preproducibility
