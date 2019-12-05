@@ -17,16 +17,25 @@ author:
   - name: Tim Head
     email: betatim@gmail.com
     affiliation: "Wild Tree Tech, Zurich, CH"
-    orcid: 0000-0003-0931-3698
-#  - Rule 4 of https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003858#s6 applies?
-abstract: Containers are greatly improving computational science by packaging software and data dependencies. In a scholarly context, transparency and support of reproducibility are the largest drivers for using these containers. It follows that choices that are made with respect to building containers can make or break its reproducibility. The build for the container image is often created based on the instructions in a plain-text file. For example, one such container technology, Docker, provides instructions using a `Dockerfile`. By following the rules in this article researchers writing a `Dockerfile` can effectively build and distribute containers.
-
-author_summary: |
-  TBD
+    orcid: 0000-0003-0931-
+  - name: Tony Hirst
+    email: tony.hirst@open.ac.uk
+    affiliation: "Department of Computing and Communications, The Open University, GB"
+    orcid: 0000-0001-6921-702X
+abstract: |
+  Containers are greatly improving computational science by packaging software and data dependencies.
+  In a scholarly context, transparency and support of reproducibility are the largest drivers for using these containers.
+  It follows that choices that are made with respect to building containers can make or break a worklow's reproducibility.
+  The build for the container image is often created based on the instructions in a plain-text file.
+  For example, one such container technology, Docker, provides instructions using a `Dockerfile`.
+  By following the rules in this article researchers writing a `Dockerfile` can effectively build and distribute containers.
+#author_summary: |
+#  TBD
 bibliography: bibliography.bib
 output: rticles::plos_article
 csl: plos.csl
-
+# Submission notes:
+# - The authors declare that no competing interests exist.
 ---
 
 <!-- please stick to one sentence per line! -->
@@ -425,11 +434,12 @@ Together you can develop common practices or even shared base images (exemplifie
 
 o2r by DFG
 
-# Contributions  {#contributions .unnumbered}
+# Contributions {#contributions .unnumbered}
 
 DN conceived the idea, wrote the first darft, contributed to all rules.
 VS converted first draft bullet points into full sentences, contributed to all rules.
 SE contributed to the overall structure and selected rules.
 TH contributed to the rule structure and particularly rule 1.
+THi gave extensive feedback on an early draft.
 
 # References {#references .unnumbered}
