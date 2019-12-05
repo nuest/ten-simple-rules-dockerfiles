@@ -3,7 +3,7 @@ title: "Ten Simple Rules for Writing Dockerfiles for Reproducible Research"
 author:
   - name: Daniel Nüst
     email: daniel.nuest@uni-muenster.de
-    affiliation: "Institute for Geoinformatics, University of M\"unster, M\"unster, Germany"
+    affiliation: 'Institute for Geoinformatics, University of Muenster, Muenster, Germany'
     corresponding: daniel.nuest@uni-muenster.de
     orcid: 
   - name: Vanessa Sochat
@@ -44,38 +44,37 @@ csl: plos.csl
 
 # Introduction {#introduction .unnumbered}
 
-With access to version control systems [REF GITHUB, GITLAB, etc.] it has become increasingly easy to not only share algorithms, but also instructions for building and testing.
-Within this content, it is suggested to include instructions for building containers to package software and data dependencies [@boettiger_introduction_2017].
-By way of providing these instructions along with thorough documentation, it's much more likely to be able to reproduce an analysis workflow.
-A container is a portabal, encapsulated environment that is built from human and machine readable instructions.
+With access to version control systems and only collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the used software.
+The publication of these artefacts are a response to the increasing complexity of computer-based research, which is too complicated for "papers" to fully communicate the knowledge [@marwick_how_2015] but where the actual knowledge is the full software environment that produced a result [@donoho_invitation_2010].
+A research compendium is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
+Within such a compendium, it is suggested to include instructions for building containers to package software and data dependencies [@boettiger_introduction_2017].
+By way of providing these instructions along with thorough documentation and application of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], it's much more likely both the author and third parties are able to reproduce an analysis workflow.
+These instructions are human and machine readable and the containers built from them are portable encapsulated snapshots of a specific environment.
 For example, containers have been created to host scientific notebooks [@rule_ten_2019], and share reproducible workflows (cf. Rule 10 of @sandve_ten_2013).
-<!-- the virtual laboratory reference isn't great, I removed it-->
 
-While there are several tutorials for using containers for reproducible research [^1], there is no extensive examination for how to write the actual instructions to create the containers.
+While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no extensive examination for how to write the actual instructions to create the containers.
 Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide any complexity from the researcher.
 While not everybody needs to understand and write Dockerfiles, as _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], the researchers who do need to craft their own environment definition should follow good practices.
-Such practices are not part of generic Docker tutorials and are not present in existing Dockerfiles often used as templates.
-The differences and potential obstacles are not obvious, especially for researchers who don't have software development experience.
+Such practices are not part of generic Docker tutorials and are not present in published Dockerfiles often used as templates.
+The differences between a helpful stable Dockerfile and one that is misleading, prone to failure, and contains potential obstacles, are not obvious, especially for researchers who don't have software development experience.
 
-While there are many different container technologies, this article focuses on Docker [REF] as it is the most commonly used [REF]. 
-The goal at hand is to write a `Dockerfile` so that it best facilitates interactive development and research as well as the higher goals of reproducibility. 
-A daily commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not an afterthought triggered by a publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
+While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019]. 
+The goal at hand is to write a `Dockerfile` so that it best facilitates interactive development and research as well as the higher goals of reproducibility and preservation. 
+A daily commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not an afterthought triggered by a scientific publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 By following the _conventions_ layed out in these ten rules, authors ensure readability by others and ideally subsequent reuse and collaboration.
-
-[^1]: https://nuest.github.io/docker-reproducible-research/, https://chapmandu2.github.io/post/2018/05/26/reproducible-data-science-environments-with-docker/, https://reproducible-analysis-workshop.readthedocs.io/en/latest/8.Intro-Docker.html
 
 ## Docker {#docker .unnumbered}
 
 Docker is a container technology that is widely adopted and supported on many platforms, and has become highly useful in science.
-They are distinct from virtual machines (VM), or hypervisors as they don't emulate hardware, and thus require the same system resources.
-To build Docker containers, we write text files that follow a particular format called `Dockerfile`s. 
+They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware, and thus do not require the same system resources.
+To build Docker containers, we write text files that follow a particular format called `Dockerfile`s [@docker_inc_dockerfile_2019]. 
 `Dockerfile`s are machine- and human-readable recipes for creating containers.
 While Docker was the original technology to support this format, other container technologies have developed around the format (and thus support it) including: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
-The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses it's own "Singularity recipe" format, it can import Docker containers directly from a Docker registry. 
+The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker containers directly from a Docker registry. 
 Although the Singularity recipe format is different, the rules here are transferable to some extent.
-While some @boettiger_introduction_2015 can argue for reasons to not publish reproducibly (lack of time & incentives and unfittingness for a researcher's workflow) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker container should become an increasingly easier task for the average researcher. 
-If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set(cf. README of @marwick_madjebebe_2015). 
-In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, and consequently where a third party might obtain them again.
+While some may argue for reasons to not publish reproducibly (lack of time & incentives and unfittingness for a researcher's workflow, cf. [@boettiger_introduction_2015]) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker container should become an increasingly easier task for the average researcher.
+If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of [@marwick_madjebebe_2015]). 
+In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 Importantly, the researcher should clearly state the platforms (by way of one or more Docker containers) have been tested on.
 
 # 1. Consider tools to assist with Dockerfile generation {-}
@@ -154,20 +153,23 @@ FROM rocker/r-ver:3.5.2
 
 It's good practice to think of the `Dockerfile` as being human _and_ machine readable. 
 This means that you should use indentation, newlines, and comments to make your `Dockerfile`s well documented and give them readability.
-Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in onr `RUN` with `&&`.
+Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
 Use `\` to break a single command into multiple lines to ensure that no single line gets too long, and use long versions of parameters for readability (e.g., `--input` instead of `-i`).
-When you need to change a directory, use `WORKDIR` to not only create the directory if it doesn't exist, but to persist the change across multiple `RUN` lines.
+When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
+
 As you are writing the `Dockerfile`, put yourself in the shoes of the next user of it.
 Are the choices made and commands being executed clear, or is further comment warranted?
-When appropriate, you can add links to discussion in version control or issues, or comments about specific usage and decisions.
-Dependencies can be grouped in this fashion to make it easier to spot changes in version control.
+When appropriate, you can add links to discussion in version control, code repository issues, or comments about specific usage and decisions.
+Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your Dockerfile is under version control.
 It can even be helpful to include comments about possibly more intuitive commands that did not work so you do not fall into the same trap twice.
 If you find that you need to remember an undocumented step, that's an indication that it should be documented.
-Labels [REF] are useful to provide a more structured form of documentation about software.
-For example, software versions, maintainer contact information, along with vendor specific metadata are commonly seen.
-Comments can also provide a helpful guide to others and a future you. 
-As an example, it's helpful to provide commented lines with `docker build` and `docker run` to show how to build and run the image. 
-These comments can be especially relevant if volume mounts or ports are important for using the container, and by putting them at the end of the file, they are more likely to be seen and easy to copy paste after a container build.
+
+Labels are useful to provide a more structured form of documentation about software.
+For example, software versions, maintainer contact information, along with vendor specific metadata are commonly seen and the OCI Image Format Specification provides some common label keys [@opencontainers_image-spec_2017].
+
+Comments can also include usage guides, which can be helpful to others and a future you. 
+As an example, it's helpful to provide commented lines with `docker build` and `docker run` within the `Dockerfile` to show how to build and run the image.
+These comments can be especially relevant if volume mounts or ports are important for using the container, and by putting them at the end of the file, they are more likely to be seen, easy to copy paste after a container build, and to be in consistent state compared to documentation in another file.
 Here is an example of a commented section to show build and usage.
 
 ```
@@ -179,17 +181,19 @@ Here is an example of a commented section to show build and usage.
 ##> docker cp gwf:/output/ ./output
 ```
 
-If you were to discover a previously written `Dockerfile` and not remember the container identifier you used, it would be represented in the `Dockerfile`.
+If you were to discover a previously written `Dockerfile` and not remember the container identifier you used, it would be represented in the `Dockerfile` in the `--name` CLI parameter.
 Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
 Here is an example of various kinds of comments that might be useful for a `Dockerfile`:
 
 ```
-# apt-get install specific version
+# apt-get install specific version, use 'apt-cache madison <pkg>' to see available versions
+RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
 # RUN command spreading several lines
-RUN install2.r \
-  fortunes \
-  here
+RUN R -e 'getOption("repos")' && \
+  install2.r \
+    fortunes \
+    here
 
 # this library must be installed from source to get version newer than in sources
 
@@ -197,13 +201,14 @@ RUN install2.r \
 ```
 
 Clarity is always more important than brevity.
-For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, you should keep the script in the container for a future user to inspect.
-Generally, try to design the `RUN` statements so that each performs one scoped action (e.g., clone of a repository to compile and install a package).
+For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production Dockerfiles aiming at small image size, you should keep the script in the container for a future user to inspect.
+Generally, try to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
+
 If a `RUN` statement is longer than a page and requires scrolling, this may be challenging for the next reader to digest, and you should consider splitting it up into several.
 When you install several system libraries, it's good practice to add comments about why the dependencies are needed. 
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed.
-If you intend to build the image more than once (perhaps during development) and can take advantage of build caching [REF] you should list commands _in order_ of least likely to change to most likely to change.
-If a step is being cached (e.g., install from a remote resource or a file that gets cached) you can use the `--no-cache` flag during build to force a re-build of all layers.
+If you intend to build the image more than once (perhaps during development) and you can take advantage of build caching to avoid execution of time-consuming instructions, e.g., install from a remote resource or a file that gets cached.
+You should list commands _in order_ of least likely to change to most likely to change and use the `--no-cache` flag to force a re-build of all layers.
 A recommended ordering based on this metric might be:
 
   1. system libraries
@@ -215,11 +220,9 @@ A recommended ordering based on this metric might be:
   5. `RUN`/`ENTRYPOINT`
 
 Finally, as a supplement to content inside the `Dockerfile`, it's good practice to also write a section in a README alongside the Dockerfile for exactly how to build, run, and otherwise interact with the container. 
-If the container is provided on Docker Hub, you should direct the user to it.
+If a pre-build image is provided on Docker Hub, you should direct the user to it.
 
 <!-- not sure how the below fits in, moving down here for someone else to address-->
-- how to access the layer commands from an existing image (`docker inspect..`) <!-- I don't understand how this fits here / what you mean to say-->
-- if need be use _layered builds_ to only keep specific files from one build step to another, e.g. for build dependencies if building software from source <!-- not familiar with this, aren't all builds layered? Do you mean multistage builds?-->
 - modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?) <!--I don't understand this point-->
 - use a linter to follow common practices and consistency <!-- suggestion?? What linter do you have in mind?-->
 
