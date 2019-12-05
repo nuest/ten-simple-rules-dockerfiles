@@ -69,32 +69,38 @@ If a researcher is able to find or create containers or `Dockerfile`s to address
 In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, and consequently where a third party might obtain them again.
 Importantly, the researcher should clearly state the platforms (by way of one or more Docker containers) have been tested on.
 
-
-# 1. Use tools to assist with Dockerfile generation. {-}
+# 1. Consider tools to assist with Dockerfile generation {-}
 
 Writing a Dockerfile from scratch is not that simple, and even "experts" sometimes take shortcuts.
-Thus, it's a good strategy to first look to tools that can help to generate a Dockerfile for you. Such tools have likely thought about and implemented good practices.
+Thus, it's a good strategy to first look to tools that can help to generate a Dockerfile for you.
+Such tools have likely thought about and implemented good practices, and they may have added newer practices when reapplied at a later point in time.
 It's always a good practice to start with your specific use case.
-You would first want to determine if there is an already existing container base that you can use, and in this case, use it and add to your software documentation instructions for doing so.
+You would first want to determine if there is an already existing container that you can use, and in this case, use it and add to your workflow documentation instructions for doing so.
 As an example, you might be doing some kind of interactive development.
-For interactive development environments such as notebooks and development servers or databases, you can readily find many containers that come installed with the software that you need. 
+For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with the software that you need. 
 In the case that there isn't an existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
-Well maintained means that recent container bases are used, likely from the Docker library, to ensure that the container has the most recent security fixes for the operating system in question.
-As an example, repo2docker [REF repo2docker] is a tool that is maintained by Jupyter Labs that can help to transform a repository in the format of some known kind of package (notebook, Python, R, etc.) into a container.
-As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python package.
+Well maintained means that recent container bases are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
+As an example, repo2docker [@jupyter_binder_2018] is a tool that is maintained by Jupyter Labs that can help to transform a repository in the format of some known kind of package (notebook, Python, R, etc.) into a container.
+Such a package contains well-defined files for defining software dependencies and versions, which repo2docker can understand.
+As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python package with the following command.
 
 ```bash
 jupyter-repo2docker https://github.com/norvig/pytudes
 ```
 
-The resulting container image would install the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to easily interact with any previously existing notebooks in the container.
+The resulting container image would install the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to easily interact with any existing workflows in the repository.
 A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself wouldn't be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
 For this reason, it's good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
 It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses, if relevant.
 The container should be built to be optimized for its use case, whether it is intended to be shared or used by a single user.
-However, in the case that a tool or interactive container environment is not available, you will likely need to write a `Dockerfile` from scratch. 
-In this case, proceed with following the remaining rules to write your `Dockerfile`.
 
+Further assisting tools are `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
+`containerit` automates the generation of standalone Dockerfiles for workflows in R.
+It can provide a starting point for users unfamiliar with writing Dockerfiles, or together with other R packages provide a full image creation and execution process without having to leave an R session.
+`dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable Dockerfiles compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
+
+However, in the case that a tool or interactive container environment is not available, or their capabilities to configure specific resources or install bespoke tools, you will likely need to write a `Dockerfile` from scratch.
+In this case, proceed with following the remaining rules to write your `Dockerfile`.
 
 # 2. Use versioned and automatically built base images {-}
 
@@ -398,15 +404,6 @@ in your regular work, it is the only way to make sure it is really stable (cf. M
   - you can install interactive UIs as part of the Dockerfile and use them just like Desktop UIs (Jupyter, RStudio, use )
 
 <!-- I'm not sure how this fits in, should these tools be mentioned above when we talk about repo2docker?-->
-<!-- I'll leave this to whomever wrote this / has vision for it-->
-**Box: Automatic generation of Dockerfiles**
-
-- there are tools you can auto-generate a `Dockerfile`
-- can be a good as a starting point, careful to avoid a lock-in
-- they have limitations, namely ...
-- `repo2docker`, `dockter`, `containerit`
-- these are useful if you don't need very specific versions etc. and for specific use cases, but sometimes requires a specific project structure (PyPI `requirements.txt`) or reproducible document (R Markdown file)
-
 
 # Example Dockerfiles
 
