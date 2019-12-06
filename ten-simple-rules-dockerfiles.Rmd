@@ -134,7 +134,7 @@ If you need to built smaller containers, consider a `busybox` base or a multi-st
 Smaller images often are indicated by having `slim` or `minimal` as part of the tag.
 Also take into account the libraries that you actually need.
 Base images that have complex software installed (e.g. machine learning libraries, specific BLAS library) are helpful and fine to use.
-To not rely on a third party or other individual to maintain the recipe and container, you should copy the Dockerfile to your own repository, and also provide a deployment for it via your own automated build. 
+If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the Dockerfile to your own repository, and also provide a deployment for it via your own automated build. 
 Trusting that the third party `Dockerfile` will persist for your analyses is a risky thing to do.
 For the new user, a potential list of existing communities with regular builds and updates includes:
 
