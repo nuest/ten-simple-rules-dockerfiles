@@ -234,7 +234,7 @@ The reproducibility of your `Dockerfile` is heavily dependent on how well you de
 **system libraries**
 
 System library versions can largely come from the base image tag that you choose to use (e.g., `ubuntu:18.04`) however, you can also install specific versions of system packages with the respective package manager. 
-This practice is called version pinning (e.g., on apt on apt: https://blog.backslasher.net/my-pinning-guidelines.html).
+This practice is called version pinning (e.g., on apt: https://blog.backslasher.net/my-pinning-guidelines.html).
 Version pinning is good practice if the version is relevant.
 For example, you might want to demonstrate a bug, prevent a bug in an updated version, or pin a working version if you suspect an update could lead to a problem.
 Generally, system libraries are more stable than software modules supporting analysis scripts, but in some cases they can be highly relevant to your workflow.
