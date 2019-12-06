@@ -285,7 +285,7 @@ RUN pip install -r requirements.txt
 
 The addition of data or code into the container using `ADD`/`COPY` is highly dependent on your use case. 
 For example, small data files and software that is essential for the function of a container to distribute a reproducible analysis is essential to add. 
-However, if the container is intended to be used as an interactive environment, you should refain from adding it to the container, and instead bind the files from the outside of the container. 
+However, if the container is intended to be used as an interactive environment, you should refrain from adding it to the container, and instead bind the files from the outside of the container. 
 This also ensures that data persists when the container instance or image is removed from your system. 
 When you do this, in the case that you will likely save as a root user from inside the container, you should be careful about file permissions. 
 To avoid problems when mounting, Docker has provided a `--user` option that you should use. 
