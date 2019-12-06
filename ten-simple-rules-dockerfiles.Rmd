@@ -344,7 +344,7 @@ Examples of build arguments that are useful to include to describe a container a
 
 # 7. Enable interactive usage and one-click execution {-}
 
-The success of a container can sometimes come down to how well it exposes it's usage and software to the user: a function that comes down to the `CMD` and `ENTRYPOINT`.
+The success of a container can sometimes come down to how well it exposes its usage and software to the user: a function that comes down to the `CMD` and `ENTRYPOINT`.
 By using `CMD` and `ENTRYPOINT`, you can use automated and manual testing to ensure that it is possible to run the container interactively _and_ given that execution is done incorrectly or has an error, a suitable help or error message is shown to assist the user.
 A possible weakness with using containers is the limitation on only providing one entrypoint, however tools (e.g., The Scientific Filesystem REF academic.oup.com/gigascience/article/7/5/giy023/4931737) have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
 It's considered good practice to have an entrypoint that meets the user expectations. 
