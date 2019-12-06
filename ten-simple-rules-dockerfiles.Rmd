@@ -406,7 +406,7 @@ After a prune is performed, it would follow naturally to rebuild a container for
 In the case of needing more setup or configuration than building the container, it's good practice to provide a `Makefile` alongside your container.
 You generally should not rely on undocumented steps or manual, extra commands to be run on the local machine.
 A fully scripted configuration makes it easier for both you and future users, and can increase trust in your workflow.
-Finally, for a sanity check it can be helpful to ask a colleague to interact with your workflow or container.
+Finally, for a sanity check it can be helpful to ask a colleague to interact with your workflow or container on a machine of their own.
 
 <!-- I don't understand how these points fit in here-->
 in your regular work, it is the only way to make sure it is really stable (cf. Marwick's "this container is the only way I have ever run this workflow")
