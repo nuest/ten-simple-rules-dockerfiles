@@ -423,7 +423,7 @@ To demonstrate the 10 rules, we have a git repository with example `Dockerfile`s
 
 # Conclusion {#conclusion .unnumbered}
 
-Reproducibility in research is an endeavour of best efforts, not about achieving the perfect solution, as that is probably not achievable or changing over time.
+Reproducibility in research is an endeavour of best efforts, not about achieving the perfect solution, which may be not achievable or the definition of which may change over time.
 This article provides guidance for using `Dockerfile`s in computational/computer-based research to work towards a "time capsule" (see https://twitter.com/DougBlank/status/1135904909663068165?s=09) which, given some expertise and the right tools, can be used to come as close as possible to the original workflow.
 Even if such a capsule decays over time, the effort to create it provides incredibly useful and valuable transparency for the project.
 The effort should also be valued by others and may change the way scholars collaborate and communicate (cf. notion of "preproducibility" by @stark_before_2018)
