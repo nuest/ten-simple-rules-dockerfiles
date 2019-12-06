@@ -220,7 +220,7 @@ A recommended ordering based on this metric might be:
   5. `RUN`/`ENTRYPOINT`
 
 Finally, as a supplement to content inside the `Dockerfile`, it's good practice to also write a section in a README alongside the Dockerfile for exactly how to build, run, and otherwise interact with the container. 
-If a pre-build image is provided on Docker Hub, you should direct the user to it.
+If a pre-built image is provided on Docker Hub, you should direct the user to it.
 
 <!-- not sure how the below fits in, moving down here for someone else to address-->
 - modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?) <!--I don't understand this point-->
