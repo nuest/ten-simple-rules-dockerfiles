@@ -259,7 +259,7 @@ As an example, here are configuration files supported by commonly used languages
   - JavaScript: `package.json` of `npm`
 
 In all of the above, the user would be required to inspect the file or the build to see what is installed. 
-In some cases (e.g., conda) the package manager is also able to make decisions about versions to install, which is likely to lead to a non-reproducible build.
+In some cases (e.g., conda) the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
 For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile`.
 For example, the `RUN` statement here:
 
