@@ -72,8 +72,8 @@ To build Docker containers, we write text files that follow a particular format 
 While Docker was the original technology to support this format, other container technologies have developed around the format (and thus support it) including: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
 The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker containers directly from a Docker registry. 
 Although the Singularity recipe format is different, the rules here are transferable to some extent.
-While some may argue for reasons to not publish reproducibly (lack of time & incentives and unfittingness for a researcher's workflow, cf. [@boettiger_introduction_2015]) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker container should become an increasingly easier task for the average researcher.
-If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of [@marwick_madjebebe_2015]). 
+While some may argue for reasons to not publish reproducibly (lack of time & incentives and unfittingness for a researcher's workflow, cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker container should become an increasingly easier task for the average researcher.
+If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015). 
 In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 Importantly, the researcher should clearly state the platforms (by way of one or more Docker containers) have been tested on.
 
@@ -99,7 +99,7 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 The resulting container image would install the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to easily interact with any existing workflows in the repository.
 A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself wouldn't be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
 For this reason, it's good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
-It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses, if relevant.
+It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses (see Rule~6).
 The container should be built to be optimized for its use case, whether it is intended to be shared or used by a single user.
 
 Further assisting tools are `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
@@ -126,7 +126,7 @@ A tag like `latest` is good in that security fixes and updates are likely presen
 Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
 As an example, the Python container on Docker Hub will be released with new versions of Python.
 If you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
-In this case, a tag like `python:3.5` might be a good choice, where the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes that won't break your code, i.e., changes that are backwards compatible, are applied (cf. semantic versioninig, [@preston-werner_semantic_2013]).
+In this case, a tag like `python:3.5` might be a good choice, where the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes that won't break your code, i.e., changes that are backwards compatible, are applied (cf. semantic versioning, [@preston-werner_semantic_2013]).
 When you choose a base image, choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
 As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.
 Especially when data is involved, containers can grow quickly in size, and you should keep this in mind.
@@ -150,7 +150,7 @@ For example, here is how we would use a base image `r-ver` with tag `3.5.2` from
 FROM rocker/r-ver:3.5.2
 ```
 
-# 3. Use formatting and favor clarity
+# 3. Use formatting, document within, and favor clarity
 
 It's good practice to think of the `Dockerfile` as being human _and_ machine readable. 
 This means that you should use indentation, newlines, and comments to make your `Dockerfile`s well documented and give them readability.
@@ -207,8 +207,11 @@ RUN R -e 'getOption("repos")' && \
 
 Clarity is always more important than brevity.
 For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production Dockerfiles aiming at small image size, you should keep the script in the container for a future user to inspect.
-Generally, try to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
+Depending on the used programming language, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
+This is a very good practice and helpful, though you should cautiously consider the externalisation of content to outside of the Dockerfile (see Rule 4).
+A long Dockerfile with secions and helpful comments can be complete and thus more understandable than a collection of files.
 
+Generally, try to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
 If a `RUN` statement is longer than a page and requires scrolling, this may be challenging for the next reader to digest, and you should consider splitting it up into several.
 When you install several system libraries, it's good practice to add comments about why the dependencies are needed. 
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed.
@@ -253,58 +256,49 @@ Most package managers have a client (CLI) interface that can easily be used from
 The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration to file formats that are supported. 
 As an example, here are configuration files supported by commonly used languages in scientific programming:
 
-  - Python: `requirements .txt`, `xxx.yml` (Conda)
-  - R: `DESCRIPTION`
-  - Java: `mvn.xml`
-  - JavaScript: `package.json` of `npm`
+- Python: `requirements.txt` (pip tool, @the_python_software_foundation_requirements_2019), `environment.yml` (Conda, @continuum_analytics_managing_2017)
+- R: `DESCRIPTION` file format [@r_core_team_description_1999] and `r` ("littler", @eddelbuettel_littler_2019)
+- JavaScript: `package.json` of `npm` [@npm_creating_2019]
+- Julia: `Project.toml` and `Manifest.toml` [@julia_tomls_2019]
 
-In all of the above, the user would be required to inspect the file or the build to see what is installed. 
-In some cases (e.g., conda) the package manager is also able to make decisions about versions to install, which is likely to lead to a non-reproducible build.
-For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile`.
+In all of the above, the user is required to inspect the file or the build to see what is installed.
+In some cases (e.g., Conda) the package manager is also able to make decisions about versions to install, which is likely to lead to a non-reproducible build.
+For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see Rule 3).
+
 For example, the `RUN` statement here:
 
 ```bash
 RUN pip install geopy==1.20.0 && \
     pip install uszipcode==0.2.2
 ```
-serves as more clear documentation in a `Dockerfile` than a requirements.txt file that lists the same:
+serves as more clear documentation in a `Dockerfile` than a `requirements.txt` file that lists the same:
 
 ```bash
 RUN pip install -r requirements.txt
 ```
 
-<!--Note from @vsoch - I think having the formats for each is out of scope, maybe instead just link to documentation for each, we wouldn't do good justce to explain in detail here-->
-- how to do in Python (`== x.y.z`)
-- do it in R with `versions` package, or by using MRAN (e.g. via `r-ver` image)- JavaScript?
-- Julia: `add Package@1.0` > https://julialang.github.io/Pkg.jl/v1/managing-packages/#Adding-packages-1
-- Use common command-line ready installation commands of programming languages
-  - better readbiliy, potentially even performance (`RUN install2.r sp` instead of `RUN R -e "install.packages('sf')"`, although the latter is "base R")
+This modularisation is a potential risk for understandability and consistency (cf. Rule 3), which can be mitigated by putting all these files in the same version-controlled project and their conscious usage.
+The version pinning capabilities of these file formats are described in the respective documentations.
 
-  
 # 5. Mount data and control code {-}
 
-The addition of data or code into the container using `ADD`/`COPY` is highly dependent on your use case. 
-For example, small data files and software that is essential for the function of a container to distribute a reproducible analysis is essential to add. 
-However, if the container is intended to be used as an interactive environment, you should refain from adding it to the container, and instead bind the files from the outside of the container. 
-This also ensures that data persists when the container instance or image is removed from your system. 
-When you do this, in the case that you will likely save as a root user from inside the container, you should be careful about file permissions. 
-To avoid problems when mounting, Docker has provided a `--user` option that you should use. 
-Without this option, there can be unexpected issues with permissions. 
-For example, writing a new file from inside the container will be owned by user "root" on your host. In that many applications generate log and other output files during runtime, be cautious about what volumes are bound to the host.
+Do not put data and workflow configuration or code only into the container.
+It is better to _bind_, or _mount_, these files from the host machine into the container, and using the container image primarily for the software and dependencies that are not specific to the project at hand.
+This is especially the case if the container is intended to be used as an interactive environment.
+This ensures that data persists when the container instance or image is removed from your system.
+When publishing your workspace, e.g. on Zenodo, having the crucial content as regular files outside of the container makes them more accessible to others, for example for reuse by researchers or analysis by preservationists.
+Be cautious about what volumes are bound to the host, because many applications generate log and other output files during runtime.
+
+How you bind external resources into the container should be included in the example commands (see Rule 3).
+In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
+For example, by default writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
+
+Only in specific cases is it feasible to add data or code into the container using `ADD`/`COPY`. 
+For example, small data files and software that is essential for the function of a container to distribute a reproducible analysis is essential to add.
+If (part of) the software developed for a specific analysis is published as a proper package you should follow Rule~4 for installing it from a public repository, but may install it from source after copying it into the image.
 The other logical case to bind mount code is when your data is very large (usually over hundreds of GB) or has limited access. 
-For example, a private dataset with personal health information (PHI) should never be added to a container. 
+For example, a private dataset with personal health information should never be added to an image. 
 In these cases, you should provide clear instructions to the user in the README for how to obtain actual or dummy data.
-
-<!-- Not sure how these fit in-->
-- easier access, does not require Docker knowledge by third parties to reause code and data
-- if you have a "stable" published software library, install it from source from the source code repo or from the software repository (so that users find the project in the future)
-- how to mount the data can be put in the example commands (see 4.)
-
-```
-docker run --volume ...
-```
-
-<!-- End not sure how these fit in -->
 
 # 6. Capture environment metadata {-}
 
@@ -312,35 +306,29 @@ Labels and build arguments can be very helpful to both provide metadata and allo
 
 ## Labels
 
-Labels serve as structured metadata that can be exposed by APIs (e.g., https://microbadger.com/labels) along with tools to inspect the container binaries (e.g., `docker inspect`).
+Labels serve as structured metadata that can be exposed by APIs, e.g., https://microbadger.com/labels, along with tools to inspect the container binaries, e.g., `docker inspect`.
 Namespaced conventions have been developed (http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec) to help standardize across container tools.
-Important metadata attributes to include as labels would include any of the following:
+Important metadata attributes to include as labels would include any of the following, ideally with globally unique identifiers:
 
- - Research organizations (https://ror.org/)
- - Funding agency/grant number
- - DOI of research compendium
- - Author DOIs (e.g., Zenodo or other)
- - repository link where Dockerfile is published
- - author (`MAINTAINER` is deprecated) and contact (e.g. email, project website)
- - license
+- Author and contact (e.g. email, project website; identified by a DOI; you will often see the deprecated `MAINTAINER` instruction - use a label instead
+- Research organizations (identified with https://ror.org/)
+- Funding agency/grant number
+- A repository link where Dockerfile is published, e.g. a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your Dockerfile before publishing the record
+- License
 
 There are several projects (https://codemeta.github.io/, https://citation-file-format.github.io/) focused around metadata citation, and you should consider using one if it seems appropriate for your use case.
 
 ## Build arguments
 
-Build arguments can provide metadata and also allow for customization of a build.
-As an example, the following build argument would default to `1.0.0` but allow the user to change it with `--build-arg MYVERSION=2.0.0`
+Build arguments can provide more dynamic metadata and also allow for customization of a build.
+As an example, the following build argument would default to `1.0.0` but allow you to change it with `--build-arg MYVERSION=2.0.0` when building the image:
 
 ```
 ARG MYVERSION=1.0.0
 ```
 
-Along with specifying versions, environment, or timestamp, build arguments can be useful to provide the context of the build (e.g., production, development, automated or not).
+Along with specifying versions, e.g., a git commit hash, or adding a date and timestamp, build arguments can be useful to provide the context of the build, e.g., building user, production versus development environment, and automated or not.
 Examples of build arguments that are useful to include to describe a container are:
-
-  - git commit hash
-  - date and timestamp
-
 
 # 7. Enable interactive usage and one-click execution {-}
 
@@ -354,26 +342,24 @@ A workflow that does not support headless execution is arguably not ideal for a 
 Using a browser to expose a user interface (e.g, RStudio, Jupyter, web tools) on a particular port is a commonly done practice, and for systems without native `x11` support, `x11docker` is recommended [REF].
 Otherwise, you would need to clearly document how the user can start and control the graphical interfaces provided inside.
 However, headless execution is ideal in that it can be tested headlessly, either by starting or interacting with the container and checking for successful responses (e.g., 200) from endpoints provided, or by using a controller such as Selenium [REF].
-To support both "one click execution" and to allow for custom configuration, it's helpful to provide users with a configuration file, or allow for settings to be expressed via environment variables  [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018]
+To support both "one click execution" and to allow for custom configuration, it's helpful to provide users with a configuration file, or allow for settings to be expressed via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
 
-<!-- This is out of scope for this section, and redundant, I would remove it-->
-- may also use the same `Dockerfile` for different purposes, e.g. include an app (e.g. Shiny) for interactive use by user
-- see also Rule 7: Build a pipeline in @rule_ten_2019
-- _what user should run within the Dockerfile?_ 
-<!-- End out of scope-->
+# 8. Establish templates for new projects {-}
 
-<!-- SUGGESTION for rule 8 instead of redundant comments with build commands - be about having a workflow to start a new project-->
-# 8. Establish templates for new projects
-
-It's likely going to be the case that you develop interactive environments, servers, or workflows that are similar in nature.
+It's likely going to be the case that you develop workflows that are similar in nature.
 In this case, you should consider adopting a standard workflow that will give you a clean slate for a new project.
-As an example, cookie cutter templates (e.g., https://github.com/cookiecutter/cookiecutter) and project starter kits can provide files, directory organization, and build instructions that include basic steps for getting started.
+If you decide to build your own standard, share it openly with your community to collaborate on making it better.
+
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g. [@marwick_rrtools_2019]) can provide files, directory organization, and build instructions that include basic steps for getting started.
 A good project template should get you started with a template for documentation, setting up testing via continuous integration, building a container, and even choosing a license.
-In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time.
-It also must be noted that developing or working on projects with containers, period, allows you to easily switch between isolated project environments.
-At most, if a port is shared by two projects, you would simply need to stop the container and restart when you are ready to work again.
-In the case of more complex web applications that require application and web servers, databases, and workers or messenging, the entire infrastructure can easily be brought up or down with a tool like `docker-compose` [REF].
-`docker-compose` also allows definition of services via it's own `docker-compose.yml`, ranging from mounted volumes, to permissions, environment, and ports.
+In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.
+It also must be noted that developing or working on projects with containers, allows you to easily switch between isolated project environments by stopping the container and restart it when you are ready to work again, even on another machine or in a cloud environment.
+You can even run projects in parallel without interference.
+At most, if a port is shared by two projects to expose a user interface in the browser, you would need to configure unconflicting ports.
+
+In the case of more complex web applications that require application and web servers, databases, and workers or messenging, the entire infrastructure can easily be brought up or down with an orchestration tool like `docker-compose` [@docker-compose_2019].
+`docker-compose` also allows definition of services using multiple containers via it's own `docker-compose.yml` file.
+The options range from mounted volumes, to permissions, environment variable, to exposed ports.
 Part of this project template should be a protocol for publishing the container image to a suitable container registry, and taking into consideration of how the code can be given a DOI or proper publication (e.g., Zenodo, Journal of Open Source Software).
 
 # 9. Publish a Dockerfile per project in a code repository with version control {-}
@@ -386,10 +372,7 @@ Version control providers (e.g., GitHub, GitLab) also make it easy to connect to
 While it's not always possible to keep datasets alongside code, in the case of smaller ones, it can be very useful to keep your `Dockerfile` alongside both the code and data (cf. research compendium concept?).
 While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's generally a simple and clear approach to provide one Dockerfile per project.
 If you find that you need to provide more than one, consider if it's possible to use build arguments to flip between states (e.g., development vs. production) or if it's possible to separate tools into different repositories.
-In fact, using and publishing a `Dockerfile` to create a container has been shown to increase chances of preservation of your work (cf. @emsley_framework_2018)
-
-<!-- Not sure how these fit in-->
-Consult Ten Simple Rules paper by Perez-Riverol et al. [@perez-riverol_ten_2016]
+In fact, using and publishing a `Dockerfile` to create a container has been shown to increase chances of preservation of your work (cf. @emsley_framework_2018).
 
 # 10. Use the container daily, rebuild the image weekly {-}
 
@@ -415,11 +398,9 @@ in your regular work, it is the only way to make sure it is really stable (cf. M
   - avoid an untidy laboratory in practice behind a shiny appearance of a `Dockerfile`
   - you can install interactive UIs as part of the Dockerfile and use them just like Desktop UIs (Jupyter, RStudio, use )
 
-<!-- I'm not sure how this fits in, should these tools be mentioned above when we talk about repo2docker?-->
-
 # Example Dockerfiles
 
-To demonstrate the 10 rules, we have a git repository with example `Dockerfile`s, some of which we took from public repositories and updated to adhere to the rules (`Dockerfile.before` and `Dockerfile.after`).
+To demonstrate the 10 rules, we have a git repository with example `Dockerfile`s, some of which we took from public repositories and updated to adhere to the rules (see `Dockerfile.original`).
 
 # Conclusion {#conclusion .unnumbered}
 
@@ -434,7 +415,7 @@ Together you can develop common practices and shared images for higher transpare
 
 # Acknowledgements {#acknowledgements .unnumbered}
 
-o2r by DFG
+DN is supported by the project Opening Reproducible Research II (\href{https://o2r.info/}{https://o2r.info/}; \href{https://www.uni-muenster.de/forschungaz/project/12343}{https://www.uni-muenster.de/forschungaz/project/12343}) funded by the German Research Foundation (DFG) under project number PE 1632/17-1.
 
 # Contributions {#contributions .unnumbered}
 
