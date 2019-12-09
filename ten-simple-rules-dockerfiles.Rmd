@@ -396,7 +396,7 @@ Consult Ten Simple Rules paper by Perez-Riverol et al. [@perez-riverol_ten_2016]
 A container that is not regularly rebuilt risks not getting essential security updates, and serving as a risk for its users.
 If you are using a container built by a `Dockerfile` regularly in your work, it's recommended to set up continuous deployment, or a strategy to ensure that the container is regularly built and tested.
 While there is no hardened rule, it would be good practice to rebuild a container every once or two weeks that you use on a daily basis.
-In an idealistic world, containers that we built years ago should rebuild seamlessly, but this isn't neessarily the case, especially with rapidly changing technology relevant to machine learning and data science.
+In an idealistic world, containers that we built years ago should rebuild seamlessly, but this isn't necessarily the case, especially with rapidly changing technology relevant to machine learning and data science.
 It can almost be guaranteed that the longer that you wait to recompile the image, the harder it will become.
 If you are using an interactive container and find that you need to manually installed a package or change a parameter, it would be best practice to add this dependency to the container and rebuild it.
 If the container is linked to an automated build provided by a version control service, simply pushing the `Dockerfile` to the service can easily trigger the build.
