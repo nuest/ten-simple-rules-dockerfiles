@@ -365,11 +365,11 @@ To support both "one click execution" and to allow for custom configuration, it'
 <!-- SUGGESTION for rule 8 instead of redundant comments with build commands - be about having a workflow to start a new project-->
 # 8. Establish templates for new projects
 
-It's likely going to be the case that over time you will develop interactive environments, servers, or workflows that are similar in nature to each other.
+It's likely going to be the case that over time you will develop interactive environments, servers, or workflows that are similar in nature to one another.
 In this case, you should consider adopting a standard workflow that will give you a clean slate for a new project.
 As an example, cookie cutter templates (e.g., https://github.com/cookiecutter/cookiecutter) and project starter kits can provide files, directory organization, and build instructions that include basic steps for getting started.
 A good project template should get you started with a template for documentation, setting up testing via continuous integration, building a container, and even choosing a license.
-In the case of using a common `Dockerfile` or base, Docker's build cacheing will take shared lines into account and speed up build time.
+In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time.
 It also must be noted that developing or working on projects with containers, period, allows you to easily switch between isolated project environments.
 At most, if a port is shared by two projects, you would simply need to stop the container and restart when you are ready to work again.
 In the case of more complex web applications that require application and web servers, databases, and workers or messenging, the entire infrastructure can easily be brought up or down with a tool like `docker-compose` [REF].
