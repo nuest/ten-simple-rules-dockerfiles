@@ -138,13 +138,14 @@ To not rely on a third party or other individual to maintain the recipe and cont
 Trusting that the third party `Dockerfile` will persist for your analyses is a risky thing to do.
 For the new user, a potential list of existing communities with regular builds and updates includes:
 
-  - [Rocker](https://www.rocker-project.org/) for R [@boettiger_introduction_2017]
-  - [Docker containers for Bioconductor](https://bioconductor.org/help/docker/) for bioinformatics
-  - [NeuroDebian images](https://hub.docker.com/_/neurodebian) for neuroscience [@halchenko_open_2012]
-  - [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html for Notebook-based computing
-  - [Taverna Server](https://hub.docker.com/r/taverna/taverna-server) for running Taverna workflows
+- [Rocker](https://www.rocker-project.org/) for R [@boettiger_introduction_2017]
+- [Docker containers for Bioconductor](https://bioconductor.org/help/docker/) for bioinformatics
+- [NeuroDebian images](https://hub.docker.com/_/neurodebian) for neuroscience [@halchenko_open_2012]
+- [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html for Notebook-based computing
+- [Taverna Server](https://hub.docker.com/r/taverna/taverna-server) for running Taverna workflows
 
-For example, here is how we would use a base image `r-ver` with tag `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`)
+For example, here is how we would use a base image `r-ver` with tag `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`).
+
 ```
 FROM rocker/r-ver:3.5.2
 ```
@@ -215,25 +216,22 @@ If you intend to build the image more than once (perhaps during development) and
 You should list commands _in order_ of least likely to change to most likely to change and use the `--no-cache` flag to force a re-build of all layers.
 A recommended ordering based on this metric might be:
 
-  1. system libraries
-  2. language-specific libraries or modules
-    1. from repositories (binaries)
-    2. from source
-  3. own software/scripts (if not mounted)
-  4. labels
-  5. `RUN`/`ENTRYPOINT`
+1. system libraries
+2. language-specific libraries or modules
+  1. from repositories (binaries)
+  2. from source
+3. own software/scripts (if not mounted)
+4. labels
+5. `RUN`/`ENTRYPOINT`
 
 Finally, as a supplement to content inside the `Dockerfile`, it's good practice to also write a section in a README alongside the Dockerfile for exactly how to build, run, and otherwise interact with the container. 
 If a pre-build image is provided on Docker Hub, you should direct the user to it.
-
-<!-- not sure how the below fits in, moving down here for someone else to address-->
-- modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?) <!--I don't understand this point-->
 
 # 4. Pin versions {-}
 
 The reproducibility of your `Dockerfile` is heavily dependent on how well you define versions for dependencies inside.
 
-**system libraries**
+## System libraries
 
 System library versions can largely come from the base image tag that you choose to use (e.g., `ubuntu:18.04`) however, you can also install specific versions of system packages with the respective package manager. 
 This practice is called version pinning (e.g., on apt on apt: https://blog.backslasher.net/my-pinning-guidelines.html).
@@ -243,11 +241,11 @@ Generally, system libraries are more stable than software modules supporting ana
 _Installing from source_ is a useful way to install very specific versions, however it comes at the cost of needing build libraries.
 Here is how you might go about listing the currently installed versions of software on your system:
 
-  - Debian/Ubuntu: `dpkg --list`
-  - Alpine: `apk -vv info|sort`
-  - CentOS: `yum list installed` or `rpm -qa`
+- Debian/Ubuntu: `dpkg --list`
+- Alpine: `apk -vv info|sort`
+- CentOS: `yum list installed` or `rpm -qa`
 
-**extension packages and programming language modules**
+## Extension packages and programming language modules
 
 In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
 Package managers generally provide reliable mirrors or endpoints to download software, and many packages are tested before release.
@@ -312,7 +310,7 @@ docker run --volume ...
 
 Labels and build arguments can be very helpful to both provide metadata and allow for customization of a build.
 
-- **labels**
+## Labels
 
 Labels serve as structured metadata that can be exposed by APIs (e.g., https://microbadger.com/labels) along with tools to inspect the container binaries (e.g., `docker inspect`).
 Namespaced conventions have been developed (http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec) to help standardize across container tools.
@@ -328,7 +326,7 @@ Important metadata attributes to include as labels would include any of the foll
 
 There are several projects (https://codemeta.github.io/, https://citation-file-format.github.io/) focused around metadata citation, and you should consider using one if it seems appropriate for your use case.
 
-- **build arguments**
+## Build arguments
 
 Build arguments can provide metadata and also allow for customization of a build.
 As an example, the following build argument would default to `1.0.0` but allow the user to change it with `--build-arg MYVERSION=2.0.0`
@@ -425,15 +423,14 @@ To demonstrate the 10 rules, we have a git repository with example `Dockerfile`s
 
 # Conclusion {#conclusion .unnumbered}
 
-Reproducibility in research is an endeavour of best efforts, not about achieving the perfect solution, as that is probably not achievable or changing over time.
-This article provides guidance for using `Dockerfile`s in computational/computer-based research to work towards a "time capsule" (see https://twitter.com/DougBlank/status/1135904909663068165?s=09) which, given some expertise and the right tools, can be used to come as close as possible to the original workflow.
+Reproducibility in research is an endeavour of best efforts, not about achieving the perfect solution, as that is probably not achievable or even changing over time.
+This article provides guidance for using `Dockerfile`s in computational/computer-based research to work towards a "time capsule" [@blank_twitter_2019] which, given some expertise and the right tools, can be used to come as close as possible to the original workflow with reasonably small efforts.
 Even if such a capsule decays over time, the effort to create it provides incredibly useful and valuable transparency for the project.
-The effort should also be valued by others and may change the way scholars collaborate and communicate (cf. notion of "preproducibility" by @stark_before_2018)
-So please, don't go insane with writing `Dockerfile`s, but be realistic about what might break and what is unlikely to break, and make a best effort.
-In a similar vein, these rules may be broken if another way works better for _your use case_.
-The rules in this article help you mastering the `Dockerfile` format for research and provide a solid basis for engaging in more complex but also in simpler assisted usage of containers (cf. Box: Aumatic Generation).
-Corner cases aside, share and exchange your `Dockerfile` freely and collaborate in your community to spread the knowledge about containers as a tool for research.
-Together you can develop common practices or even shared base images (exemplified by communities listed in Rule 1).
+The author's work should also be valued by others and may change the way scholars communicate (cf. notion of "preproducibility" by @stark_before_2018).
+So please, don't go insane with writing `Dockerfile`s, but be realistic about what might break and what is unlikely to break, and make a best effort with your current knowledge.
+In a similar vein, the rules may be broken if another way works better _for your use case_.
+Most importantly, share and exchange your `Dockerfile` freely and collaborate in your community to spread the knowledge about containers as a tool for research and scholarly collaboration and communication.
+Together you can develop common practices and shared images for higher transparency, better effectivity, and faster innovation.
 
 # Acknowledgements {#acknowledgements .unnumbered}
 
