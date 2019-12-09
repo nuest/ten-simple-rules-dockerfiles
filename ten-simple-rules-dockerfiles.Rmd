@@ -157,6 +157,10 @@ Specifically, carefully indent commands and their arguments to make clear what b
 Use `\` to break a single command into multiple lines to ensure that no single line gets too long, and use long versions of parameters for readability (e.g., `--input` instead of `-i`).
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
 
+You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
+The consistency added by linting also helps keeping your edits to a Dockerfile under version control meaningful.
+Note however that a linter's rules may not primarily serve the intention of reproducible scientific workflows.
+
 As you are writing the `Dockerfile`, put yourself in the shoes of the next user of it.
 Are the choices made and commands being executed clear, or is further comment warranted?
 When appropriate, you can add links to discussion in version control, code repository issues, or comments about specific usage and decisions.
@@ -224,8 +228,6 @@ If a pre-build image is provided on Docker Hub, you should direct the user to it
 
 <!-- not sure how the below fits in, moving down here for someone else to address-->
 - modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?) <!--I don't understand this point-->
-- use a linter to follow common practices and consistency <!-- suggestion?? What linter do you have in mind?-->
-
 
 # 4. Pin versions {-}
 
