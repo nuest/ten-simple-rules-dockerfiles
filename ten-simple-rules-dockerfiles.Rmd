@@ -331,17 +331,60 @@ Examples of build arguments that are useful to include to describe a container a
 
 # 7. Enable interactive usage and one-click execution {-}
 
-The success of a container can sometimes come down to how well it exposes its usage and software to the user: a function that comes down to the `CMD` and `ENTRYPOINT`.
-By using `CMD` and `ENTRYPOINT`, you can use automated and manual testing to ensure that it is possible to run the container interactively _and_ given that execution is done incorrectly or has an error, a suitable help or error message is shown to assist the user.
-A possible weakness with using containers is the limitation on only providing one entrypoint, however tools (e.g., The Scientific Filesystem REF academic.oup.com/gigascience/article/7/5/giy023/4931737) have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
-It's considered good practice to have an entrypoint that meets the user expectations. 
-For example, a container known to be a workflow should execute the workflow, or spit out usage for how to do so.
-An interactive container should spin up an analysis environment, ensuring to print to the screen the ports that are being used (that need to be bound to the host) along with any login credentials needed.
-A workflow that does not support headless execution is arguably not ideal for a container, and you should consider switching tools. 
-Using a browser to expose a user interface (e.g, RStudio, Jupyter, web tools) on a particular port is a commonly done practice, and for systems without native `x11` support, `x11docker` is recommended [REF].
-Otherwise, you would need to clearly document how the user can start and control the graphical interfaces provided inside.
-However, headless execution is ideal in that it can be tested headlessly, either by starting or interacting with the container and checking for successful responses (e.g., 200) from endpoints provided, or by using a controller such as Selenium [REF].
-To support both "one click execution" and to allow for custom configuration, it's helpful to provide users with a configuration file, or allow for settings to be expressed via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
+Containers are very well suited for day-to-day development tasks (see also Rule&nbsp;10), because they support common interactive environments for data science and software development.
+But they are also useful for a "headless" execution of a full workflows, e.g. as demonstrated in [@verstegen_pluc_mozambique_2019].
+These two usages can be configured by the Dockerfile author and exposed to the user based on the Dockerfile's `CMD` and `ENTRYPOINT` instructions.
+It's considered good practice to have a combination of default command and entrypoint that meets the user expectations.
+For example, a container known to be a workflow should execute the workflow, or print out usage instructions.
+Since you are likely the primary user of the Dockerfile and image, so you should choose a selection or combination that works for you.
+A possible weakness with using containers is the limitation on only providing one default command and entrypoint.
+However tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
+With plain Docker, you can override the defaults as part of the `docker run` command or in an extra Dockerfile using the primary image as a base.
+In any case you should document different variants, if you choose to provide them, in a `Makefile` [@wikipedia_contributors_make_2019].
+To support both one click execution and interactive interfaces and even allow for custom configuration, it's helpful to expose settings via a configuration file which can be bound from the host, via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
+
+_Interactive graphical interfaces_ such as RStudio, Jupyter, or Visual Studio Code, can run in a container be used cross-platform via a regular web browser.
+The HTML-based user interface is exposed over HTTP.
+Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user.
+A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019], which can assisst with port mapping if the ports are properly defined in the image metadata.
+It should also print to the screen the used ports along with any login credentials needed.
+For example, as done in the last few lines of the output of running a Jupyter Notebook server locally.
+
+```{bash, eval=FALSE}
+docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
+```
+```
+[...]
+[I 15:44:31.323 NotebookApp] The Jupyter Notebook is running at:
+[I 15:44:31.323 NotebookApp] http://9027563c6465:8888/?token=6a92d5a638b948f36f9e7d66af20fb976dc4a0be547abb2e
+[I 15:44:31.323 NotebookApp]  or http://127.0.0.1:8888/?token=6a92d5a638b948f36f9e7d66af20fb976dc4a0be547abb2e
+[I 15:44:31.323 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+```
+
+_Interactive usage of a command-line interfaces_ (CLI) are quite straightforward to access from containers, if users are familiar with them.
+Running the container will provide a shell where a tool can be used and help or error messages can assist the user.
+For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
+If your workflow can be executed via a CLI you may use that to validate correct functionality of an image in automated builds, e.g. using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, e.g. via an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
+A workflow that does not at all support headless execution is arguably not reproducible and you should consider switching tools. 
+
+The followig example runs a simple R command using a setting passed as an environment variable and then exists.
+It uses the same Jupyter image as above.
+
+```{bash}
+docker run \
+  --env CONFIG_PARAM="/data/ten-simple-rules-dockerfiles.Rmd" \
+  --volume $(pwd):/data \
+  jupyter/datascience-notebook:7a0c7325e470 \
+  R --quiet -e "
+l = length(readLines(Sys.getenv('CONFIG_PARAM')));
+print(paste('Number of lines: ', l))
+"
+```
+
+If there is only a regular desktop application, the hosts window manager can be connected to the container.
+This has notable security implications, which are reduced by using the "X11 forwarding" natively supported by Singularity [@singularity_frequently_2019], which can execute Docker containers, or by leveraging supporting tools such as `x11docker` [@viereck_x11docker_2019].
+Bidge containers [@yaremenko_docker-x11-bridge_2019] and exposing a regular desktop via the browser (e.g., for Jupyter Hub [@yuvipanda_jupyter-desktop-server_2019]) are further alternatives.
+This variety of approaches render seemingly more convenient uncontainerised environments, i.e. just using the local machine, unneccessary in favour of reproducibility and portability.
 
 # 8. Establish templates for new projects {-}
 
