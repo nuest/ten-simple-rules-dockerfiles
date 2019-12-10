@@ -292,15 +292,32 @@ RUN pip install -r requirements.txt
 This modularisation is a potential risk for understandability and consistency (cf. Rule 3), which can be mitigated by putting all these files in the same version-controlled project and their conscious usage.
 The version pinning capabilities of these file formats are described in the respective documentations.
 
-# 5. Mount data and control code {-}
+# 5. Bind mount data and control code {-}
 
 Do not put data and workflow configuration or code only into the container.
 It is better to _bind_, or _mount_, these files from the host machine into the container, and using the container image primarily for the software and dependencies that are not specific to the project at hand.
 This is especially the case if the container is intended to be used as an interactive environment.
 This ensures that data persists when the container instance or image is removed from your system.
 When publishing your workspace, e.g. on Zenodo, having the crucial content as regular files outside of the container makes them more accessible to others, for example for reuse by researchers or analysis by preservationists.
-Be cautious about what volumes are bound to the host, because many applications generate log and other output files during runtime.
 
+You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [], including options, as shown in the following examples.
+If the target path exists in the image, the bind mount will replace it for the specific container.
+
+```
+# mount directory
+docker run --volume /home/user/project:/project mycontainer
+
+# mount directory as read-only
+docker run --volume /home/user/project:/project:ro mycontainer
+
+# mount directory with write access relative to current path (Linux)
+docker run --volume $(pwd)/inputdata:/data:rw mycontainer
+
+# mount directory relative to current path (MacOS)
+# mount directory relative to current path (Windows)
+```
+
+Be cautious about what volumes are bound to the host, because many applications generate log and other output files during runtime.
 How you bind external resources into the container should be included in the example commands (see Rule 3).
 In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
