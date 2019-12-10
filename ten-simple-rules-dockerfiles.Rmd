@@ -373,29 +373,41 @@ While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's genera
 If you find that you need to provide more than one, consider if it's possible to use build arguments to flip between states (e.g., development vs. production) or if it's possible to separate tools into different repositories.
 In fact, using and publishing a `Dockerfile` to create a container has been shown to increase chances of preservation of your work (cf. @emsley_framework_2018).
 
-# 10. Use the container daily, rebuild the image weekly {-}
+# 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 
-A container that is not regularly rebuilt risks not getting essential security updates, and serving as a risk for its users.
-If you are using a container built by a `Dockerfile` regularly in your work, it's recommended to set up continuous deployment, or a strategy to ensure that the container is regularly built and tested.
-While there is no hardened rule, it would be good practice to rebuild a container every once or two weeks that you use on a daily basis.
+Using containers for research workflows does not only require technical understanding, but also an awareness of risks that can only be answered by following a number of _habits_.
+While there is no hardened rule, it would be good practice to rebuild a container every once or two weeks that you use on a daily basis, and to save a copy of the image in a public data repository on publication of the research project.
+
+First, use your container every time you work on a project and not just as a final step during publication.
+If the container is the only platform you use, the confidence in proper documentation of the computing environment can be very high [@marwick_readme_2015].
+You should prioritize this usage over others, e.g., non-interactive execution of a full workflow, because it give you personally the highest value and does not limit your use (interactive development environments are possible, e.g. RStudio or Jupyter, even for normal desktop applications [@viereck_x11docker_2019]) or other's use of your data and code at all.
+A seemingly convenient uncontainerised computing environment puts reproducibility and portability at risk.
+
+Second, for reproducibility, we can adopt the intentions of the cattle vs. pets meme [@bias_history_2016] and not only be unattached to a particular container but even intentionally rebuild an image at regular intervals.
 In an idealistic world, containers that we built years ago should rebuild seamlessly, but this isn't necessarily the case, especially with rapidly changing technology relevant to machine learning and data science.
 It can almost be guaranteed that the longer that you wait to recompile the image, the harder it will become.
-If you are using an interactive container and find that you need to manually installed a package or change a parameter, it would be best practice to add this dependency to the container and rebuild it.
-If the container is linked to an automated build provided by a version control service, simply pushing the `Dockerfile` to the service can easily trigger the build.
-Docker images and layers can exhaust system resources, so it's good practice to regularly do `system prune --all` that will clean up stopped and unused containers, volumes, and networks. 
-If you want to regularly prune unused container resources, you might even consider adding a cron job [REF] to do it.
-After a prune is performed, it would follow naturally to rebuild a container for local usage, or to pull it again from a newly built registry image.
-In the case of needing more setup or configuration than building the container, it's good practice to provide a `Makefile` alongside your container.
-You generally should not rely on undocumented steps or manual, extra commands to be run on the local machine.
-A fully scripted configuration makes it easier for both you and future users, and can increase trust in your workflow.
-Finally, for a sanity check it can be helpful to ask a colleague to interact with your workflow or container on a machine of their own.
+If you are using an interactive container and find that you need to manually install a package or change a parameter, it would be best practice to add this dependency to the container and rebuild it rightaway, but one tends to take shortcuts.
+Therefore, a habitual deletion of a container and cache-less rebuild of the used image not only increase security due to updated underlying software, it most importantly lets you realise breaks through manual interference, i.e., changes to code or configuration not mirrored in the `Dockerfile`, or though software updates early.
+This way you are most likely to remember what you did. or to easily find documentation about breaking changes in used tools.
+This habit may be augmented by continuous deployment or CI strategies.
+If the container is linked to an automated build provided by a version control service, simply pushing the `Dockerfile` to the service can easily trigger the build and ideally a simple validating execution.
 
-<!-- I don't understand how these points fit in here-->
-in your regular work, it is the only way to make sure it is really stable (cf. Marwick's "this container is the only way I have ever run this workflow")
-- no showstopper for using UIs (web-based, e.g. Jupyter, RStudio, but also `x11docker`)
-- **Don't replicate environment configuration outside of the Dockerfile for convenience**
-  - avoid an untidy laboratory in practice behind a shiny appearance of a `Dockerfile`
-  - you can install interactive UIs as part of the Dockerfile and use them just like Desktop UIs (Jupyter, RStudio, use )
+In the case of needing setup or configuration for the first two habits, it's good practice to provide a `Makefile` [@wikipedia_contributors_make_2019] alongside your container, which can capture the specific commands.
+The effective usage of a `Makefile` also helps avoiding any undocumented steps or manual, extra commands to be run on the local machine.
+A fully scripted configuration makes it easier for both you and future users, and can increase trust in your workflow.
+
+Third, from time to time you can reduce the system resources occupied by Docker images and their layers or unused containers, volumes and networks by running `docker system prune --all`.
+After a prune is performed, it would follow naturally to rebuild a container for local usage, or to pull it again from a newly built registry image.
+This habit may even be automated with a cron job [@wikipedia_contributors_cron_2019].
+
+Fourth, you may export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a real snapshot of the _actual_ environment you used at a specific point in time.
+You should include instructions how to import and run the workflow based on the image archive.
+Depositing the image with other project files (data, code, `Dockerfile`) in a public repository makes them likely to be preserved.
+Applying proper preservation strategies (cf. [@emsley_framework_2018]) is probably beyond your grasp, but you could run import, run, and export the images once a year to make sure the export format still works with the then current version of Docker.
+The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow, e.g., updating versions of pinned dependencies (see Rule&nbsp;4).
+
+Finally, for a sanity check and even higher trust in the stability and documentation, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
+This you can do shortly before submitting your reproducible workflow to peer-review, so you are very well prepared for the future of scholarly communication and Open Science [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
 
 # Example Dockerfiles
 
