@@ -75,14 +75,16 @@ By following the _conventions_ layed out in these ten rules, authors ensure read
 Docker is a container technology that is widely adopted and supported on many platforms, and has become highly useful in science.
 They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware, and thus do not require the same system resources.
 To build Docker containers, we write text files that follow a particular format called `Dockerfile`s [@docker_inc_dockerfile_2019]. 
-`Dockerfile`s are machine- and human-readable recipes for creating containers.
+`Dockerfile`s are machine- and human-readable recipes for building images.
+These images can then be run as stateful containers, which can be stopped, restarted and purged`.
+
 While Docker was the original technology to support this format, other container technologies have developed around the format (and thus support it) including: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
 The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker containers directly from a Docker registry. 
 Although the Singularity recipe format is different, the rules here are transferable to some extent.
 While some may argue for reasons to not publish reproducibly (lack of time & incentives and unfittingness for a researcher's workflow, cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker container should become an increasingly easier task for the average researcher.
 If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015). 
 In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
-Importantly, the researcher should clearly state the platforms (by way of one or more Docker containers) have been tested on.
+Importantly, the researcher should clearly state the platforms (by way of one or more Docker containers) that a workflow has been tested on.
 
 # 1. Consider tools to assist with Dockerfile generation {-}
 
