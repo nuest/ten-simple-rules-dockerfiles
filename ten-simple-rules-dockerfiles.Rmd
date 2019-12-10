@@ -345,7 +345,7 @@ To support both one click execution and interactive interfaces and even allow fo
 
 _Interactive graphical interfaces_ such as RStudio, Jupyter, or Visual Studio Code, can run in a container be used cross-platform via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
-Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user.
+Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user using the `docker run` option `-p`/`--publish <host port>:<container port>`.
 A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019], which can assisst with port mapping if the ports are properly defined in the image metadata.
 It should also print to the screen the used ports along with any login credentials needed.
 For example, as done in the last few lines of the output of running a Jupyter Notebook server locally.
