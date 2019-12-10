@@ -46,22 +46,25 @@ csl: plos.csl
 
 With access to version control systems (VCS, @wikipedia_contributors_version_2019) and only collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the used software.
 The publication of these artefacts are a response to the increasing complexity of computer-based research, which is too complicated for "papers" to fully communicate the knowledge [@marwick_how_2015] but where the actual knowledge is the full software environment that produced a result [@donoho_invitation_2010].
-A research compendium is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
-Within such a compendium, it is suggested to include instructions for building containers to package software and data dependencies [@boettiger_introduction_2017].
-By way of providing these instructions along with thorough documentation and application of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], it's much more likely both the author and third parties are able to reproduce an analysis workflow.
-These instructions are human and machine readable and the containers built from them are portable encapsulated snapshots of a specific environment.
-For example, containers have been created to host scientific notebooks [@rule_ten_2019], and share reproducible workflows (cf. Rule 10 of @sandve_ten_2013).
+A _research compendium_ is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
+Within such a compendium, it is suggested to include instructions, i.e. a human- and machine-readable recipe, for buiding containers that capturw the computing environment, i.e., all software and data dependencies.
+By way of providing this recipe, authors of scientific articles greatly improve documentation and apply one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and third parties are able to reproduce an analysis workflow.
+The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
+Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows (cf. Rule 10 of @sandve_ten_2013).
 
 While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no extensive examination for how to write the actual instructions to create the containers.
 Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide any complexity from the researcher.
-While not everybody needs to understand and write Dockerfiles, as _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], the researchers who do need to craft their own environment definition should follow good practices.
-Such practices are not part of generic Docker tutorials and are not present in published Dockerfiles often used as templates.
-The differences between a helpful stable Dockerfile and one that is misleading, prone to failure, and contains potential obstacles, are not obvious, especially for researchers who don't have software development experience.
+Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes, even if the are not sure how the technology behin them actually works.
+Therefore researchers publishing a research compendium should craft their own definition of computing environments following good practices.
 
-While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019]. 
-The goal at hand is to write a `Dockerfile` so that it best facilitates interactive development and research as well as the higher goals of reproducibility and preservation. 
+While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
+Docker has been demonstrated as a very suitable tool for reproducible research (e.g., @boettiger_introduction_2017).
+The goal at hand is to write a `Dockerfile` so that it best facilitates interactive development and computer-based research as well as the higher goals of reproducibility and preservation of knowledge.
+Such practices are not part of generic containerisation tutorials and are not present in published Dockerfiles, which are often used as templates by novices.
+The differences between a helpful stable Dockerfile and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who don't have software development experience.
+
 A daily commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not an afterthought triggered by a scientific publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
-By following the _conventions_ layed out in these ten rules, authors ensure readability by others and ideally subsequent reuse and collaboration.
+By following the _conventions_ layed out in these ten rules, authors ensure readability by others and enable subsequent reuse and collaboration.
 
 ## Docker {#docker .unnumbered}
 
