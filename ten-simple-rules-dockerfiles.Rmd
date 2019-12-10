@@ -60,8 +60,8 @@ Therefore researchers publishing a research compendium should craft their own de
 While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
 Docker has been demonstrated as a very suitable tool for reproducible research (e.g., @boettiger_introduction_2017).
 The goal at hand is to write a `Dockerfile` so that it best facilitates interactive development and computer-based research as well as the higher goals of reproducibility and preservation of knowledge.
-Such practices are not part of generic containerisation tutorials and are not present in published Dockerfiles, which are often used as templates by novices.
-The differences between a helpful stable Dockerfile and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who don't have software development experience.
+Such practices are not part of generic containerisation tutorials and are not present in published `Dockerfile`s, which are often used as templates by novices.
+The differences between a helpful stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who don't have software development experience.
 
 We assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a single command.
 This execution should be able to be triggered by command-line instruction, which is possible for all generic programming languages and widely used workflow tools, but may also be opening and starting a process with a graphical user interface.
@@ -76,7 +76,9 @@ Docker is a container technology that is widely adopted and supported on many pl
 They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware, and thus do not require the same system resources.
 To build Docker containers, we write text files that follow a particular format called `Dockerfile`s [@docker_inc_dockerfile_2019]. 
 `Dockerfile`s are machine- and human-readable recipes for building images.
-These images can then be run as stateful containers, which can be stopped, restarted and purged`.
+They consist of a sequence of instructions, which add layers to the image.
+These layers can be used for caching across image builds.
+The images can then be run as stateful containers, which can be stopped, restarted and purged.
 
 While Docker was the original technology to support this format, other container technologies have developed around the format (and thus support it) including: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
 The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker containers directly from a Docker registry. 
@@ -88,8 +90,8 @@ Importantly, the researcher should clearly state the platforms (by way of one or
 
 # 1. Consider tools to assist with Dockerfile generation {-}
 
-Writing a Dockerfile from scratch is not that simple, and even "experts" sometimes take shortcuts.
-Thus, it's a good strategy to first look to tools that can help to generate a Dockerfile for you.
+Writing a `Dockerfile` from scratch is not that simple, and even "experts" sometimes take shortcuts.
+Thus, it's a good strategy to first look to tools that can help to generate a `Dockerfile` for you.
 Such tools have likely thought about and implemented good practices, and they may have added newer practices when reapplied at a later point in time.
 It's always a good practice to start with your specific use case.
 You would first want to determine if there is an already existing container that you can use, and in this case, use it and add to your workflow documentation instructions for doing so.
@@ -112,9 +114,9 @@ It's also recommended (if you are able) to add custom labels to your container b
 The container should be built to be optimized for its use case, whether it is intended to be shared or used by a single user.
 
 Further assisting tools are `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
-`containerit` automates the generation of standalone Dockerfiles for workflows in R.
-It can provide a starting point for users unfamiliar with writing Dockerfiles, or together with other R packages provide a full image creation and execution process without having to leave an R session.
-`dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable Dockerfiles compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
+`containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
+It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
+`dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
 
 However, in the case that a tool or interactive container environment is not available, or their capabilities to configure specific resources or install bespoke tools, you will likely need to write a `Dockerfile` from scratch.
 In this case, proceed with following the remaining rules to write your `Dockerfile`.
@@ -123,7 +125,7 @@ In this case, proceed with following the remaining rules to write your `Dockerfi
 
 It's good practice to use base images that are maintained by the Docker library.
 While some organizations can be trustworthy in terms of content, and reliable to update containers with security fixes (e.g., `rocker/r-ver`), for most individual accounts that build containers, it's likely that containers will not be updated regularly.
-It is even possible that images or Dockerfiles disappear.
+It is even possible that images or `Dockerfile`s disappear.
 Therefore a good understanding of how base images and image tags work is crucial, as the tag that you choose has implications for your container build.
 You should know how to use `FROM` statements to trace all the way up to the original container base, an abstract base called `scratch`.
 Doing this kind of trace is essential to be able to be aware of all of the steps that were taken to generate your container and who took them.
@@ -143,7 +145,7 @@ If you need to built smaller containers, consider a `busybox` base or a multi-st
 Smaller images often are indicated by having `slim` or `minimal` as part of the tag.
 Also take into account the libraries that you actually need.
 Base images that have complex software installed (e.g. machine learning libraries, specific BLAS library) are helpful and fine to use.
-If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the Dockerfile to your own repository, and also provide a deployment for it via your own automated build. 
+If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
 Trusting that the third party `Dockerfile` will persist for your analyses is a risky thing to do.
 For the new user, a potential list of existing communities with regular builds and updates includes:
 
@@ -169,17 +171,17 @@ Use long versions of parameters for readability (e.g., `--input` instead of `-i`
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
 
 You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
-The consistency added by linting also helps keeping your edits to a Dockerfile in a VCS meaningful (see Rule&nbsp;9).
+The consistency added by linting also helps keeping your edits to a `Dockerfile` in a VCS meaningful (see Rule&nbsp;9).
 Note however that a linter's rules may not primarily serve the intention of reproducible scientific workflows.
 
 As you are writing the `Dockerfile`, put yourself in the shoes of the next user of it.
 Are the choices made and commands being executed clear, or is further comment warranted?
 When appropriate, you can add links to online forums, code repository issues, or VCS commit message about specific usage and decisions.
-Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your Dockerfile is managed in a VCS (see Rule&nbsp;9).
+Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your `Dockerfile` is managed in a VCS (see Rule&nbsp;9).
 It can even be helpful to include comments about possibly more intuitive commands that did not work so you do not fall into the same trap twice.
 If you find that you need to remember an undocumented step, that's an indication that it should be documented.
 
-Labels are useful to provide a more structured form of documentation about software, especially for users of supporting infrastructure that might not expose the actual Dockerfile - see Rule&nbsp;6 for details.
+Labels are useful to provide a more structured form of documentation about software, especially for users of supporting infrastructure that might not expose the actual `Dockerfile` - see Rule&nbsp;6 for details.
 Comments should include helpful usage guides and links for readers inspecting the Dockerfile, including future you. 
 As an example, it's helpful to provide commented lines with `docker build` and `docker run` within the `Dockerfile` to show how to build and run the image.
 These comments can be especially relevant if volume mounts or ports are important for using the container, and by putting them at the end of the file, they are more likely to be seen, easy to copy paste after a container build, and to be in consistent state compared to documentation in another file.
@@ -214,14 +216,16 @@ RUN R -e 'getOption("repos")' && \
 ```
 
 Clarity is always more important than brevity.
-For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production Dockerfiles aiming at small image size, you should keep the script in the container for a future user to inspect.
+For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image size, you should keep the script in the container for a future user to inspect.
 Depending on the used programming language, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
-This is a very good practice and helpful, though you should cautiously consider the externalisation of content to outside of the Dockerfile (see Rule 4).
-A long Dockerfile with secions and helpful comments can be complete and thus more understandable than a collection of files.
+This is a very good practice and helpful, though you should cautiously consider the externalisation of content to outside of the `Dockerfile` (see Rule&nbsp;4).
+A long `Dockerfile` with secions and helpful comments can be complete and thus more understandable than a collection of files.
 
 Generally, try to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
-Each statement will result in a new layer, and reasonably grouped changes increase readability of the Dockerfile and facilitate inspection of the image, e.g. with tools like dive [@goodman_dive_2019].
-If a `RUN` statement is longer than a page and requires scrolling, this may be challenging for the next reader to digest, and you should consider splitting it up into several.
+Each statement will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g. with tools like dive [@goodman_dive_2019].
+A `RUN` statement longer than a page requires scrolling.
+This may be challenging for the next reader to digest and you should consider splitting it up, being aware of the extra layers added to the image.
+
 When you install several system libraries, it's good practice to add comments about why the dependencies are needed. 
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed.
 If you intend to build the image more than once (perhaps during development) and you can take advantage of build caching to avoid execution of time-consuming instructions, e.g., install from a remote resource or a file that gets cached.
@@ -236,7 +240,7 @@ A recommended ordering based on this metric might be:
 4. labels
 5. `RUN`/`ENTRYPOINT`
 
-Finally, as a supplement to content inside the `Dockerfile`, it's good practice to also write a section in a README alongside the Dockerfile for exactly how to build, run, and otherwise interact with the container. 
+Finally, as a supplement to content inside the `Dockerfile`, it's good practice to also write a section in a `README` alongside the `Dockerfile` for exactly how to build, run, and otherwise interact with the container. 
 If a pre-built image is provided on Docker Hub, you should direct the user to it.
 
 # 4. Pin versions {-}
@@ -336,7 +340,7 @@ Important metadata attributes to include as labels would include any of the foll
 - Author and contact (e.g. email, project website; identified by a DOI; you will often see the deprecated `MAINTAINER` instruction - use a label instead
 - Research organizations (identified with https://ror.org/)
 - Funding agency/grant number
-- A repository link where Dockerfile is published, e.g. a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your Dockerfile before publishing the record
+- A repository link where the `Dockerfile` is published, e.g. a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your `Dockerfile` before publishing the record
 - License
 
 There are several projects (https://codemeta.github.io/, https://citation-file-format.github.io/) focused on metadata citation, and you should consider using one if it seems appropriate for your use case.
@@ -392,7 +396,7 @@ Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use C
 If your `Dockerfile` includes an interactive user interface, you can also adapt it so that it is ready-to-use as a Binder [@jupyter_binder_2018], providing an online work environment to any user with a simple click of a link.
 Furthermore, the commit messages keep a record of notes alongside all changes to the file.
 
-While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's generally a simple and clear approach to provide one Dockerfile per project.
+While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
 If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see Rule&nbsp;6) or to separate tools into different repositories.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
