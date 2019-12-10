@@ -437,10 +437,11 @@ DN is supported by the project Opening Reproducible Research II (\href{https://o
 
 # Contributions {#contributions .unnumbered}
 
-DN conceived the idea, wrote the first darft, contributed to all rules.
-VS converted first draft bullet points into full sentences, contributed to all rules.
+DN conceived the idea, wrote the first darft, and contributed to all rules.
+VS wrote the first draft based on notes and contributed to all rules.
 SE contributed to the overall structure and selected rules.
-TH contributed to the rule structure and particularly rule 1.
-THi gave extensive feedback on an early draft.
+THe contributed to the rule structure and particularly rule&nbsp;1.
+THi gave extensive feedback on early drafts and contributed to the discussion.
+This articles was written collaboratively on GitHub, where all contributions in form of text or discussions comments are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
