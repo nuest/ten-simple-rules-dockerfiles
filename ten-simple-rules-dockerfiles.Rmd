@@ -44,7 +44,7 @@ csl: plos.csl
 
 # Introduction {#introduction .unnumbered}
 
-With access to version control systems and only collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the used software.
+With access to version control systems (VCS, @wikipedia_contributors_version_2019) and only collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the used software.
 The publication of these artefacts are a response to the increasing complexity of computer-based research, which is too complicated for "papers" to fully communicate the knowledge [@marwick_how_2015] but where the actual knowledge is the full software environment that produced a result [@donoho_invitation_2010].
 A research compendium is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
 Within such a compendium, it is suggested to include instructions for building containers to package software and data dependencies [@boettiger_introduction_2017].
@@ -159,13 +159,13 @@ Use `\` to break a single command into multiple lines to ensure that no single l
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
 
 You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
-The consistency added by linting also helps keeping your edits to a Dockerfile under version control meaningful.
+The consistency added by linting also helps keeping your edits to a Dockerfile in a VCS meaningful (see Rule&nbsp;9).
 Note however that a linter's rules may not primarily serve the intention of reproducible scientific workflows.
 
 As you are writing the `Dockerfile`, put yourself in the shoes of the next user of it.
 Are the choices made and commands being executed clear, or is further comment warranted?
-When appropriate, you can add links to discussion in version control, code repository issues, or comments about specific usage and decisions.
-Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your Dockerfile is under version control.
+When appropriate, you can add links to online forums, code repository issues, or VCS commit message about specific usage and decisions.
+Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your Dockerfile is managed in a VCS (see Rule&nbsp;9).
 It can even be helpful to include comments about possibly more intuitive commands that did not work so you do not fall into the same trap twice.
 If you find that you need to remember an undocumented step, that's an indication that it should be documented.
 
@@ -350,7 +350,7 @@ In this case, you should consider adopting a standard workflow that will give yo
 If you decide to build your own standard, share it openly with your community to collaborate on making it better.
 
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g. [@marwick_rrtools_2019]) can provide files, directory organization, and build instructions that include basic steps for getting started.
-A good project template should get you started with a template for documentation, setting up testing via continuous integration, building a container, and even choosing a license.
+A good project template should get you started with a template for documentation, setting up testing via continuous integration (CI), building a container, and even choosing a license.
 In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.
 It also must be noted that developing or working on projects with containers, allows you to easily switch between isolated project environments by stopping the container and restart it when you are ready to work again, even on another machine or in a cloud environment.
 You can even run projects in parallel without interference.
@@ -364,14 +364,13 @@ Part of this project template should be a protocol for publishing the container 
 # 9. Publish a Dockerfile per project in a code repository with version control {-}
 
 The `Dockerfile` is a plain text-based format and thus fits nicely into a version control system.
-You should tend to include `Dockerfile`s alongside your code as a way to quickly build your software, and show visitors of the repository how it's built (qoute Abelson? see also https://www.quora.com/How-true-is-Programs-are-meant-to-be-read-by-humans-and-only-incidentally-for-computers-to-execute)/, and as mentioned previously, the `Dockerfile` itself can then link back to the repository.
-Take advantage of git commit messages to keep a record of notes alongside changes to your files.
-Versioning and publishing on a collaboration platform is also beneficial in that is enables collaboration and makes it easy to solicit feedback.
-Version control providers (e.g., GitHub, GitLab) also make it easy to connect to or use embedded continuous integration (CI) services to test and deploy your containers and software.
-While it's not always possible to keep datasets alongside code, in the case of smaller ones, it can be very useful to keep your `Dockerfile` alongside both the code and data (cf. research compendium concept?).
+Including a `Dockerfile` alongside your workflow's code and (if size permits) data is an effective way to consistently build your software, to show visitors of the repository how it's built and used, to solicit feedback and collaborate with your peers, and to increase chances of preservation of your work (cf. @emsley_framework_2018).
+Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building your image in a second build environment, which increases stability and trust, and to publish images automatically.
+If your `Dockerfile` includes an interactive user interface, you can also adapt it so that it is ready-to-use as a Binder [@jupyter_binder_2018], providing an online work environment to any user with a simple click of a link.
+Furthermore, the commit messages keep a record of notes alongside all changes to the file.
+
 While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's generally a simple and clear approach to provide one Dockerfile per project.
-If you find that you need to provide more than one, consider if it's possible to use build arguments to flip between states (e.g., development vs. production) or if it's possible to separate tools into different repositories.
-In fact, using and publishing a `Dockerfile` to create a container has been shown to increase chances of preservation of your work (cf. @emsley_framework_2018).
+If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see Rule&nbsp;6) or to separate tools into different repositories.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 
@@ -390,7 +389,7 @@ If you are using an interactive container and find that you need to manually ins
 Therefore, a habitual deletion of a container and cache-less rebuild of the used image not only increase security due to updated underlying software, it most importantly lets you realise breaks through manual interference, i.e., changes to code or configuration not mirrored in the `Dockerfile`, or though software updates early.
 This way you are most likely to remember what you did. or to easily find documentation about breaking changes in used tools.
 This habit may be augmented by continuous deployment or CI strategies.
-If the container is linked to an automated build provided by a version control service, simply pushing the `Dockerfile` to the service can easily trigger the build and ideally a simple validating execution.
+If the container is linked to an automated build, simply pushing the `Dockerfile` to a VCS can easily trigger the build and ideally a simple validating execution.
 
 In the case of needing setup or configuration for the first two habits, it's good practice to provide a `Makefile` [@wikipedia_contributors_make_2019] alongside your container, which can capture the specific commands.
 The effective usage of a `Makefile` also helps avoiding any undocumented steps or manual, extra commands to be run on the local machine.
