@@ -162,7 +162,8 @@ FROM rocker/r-ver:3.5.2
 It's good practice to think of the `Dockerfile` as being human _and_ machine readable. 
 This means that you should use indentation, newlines, and comments to make your `Dockerfile`s well documented and give them readability.
 Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
-Use `\` to break a single command into multiple lines to ensure that no single line gets too long, and use long versions of parameters for readability (e.g., `--input` instead of `-i`).
+Use `\` to break a single command into multiple lines to ensure that no single line gets too long.
+Use long versions of parameters for readability (e.g., `--input` instead of `-i`).
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
 
 You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
@@ -176,10 +177,8 @@ Dependencies can be grouped in this fashion, which also makes it easier to spot 
 It can even be helpful to include comments about possibly more intuitive commands that did not work so you do not fall into the same trap twice.
 If you find that you need to remember an undocumented step, that's an indication that it should be documented.
 
-Labels are useful to provide a more structured form of documentation about software.
-For example, software versions, maintainer contact information, along with vendor specific metadata are commonly seen and the OCI Image Format Specification provides some common label keys [@opencontainers_image-spec_2017].
-
-Comments can also include usage guides, which can be helpful to others and a future you. 
+Labels are useful to provide a more structured form of documentation about software, especially for users of supporting infrastructure that might not expose the actual Dockerfile - see Rule&nbsp;6 for details.
+Comments should include helpful usage guides and links for readers inspecting the Dockerfile, including future you. 
 As an example, it's helpful to provide commented lines with `docker build` and `docker run` within the `Dockerfile` to show how to build and run the image.
 These comments can be especially relevant if volume mounts or ports are important for using the container, and by putting them at the end of the file, they are more likely to be seen, easy to copy paste after a container build, and to be in consistent state compared to documentation in another file.
 Here is an example of a commented section to show build and usage.
@@ -307,14 +306,29 @@ The other logical case to bind mount code is when your data is very large (usual
 For example, a private dataset with personal health information should never be added to an image. 
 In these cases, you should provide clear instructions to the user in the README for how to obtain actual or dummy data.
 
-# 6. Capture environment metadata {-}
+# 6. Capture structured environment metadata {-}
 
 Labels and build arguments can be very helpful to both provide metadata and allow for customization of a build.
 
 ## Labels
 
 Labels serve as structured metadata that can be exposed by APIs, e.g., https://microbadger.com/labels, along with tools to inspect the container binaries, e.g., `docker inspect`.
-Namespaced conventions have been developed (http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec) to help standardize across container tools.
+For example, software versions, maintainer contact information, along with vendor specific metadata are commonly seen.
+The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardize field names across container tools, as shown below.
+
+```
+LABEL org.opencontainers.image.created='2019-12-10' \
+  org.opencontainers.image.authors='author@example.org' \
+  org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
+  org.opencontainers.image.documentation='https://github.com/nuest/ten-simple-rules/README.md' \
+  org.opencontainers.image.version='0.0.1'
+
+LABEL org.opencontainers.image.vendor='nuest' \
+  org.opencontainers.image.title='Demo title' \
+  org.opencontainers.image.description='Demo description'
+```
+
+You can add multiple fields within the same instruction.
 Important metadata attributes to include as labels would include any of the following, ideally with globally unique identifiers:
 
 - Author and contact (e.g. email, project website; identified by a DOI; you will often see the deprecated `MAINTAINER` instruction - use a label instead
@@ -323,7 +337,7 @@ Important metadata attributes to include as labels would include any of the foll
 - A repository link where Dockerfile is published, e.g. a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your Dockerfile before publishing the record
 - License
 
-There are several projects (https://codemeta.github.io/, https://citation-file-format.github.io/) focused around metadata citation, and you should consider using one if it seems appropriate for your use case.
+There are several projects (https://codemeta.github.io/, https://citation-file-format.github.io/) focused on metadata citation, and you should consider using one if it seems appropriate for your use case.
 
 ## Build arguments
 
