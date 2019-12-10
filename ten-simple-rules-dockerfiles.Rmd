@@ -99,7 +99,7 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 The resulting container image would install the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to easily interact with any existing workflows in the repository.
 A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself wouldn't be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
 For this reason, it's good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
-It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses (see Rule~6).
+It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses (see Rule&nbsp;6).
 The container should be built to be optimized for its use case, whether it is intended to be shared or used by a single user.
 
 Further assisting tools are `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
@@ -294,7 +294,7 @@ For example, by default writing a new file from inside the container will be own
 
 Only in specific cases is it feasible to add data or code into the container using `ADD`/`COPY`. 
 For example, small data files and software that is essential for the function of a container to distribute a reproducible analysis is essential to add.
-If (part of) the software developed for a specific analysis is published as a proper package you should follow Rule~4 for installing it from a public repository, but may install it from source after copying it into the image.
+If (part of) the software developed for a specific analysis is published as a proper package you should follow Rule&nbsp;4 for installing it from a public repository, but may install it from source after copying it into the image.
 The other logical case to bind mount code is when your data is very large (usually over hundreds of GB) or has limited access. 
 For example, a private dataset with personal health information should never be added to an image. 
 In these cases, you should provide clear instructions to the user in the README for how to obtain actual or dummy data.
@@ -410,7 +410,7 @@ This you can do shortly before submitting your reproducible workflow to peer-rev
 
 # Example Dockerfiles
 
-To demonstrate the 10 rules, we have a git repository with example `Dockerfile`s, some of which we took from public repositories and updated to adhere to the rules (see `Dockerfile.original`).
+To demonstrate the ten rules, we maintain a GitHub repository with example `Dockerfile`s, some of which we took from public repositories and updated to adhere to the rules (see `Dockerfile.original`): [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/)
 
 # Conclusion {#conclusion .unnumbered}
 
