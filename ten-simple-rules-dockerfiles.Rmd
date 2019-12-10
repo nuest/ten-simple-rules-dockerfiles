@@ -212,6 +212,7 @@ This is a very good practice and helpful, though you should cautiously consider 
 A long Dockerfile with secions and helpful comments can be complete and thus more understandable than a collection of files.
 
 Generally, try to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
+Each statement will result in a new layer, and reasonably grouped changes increase readability of the Dockerfile and facilitate inspection of the image, e.g. with tools like dive [@goodman_dive_2019].
 If a `RUN` statement is longer than a page and requires scrolling, this may be challenging for the next reader to digest, and you should consider splitting it up into several.
 When you install several system libraries, it's good practice to add comments about why the dependencies are needed. 
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed.
@@ -379,8 +380,7 @@ While there is no hardened rule, it would be good practice to rebuild a containe
 
 First, use your container every time you work on a project and not just as a final step during publication.
 If the container is the only platform you use, the confidence in proper documentation of the computing environment can be very high [@marwick_readme_2015].
-You should prioritize this usage over others, e.g., non-interactive execution of a full workflow, because it give you personally the highest value and does not limit your use (interactive development environments are possible, e.g. RStudio or Jupyter, even for normal desktop applications [@viereck_x11docker_2019]) or other's use of your data and code at all.
-A seemingly convenient uncontainerised computing environment puts reproducibility and portability at risk.
+You should prioritize this usage over others, e.g., non-interactive execution of a full workflow, because it give you personally the highest value and does not limit your use or other's use of your data and code at all (see Rule&nbsp;7).
 
 Second, for reproducibility, we can adopt the intentions of the cattle vs. pets meme [@bias_history_2016] and not only be unattached to a particular container but even intentionally rebuild an image at regular intervals.
 In an idealistic world, containers that we built years ago should rebuild seamlessly, but this isn't necessarily the case, especially with rapidly changing technology relevant to machine learning and data science.
@@ -391,7 +391,7 @@ This way you are most likely to remember what you did. or to easily find documen
 This habit may be augmented by continuous deployment or CI strategies.
 If the container is linked to an automated build, simply pushing the `Dockerfile` to a VCS can easily trigger the build and ideally a simple validating execution.
 
-In the case of needing setup or configuration for the first two habits, it's good practice to provide a `Makefile` [@wikipedia_contributors_make_2019] alongside your container, which can capture the specific commands.
+In the case of needing setup or configuration for the first two habits, it's good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
 The effective usage of a `Makefile` also helps avoiding any undocumented steps or manual, extra commands to be run on the local machine.
 A fully scripted configuration makes it easier for both you and future users, and can increase trust in your workflow.
 
@@ -402,8 +402,10 @@ This habit may even be automated with a cron job [@wikipedia_contributors_cron_2
 Fourth, you may export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a real snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions how to import and run the workflow based on the image archive.
 Depositing the image with other project files (data, code, `Dockerfile`) in a public repository makes them likely to be preserved.
-Applying proper preservation strategies (cf. [@emsley_framework_2018]) is probably beyond your grasp, but you could run import, run, and export the images once a year to make sure the export format still works with the then current version of Docker.
-The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow, e.g., updating versions of pinned dependencies (see Rule&nbsp;4).
+Applying proper preservation strategies (cf. [@emsley_framework_2018]) is probably beyond your grasp, but simply running an image "as-is", i.e. with the default command and entrypoint (see Rule&nbsp;7), and observing the output is quite likely to work in the future.
+If the image does not work anymore, a user can still extract the image contents and explore the files of each layer manually, or if an import still works with exploration tools like dive [@goodman_dive_2019].
+However, if you want to ensure usability and extendability, then you could run import, run, and export an image regularly to make sure the export format still works with the then current version of Docker.
+The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see Rule&nbsp;4) and regular image building (see above).
 
 Finally, for a sanity check and even higher trust in the stability and documentation, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 This you can do shortly before submitting your reproducible workflow to peer-review, so you are very well prepared for the future of scholarly communication and Open Science [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
