@@ -301,7 +301,7 @@ This is especially the case if the container is intended to be used as an intera
 This ensures that data persists when the container instance or image is removed from your system.
 When publishing your workspace, e.g. on Zenodo, having the crucial content as regular files outside of the container makes them more accessible to others, for example for reuse by researchers or analysis by preservationists.
 
-You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [], including options, as shown in the following examples.
+You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists in the image, the bind mount will replace it for the specific container.
 
 ```
