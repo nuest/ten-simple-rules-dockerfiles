@@ -132,7 +132,9 @@ Doing this kind of trace is essential to be able to be aware of all of the steps
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
 If you want to use an unofficial image, do save a copy of the Dockerfile(s) created by others.
 Alternatively copy relevant instructions into your own Dockerfile, acknowledge the source in a comment, and configure an automated build for your own image.
-You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image. 
+Automated builds can be complex to set up, and details are out of scope of this article.
+The documentation and tools of container registries, e.g., [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) instances, but also of CI platforms, e.g. [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), a GitHub actions for `repo2docker` [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019], or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build), can help you get started.
+You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image.
 
 A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it's a moving target so that it is more likely that an updated base could break your workflow.
 Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
