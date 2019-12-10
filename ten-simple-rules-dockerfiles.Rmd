@@ -63,7 +63,11 @@ The goal at hand is to write a `Dockerfile` so that it best facilitates interact
 Such practices are not part of generic containerisation tutorials and are not present in published Dockerfiles, which are often used as templates by novices.
 The differences between a helpful stable Dockerfile and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who don't have software development experience.
 
-A daily commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not an afterthought triggered by a scientific publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
+We assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a single command.
+This execution should be able to be triggered by command-line instruction, which is possible for all generic programming languages and widely used workflow tools, but may also be opening and starting a process with a graphical user interface.
+A workflow that does not support scripted execution is out of scope for reproducible research and does fit well with containerisation. 
+
+A commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not merely triggered by the publication of a finished project (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 By following the _conventions_ layed out in these ten rules, authors ensure readability by others and enable subsequent reuse and collaboration.
 
 ## Docker {#docker .unnumbered}
@@ -341,10 +345,9 @@ A possible weakness with using containers is the limitation on only providing on
 It's considered good practice to have an entrypoint that meets the user expectations. 
 For example, a container known to be a workflow should execute the workflow, or spit out usage for how to do so.
 An interactive container should spin up an analysis environment, ensuring to print to the screen the ports that are being used (that need to be bound to the host) along with any login credentials needed.
-A workflow that does not support headless execution is arguably not ideal for a container, and you should consider switching tools. 
 Using a browser to expose a user interface (e.g, RStudio, Jupyter, web tools) on a particular port is a commonly done practice, and for systems without native `x11` support, `x11docker` is recommended [REF].
 Otherwise, you would need to clearly document how the user can start and control the graphical interfaces provided inside.
-However, headless execution is ideal in that it can be tested headlessly, either by starting or interacting with the container and checking for successful responses (e.g., 200) from endpoints provided, or by using a controller such as Selenium [REF].
+However, headless execution is ideal in that it can be tested without a graphical interface, either by starting or interacting with the container and checking for successful responses (e.g., 200) from endpoints provided, or by using a controller such as Selenium [REF].
 To support both "one click execution" and to allow for custom configuration, it's helpful to provide users with a configuration file, or allow for settings to be expressed via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
 
 # 8. Establish templates for new projects {-}
