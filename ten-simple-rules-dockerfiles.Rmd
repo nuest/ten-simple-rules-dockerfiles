@@ -124,8 +124,8 @@ In this case, proceed with following the remaining rules to write your `Dockerfi
 # 2. Use versioned and automatically built base images {-}
 
 It's good practice to use base images that are maintained by the Docker library.
-While some organizations can be trustworthy in terms of content, and reliable to update containers with security fixes (e.g., `rocker/r-ver`), for most individual accounts that build containers, it's likely that containers will not be updated regularly.
-It is even possible that images or `Dockerfile`s disappear.
+While some organizations can be trustworthy in terms of content, and reliably update containers with security fixes (e.g., `rocker/r-ver`), for most individual accounts that build containers, it's likely that containers will not be updated regularly.
+It is even possible that images or `Dockerfile`s may disappear.
 Therefore a good understanding of how base images and image tags work is crucial, as the tag that you choose has implications for your container build.
 You should know how to use `FROM` statements to trace all the way up to the original container base, an abstract base called `scratch`.
 Doing this kind of trace is essential to be able to be aware of all of the steps that were taken to generate your container and who took them.
