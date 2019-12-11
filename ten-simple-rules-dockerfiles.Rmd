@@ -139,7 +139,7 @@ You should avoid publishing an image in a public registry with `docker push`, be
 A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it's a moving target so that it is more likely that an updated base could break your workflow.
 Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
 Official builds are often tagged with corresponding release version numbers as well as with the `latest` tag.
-If you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
+For example, if you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
 In this case, a tag like `python:3.5` might be a good choice, where the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes that won't break your code, i.e., changes that are backwards compatible, are applied (cf. semantic versioning, [@preston-werner_semantic_2013]).
 
 Containers can grow quickly in size, particularly when data is involved, and you should keep this in mind. Smaller images are often indicated by having `slim` or `minimal` as part of the tag.  If you need to build smaller containers, consider a `busybox` base or a multi-stage build, which allows you to selectively copy files from one build step to another. Also take into account the libraries that you actually need.
