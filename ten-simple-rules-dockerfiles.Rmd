@@ -131,7 +131,7 @@ You should know how to use `FROM` statements to trace all the way up to the orig
 Doing this kind of trace is essential because it makes all of the steps that were taken to generate your container and who took them.
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
 If you want to use an unofficial image, do save a copy of the Dockerfile(s) created by others.
-Alternatively copy relevant instructions into your own Dockerfile, acknowledge the source in a comment, and configure an automated build for your own image.
+Alternatively, copy relevant instructions into your own Dockerfile, acknowledge the source in a comment, and configure an automated build for your own image.
 Automated builds can be complex to set up, and details are out of scope of this article.
 The documentation and tools of container registries, e.g., [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) instances, but also of CI platforms, e.g. [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), a GitHub actions for `repo2docker` [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019], or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build), can help you get started.
 You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image.
