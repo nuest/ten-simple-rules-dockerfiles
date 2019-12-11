@@ -138,15 +138,15 @@ You should avoid publishing an image in a public registry with `docker push`, be
 
 A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it's a moving target so that it is more likely that an updated base could break your workflow.
 Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
-As an example, the Python container on Docker Hub will be released with new versions of Python.
+Official builds are often tagged with corresponding release version numbers as well as with the `latest` tag.
 If you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
 In this case, a tag like `python:3.5` might be a good choice, where the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes that won't break your code, i.e., changes that are backwards compatible, are applied (cf. semantic versioning, [@preston-werner_semantic_2013]).
+
+Containers can grow quickly in size, particularly when data is involved, and you should keep this in mind. Smaller images are often indicated by having `slim` or `minimal` as part of the tag.  If you need to build smaller containers, consider a `busybox` base or a multi-stage build, which allows you to selectively copy files from one build step to another. Also take into account the libraries that you actually need.
+
 When you choose a base image, choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
 As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.
-Especially when data is involved, containers can grow quickly in size, and you should keep this in mind.
-If you need to built smaller containers, consider a `busybox` base or a multi-stage build, which allows to selectively keep files from one build step to another.
-Smaller images often are indicated by having `slim` or `minimal` as part of the tag.
-Also take into account the libraries that you actually need.
+
 Base images that have complex software installed (e.g. machine learning libraries, specific BLAS library) are helpful and fine to use.
 If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
 Trusting that the third party `Dockerfile` will persist for your analyses is a risky thing to do.
