@@ -11,4 +11,5 @@ RUN r -e 'tinytex::tlmgr_install(pkgs = c("changepage", \
     "lastpage", \
     "fancyhdr", \
     "forarray", \
-    "xstring"))'
+    "xstring", \
+    "ec"))'

@@ -13,6 +13,7 @@ branches:
 #  - docker build --tag nuest/rockerverse-paper --file .binder/Dockerfile .
 
 # Access to GITHUB_PAT for rate limit??
+# --user is needed to write into mounted directory
 script:
   - docker run --interactive --rm --user $UID --volume $(pwd):/tsrd nuest/ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
   - ls -l
