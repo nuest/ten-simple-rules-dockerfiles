@@ -9,13 +9,13 @@ branches:
   only:
     - master
 
-install:
-  - docker build --tag ten-simple-rules-dockerfiles .
+#install:
+#  - docker build --tag ten-simple-rules-dockerfiles .
 
 # - access to GITHUB_PAT for rate limit
 # - --user is needed to write into mounted directory
 script:
-  - docker run --interactive --rm --user $UID --volume $(pwd):/tsrd ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
+  - docker run --interactive --rm --volume $(pwd):/tsrd nuest/ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
   - ls -l
 
 # only works for one branch, because of reset
