@@ -9,11 +9,11 @@ branches:
   only:
     - master
 
-#install:
-#  - docker build --tag nuest/rockerverse-paper --file .binder/Dockerfile .
+install:
+  - docker build --tag nuest/ten-simple-rules-dockerfiles .
 
-# Access to GITHUB_PAT for rate limit??
-# --user is needed to write into mounted directory
+# - access to GITHUB_PAT for rate limit
+# - --user is needed to write into mounted directory
 script:
   - docker run --interactive --rm --user $UID --volume $(pwd):/tsrd nuest/ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
   - ls -l

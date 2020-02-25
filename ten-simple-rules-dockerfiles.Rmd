@@ -2,23 +2,33 @@
 title: "Ten Simple Rules for Writing Dockerfiles for Reproducible Research"
 author:
   - name: Daniel Nüst
+    # https://github.com/nuest
     email: daniel.nuest@uni-muenster.de
     affiliation: 'Institute for Geoinformatics, University of Muenster, Muenster, Germany'
     corresponding: daniel.nuest@uni-muenster.de
-    orcid: 
+    orcid: 0000-0002-0024-5046
   - name: Vanessa Sochat
+    # https://github.com/vsoch
     email: vsochat@stanford.edu
     affiliation: "Stanford Research Computing Center, Stanford University, Stanford, CA, US"
     orcid: 0000-0002-4387-3819
+  - name: Ben Marwick
+    # https://github.com/benmarwick
+    affiliation: 'Department of Anthropology, University of Washington, Seattle, USA'
+    orcid: 0000-0001-7879-4531
+    email: bmarwick@uw.edu
   - name: Stephen Eglen
+    # https://github.com/sje30
     email: sje30@cam.ac.uk
     affiliation: "Department of Applied Mathematics and Theoretical Physics, University of Cambridge, Cambridge, Cambridgeshire, GB"
     orcid: 0000-0001-8607-8025
   - name: Tim Head
+    # https://github.com/betatim
     email: betatim@gmail.com
     affiliation: "Wild Tree Tech, Zurich, CH"
-    orcid: 0000-0003-0931-
+    orcid: 0000-0003-0931-3698
   - name: Tony Hirst
+    # https://github.com/psychemedia
     email: tony.hirst@open.ac.uk
     affiliation: "Department of Computing and Communications, The Open University, GB"
     orcid: 0000-0001-6921-702X
@@ -33,6 +43,11 @@ abstract: |
 #  TBD
 bibliography: bibliography.bib
 output: rticles::plos_article
+header-includes:
+  # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
+  - \usepackage[user,titleref]{zref}
+  - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
+  - \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
 csl: plos.csl
 # Submission notes:
 # - The authors declare that no competing interests exist.
@@ -43,6 +58,8 @@ csl: plos.csl
 <!-- add " {-}" after headings to remove numbering -->
 
 # Introduction {#introduction .unnumbered}
+
+\ruleref{rule:pinning}
 
 With access to version control systems (VCS, @wikipedia_contributors_version_2019) and collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the software used.
 The publication of these instructions and related files (also known as 'artefacts') are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details [@marwick_how_2015], but where the actual contribution to knowledge is the full software environment that produced a result [@donoho_invitation_2010].
@@ -90,6 +107,7 @@ If a researcher is able to find or create containers or `Dockerfile`s to address
 In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 
 # 1. Consider tools to assist with Dockerfile generation {-}
+\rulelabel{1}{rule:tools}
 
 Writing a `Dockerfile` from scratch is not that simple, and even experts sometimes take shortcuts.
 Thus, it is a good strategy to first look to tools that can help to generate a `Dockerfile` for you.
@@ -111,7 +129,7 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 The resulting container image installs the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to easily interact with any existing workflows in the repository.
 A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
 For this reason, it is good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
-It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses (see Rule&nbsp;6).
+It's also recommended (if you are able) to add custom labels to your container build to define metadata for your analyses (see \ruleref{rule:metadata}).
 The container should be built to be optimized for its use case, whether it is intended to be shared or used by a single user.
 
 Additional tools to assist with writing Dockerfiles include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
@@ -123,6 +141,8 @@ However, in the case that a tool or interactive container environment is not ava
 In this case, proceed with following the remaining rules to write your `Dockerfile`.
 
 # 2. Use versioned and automatically built base images {-}
+\ztitlerefsetup{title=2}\zlabel{rule:base}
+\rulelabel{2}{rule:base}
 
 It is good practice to use base images that are maintained by the Docker library.
 While some organizations can be trusted to update containers with security fixes (e.g., `rocker/r-ver`), for most individual accounts that build containers, it is likely that containers will not be updated regularly.
@@ -166,6 +186,7 @@ FROM rocker/r-ver:3.5.2
 ```
 
 # 3. Use formatting, document within, and favor clarity
+\rulelabel{3}{rule:formatting}
 
 It is good practice to think of the `Dockerfile` as a human _and_ machine readable file. 
 This means that you should use indentation, new lines, and comments to make your `Dockerfile`s well documented and easily readable.
@@ -176,18 +197,18 @@ Use long versions of parameters for readability (e.g., `--input` instead of `-i`
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
 
 You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
-The consistency added by linting also helps keeping your edits to a `Dockerfile` in a version control system (VCS) meaningful (see Rule&nbsp;9).
+The consistency added by linting also helps keeping your edits to a `Dockerfile` in a version control system (VCS) meaningful (see \ruleref{rule:publish}).
 Note however that a linter's rules may not primarily serve the intention of reproducible scientific workflows.
 
 As you are writing the `Dockerfile`, be mindful of how other people will read it. 
 Are your choices and commands being executed clear, or is further comment warranted?
 To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or VCS commit messages to give context for your specific decisions.
 Comments should include helpful usage guides and links for readers inspecting the `Dockerfile`, including future you. 
-Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your `Dockerfile` is managed in a VCS (see Rule&nbsp;9).
+Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your `Dockerfile` is managed in a VCS (see \ruleref{rule:publish}).
 It can even be helpful to include comments about commands that did not work so you do not fall repeat past mistakes.
 If you find that you need to remember an undocumented step, that is an indication that it should be documented in the `Dockerfile`.
 
-Labels are useful to provide a more structured form of documentation about software, especially for users of supporting infrastructure that might not expose the actual `Dockerfile` - see Rule&nbsp;6 for details.
+Labels are useful to provide a more structured form of documentation about software, especially for users of supporting infrastructure that might not expose the actual `Dockerfile` (see \ruleref{rule:metadata})¸.
 It is often helpful to provide commented lines with `docker build` and `docker run` within the `Dockerfile` to show how to build and run the image, even though these lines are not necessary for a valid `Dockerfile`, this is a convenient place to record them. 
 These comments can be especially relevant if volume mounts or ports are important for using the container, and by putting them at the end of the file, they are more likely to be seen, easy to copy-paste after a container build, and to be in consistent state compared to documentation in another file.
 Here is an example of a commented section to show build and usage.
@@ -223,7 +244,7 @@ RUN R -e 'getOption("repos")' && \
 Clarity is always more important than brevity.
 For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image size, you should keep the script in the container for a future user to inspect.
 Depending on the programming language used, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
-This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see Rule&nbsp;4).
+This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mout}).
 A single long `Dockerfile` with sections and helpful comments can be complete and thus more understandable than a collection of separate files.
 
 Generally, aim to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
@@ -248,15 +269,17 @@ A recommended ordering based on this metric might be:
 Finally, as a supplement to content inside the `Dockerfile`, it is good practice to also write a section in a `README` alongside the `Dockerfile` for exactly how to build, run, and otherwise interact with the container. 
 If a pre-built image is provided on Docker Hub, you should direct the user to it in your `README`.
 
-# 4. Pin versions {-}
+# 4. Define version numbers for reproducible builds {-}
+\rulelabel{4}{rule:pinning}
 
-The reproducibility of your `Dockerfile` is heavily dependent on how well you define versions for dependencies inside.
+The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
+The more specific, the better, because using the desired version leads to reproducible builds.
+The practice of specifying versions of software is called _version pinning_ (e.g., on `apt`: https://blog.backslasher.net/my-pinning-guidelines.html).
 
 ## System libraries
 
-System library versions can largely come from the base image tag that you choose to use (e.g., `ubuntu:18.04`) however, you can also install specific versions of system packages with the respective package manager. 
-This practice is called version pinning (e.g., on apt: https://blog.backslasher.net/my-pinning-guidelines.html).
-Version pinning is good practice if the version is relevant.
+System library versions can largely come from the base image tag that you choose to use, e.g., `ubuntu:18.04`, because the operating system's software repositories are very unlikely to introduce breaking changes, but predominantly fix errors with newer versions.
+However, you can also install specific versions of system packages with the respective package manager.
 For example, you might want to demonstrate a bug, prevent a bug in an updated version, or pin a working version if you suspect an update could lead to a problem.
 Generally, system libraries are more stable than software modules supporting analysis scripts, but in some cases they can be highly relevant to your workflow.
 _Installing from source_ is a useful way to install very specific versions, however it comes at the cost of needing build libraries.
@@ -281,7 +304,7 @@ As an example, here are configuration files supported by commonly used languages
 
 In some cases (e.g., Conda) the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
 In all of the above, the user is required to inspect the file or the build to see what is installed.
-For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see Rule 3).
+For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:formatting}).
 For example, the `RUN` statement here:
 
 ```bash
@@ -298,6 +321,7 @@ This modularisation is a potential risk for understandability and consistency (c
 The version pinning capabilities of these file formats are described in their respective documentation.
 
 # 5. Bind mount data and control code {-}
+\rulelabel{5}{rule:mount}
 
 Do not put data and workflow configuration or code only into the container.
 It is better to _bind_, or _mount_, these files from the host machine into the container, and using the container image primarily for the software and dependencies.
@@ -326,15 +350,16 @@ docker run --volume $(pwd)/inputdata:/data:rw mycontainer
 ```
 
 Be careful about what volumes are bound to the host, because many applications generate log and other output files during runtime.
-How you bind external resources into the container should be included in the example commands (see Rule 3).
+How you bind external resources into the container should be included in the example commands (see \ruleref{rule:mount}).
 In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
 In specific cases is it feasible to add data or code into the container using `ADD`/`COPY`. 
 For example, to ensure you can distribute a reproducible analysis it may be essential to add small data files and software required for the container to function. 
-If part of the software developed for a specific analysis is published as a conventional package you should follow Rule&nbsp;4 for installing it from a public repository, but you may also want to install it from source after copying it into the image.
+If part of the software developed for a specific analysis is published as a conventional package you should follow \ruleref{rule:pinning} for installing it from a public repository, but you may also want to install it from source after copying it into the image.
 
 # 6. Capture structured environment metadata {-}
+\rulelabel{6}{rule:metadata}
 
 Labels and build arguments can be very helpful to both provide metadata and allow for customization of a build.
 
@@ -382,6 +407,7 @@ Examples of build arguments that are useful to include to describe a container a
 <!-- examples needed -->  
 
 # 7. Enable interactive usage and one-click execution {-}
+\rulelabel{7}{rule:interactive}
 
 The success of a container can sometimes come down to how well it exposes its usage and software to the user: a function that comes down to the `CMD` and `ENTRYPOINT`.
 By using `CMD` and `ENTRYPOINT`, you can use automated and manual testing to ensure that it is possible to run the container interactively _and_ given that execution is done incorrectly or has an error, a suitable help or error message is shown to assist the user.
@@ -395,6 +421,7 @@ However, headless execution is often desirable in that it can be tested without 
 To support both "one click execution" and to allow for custom configuration, it is helpful to provide users with a configuration file, or allow for settings to be expressed via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
 
 # 8. Establish templates for new projects {-}
+\rulelabel{8}{rule:templates}
 
 It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
 In this case, you should consider adopting a standard workflow that will give you a clean slate for a new project.
@@ -413,6 +440,7 @@ This file can help to template options including mounted volumes, to permissions
 
 
 # 9. Publish one Dockerfile per project in a code repository with version control {-}
+\rulelabel{9}{rule:publish}
 
 Because a `Dockerfile` is a plain text-based format, it works well with version control systems.
 Including a `Dockerfile` alongside your code and (if size permits) data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf. @emsley_framework_2018).
@@ -422,9 +450,10 @@ If your `Dockerfile` includes an interactive user interface, you can also adapt 
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
 
 While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
-If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see Rule&nbsp;6) or to separate tools into different repositories.
+If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see \ruleref{rule:interactive}) or to separate tools into different repositories.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
+\rulelabel{10}{rule:usage}
 
 Using containers for research workflows does not only require technical understanding, but also an awareness of risks that can be managed efficiently by following a number of good _habits_, which we outline below.
 While there is no firm rule, if you use a container daily, is good practice to rebuild that container every once or two weeks.
@@ -432,7 +461,7 @@ At the time of publication of research results it is good practice to save a cop
 
 First, use your container every time you work on a project and not just as a final step during publication.
 If the container is the only platform you use, the confidence in proper documentation of the computing environment can be very high [@marwick_readme_2015].
-You should prioritize this usage over others, e.g., non-interactive execution of a full workflow, because it gives you personally the highest value and does not limit your use or others' use of your data and code at all (see Rule&nbsp;7).
+You should prioritize this usage over others, e.g., non-interactive execution of a full workflow, because it gives you personally the highest value and does not limit your use or others' use of your data and code at all (see \ruleref{rule:interactive}).
 
 Second, for reproducibility, we can treat containers as transient and disposable, and even intentionally rebuild an image at regular intervals.
 Ideally, containers that we built years ago should rebuild seamlessly, but this is not necessarily the case, especially with rapidly changing technology relevant to machine learning and data science.
@@ -453,10 +482,11 @@ This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
 Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions how to import and run the workflow based on the image archive.
 Depositing the image with other project files (e.g. data, code, `Dockerfile`) in a public repository makes them likely to be preserved.
-Applying proper preservation strategies (cf. [@emsley_framework_2018]) can be highly complex, but simply running an image "as-is", i.e. with the default command and entrypoint (see Rule&nbsp;7), and observing the output is quite likely to work for many years into the future.
+Applying proper preservation strategies (cf. [@emsley_framework_2018]) can be highly complex, but simply running an image "as-is", i.e. with the default command and entrypoint (see \ruleref{rule:interactive}), and observing the output is quite likely to work for many years into the future.
 If the image does not work anymore, a user can still extract the image contents and explore the files of each layer manually, or if an import still works, with exploration tools like dive [@goodman_dive_2019].
 However, if you want to ensure usability and extendability, then you could run import, run, and export an image regularly to make sure the export format still works with the then current version of Docker.
-The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see Rule&nbsp;4) and regular image building (see above).
+
+The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pin}) and regular image building (see above).
 
 Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
@@ -483,11 +513,12 @@ DN is supported by the project Opening Reproducible Research II (\href{https://o
 
 # Contributions {#contributions .unnumbered}
 
-DN conceived the idea, wrote the first draft, and contributed to all rules.
-VS wrote the first draft based on notes and contributed to all rules.
+DN conceived the idea, outlined the first rules, and contributed to all rules.
+VS wrote the first draft and contributed to all rules.
+BM revised the text and contributed to all rules.
 SE contributed to the overall structure and selected rules.
-THe contributed to the rule structure and particularly rule&nbsp;1.
+THe contributed to the rule structure and particularly Rule&nbsp;1.
 THi gave extensive feedback on early drafts and contributed to the discussion.
-This articles was written collaboratively on GitHub, where all contributions in form of text or discussions comments are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
+This articles was written collaboratively on GitHub, where all [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
