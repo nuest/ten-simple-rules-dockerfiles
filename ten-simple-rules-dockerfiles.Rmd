@@ -93,7 +93,7 @@ Docker is a container technology that is widely adopted and supported on many pl
 They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware, and thus do not require the same system resources.
 To build Docker containers, we write text files that follow a particular format called `Dockerfile`s [@docker_inc_dockerfile_2019]. 
 `Dockerfile`s are machine- and human-readable recipes for building images. 
-Images are inert, immutable, read-only files that includes the application (e.g. the programming language interpreter needed to run the workflow) and the environment required by the application to run.
+Images are inert, immutable, read-only files that includes the application (e.g., the programming language interpreter needed to run the workflow) and the environment required by the application to run.
 They consist of a sequence of instructions, which add layers to the image.
 These layers can be used for caching across image builds, which is important for minimizing build and download times.
 The images can then be run as stateful containers, which are the running instances of Docker images. 
@@ -102,7 +102,7 @@ Containers can be modified, stopped, restarted and purged.
 While Docker was the original technology to support this format, other container technologies have developed around the format (and thus support it) including: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
 The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker containers directly from a Docker registry. 
 Although the Singularity recipe format is different, the rules here are transferable to some extent.
-While some may argue for reasons to not publish reproducibly (e.g. lack of time and incentives, reluctance to share, cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker or other type of container should become an increasingly easier task for the average researcher.
+While some may argue for reasons to not publish reproducibly (e.g., lack of time and incentives, reluctance to share, cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker or other type of container should become an increasingly easier task for the average researcher.
 If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015). 
 In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 
@@ -141,7 +141,6 @@ However, in the case that a tool or interactive container environment is not ava
 In this case, proceed with following the remaining rules to write your `Dockerfile`.
 
 # 2. Use versioned and automatically built base images {-}
-\ztitlerefsetup{title=2}\zlabel{rule:base}
 \rulelabel{2}{rule:base}
 
 It is good practice to use base images that are maintained by the Docker library.
@@ -154,7 +153,7 @@ If you want to build on a third party image, carefully consider the author/maint
 If you want to use an unofficial image, do save a copy of the Dockerfile(s) created by others.
 Alternatively, copy relevant instructions into your own Dockerfile, acknowledge the source in a comment, and configure an automated build for your own image.
 Automated builds can be complex to set up, and the details are out of scope of this article.
-The documentation and tools of container registries, e.g., [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) instances, but also of CI platforms, e.g. [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), a GitHub actions for `repo2docker` [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019], or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build), can help you get started.
+The documentation and tools of container registries, e.g., [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) instances, but also of CI platforms, e.g., [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), a GitHub actions for `repo2docker` [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019], or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build), can help you get started.
 Using an automated build can help you avoid publishing an image in a public registry with `docker push`, which is not ideal because using `docker push` in this way opaquely breaks the linkage between a `Dockerfile` and its resulting image.
 
 A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it is a moving target so that it is more likely that an updated base could break your workflow.
@@ -168,7 +167,7 @@ Especially when data is involved, containers can grow quickly in size, and you s
 If you need to built smaller containers, consider a `busybox` base or a multi-stage build, which allows to selectively keep files from one build step to another.
 Smaller images often are indicated by having `slim` or `minimal` as part of the tag.
 Also take into account the libraries that you actually need.
-Base images that have complex software installed (e.g. machine learning libraries, specific BLAS library) are helpful and fine to use.
+Base images that have complex software installed (e.g., machine learning libraries, specific BLAS library) are helpful and fine to use.
 If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
 Trusting that the third party `Dockerfile` will persist for your analyses may be risky because that `Dockerfile` could disappear without warning. 
 Here is a selection of communities that produce widely used regular builds and updates:
@@ -244,11 +243,11 @@ RUN R -e 'getOption("repos")' && \
 Clarity is always more important than brevity.
 For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image size, you should keep the script in the container for a future user to inspect.
 Depending on the programming language used, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
-This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mout}).
+This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mount}).
 A single long `Dockerfile` with sections and helpful comments can be complete and thus more understandable than a collection of separate files.
 
 Generally, aim to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
-Each statement will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g. with tools like dive [@goodman_dive_2019].
+Each statement will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
 A `RUN` statement longer than a page requires scrolling, diminishing readability.
 This may be challenging for the next reader to digest and you should consider splitting it up, being aware of the extra layers added to the image.
 
@@ -366,6 +365,7 @@ Labels and build arguments can be very helpful to both provide metadata and allo
 Labels serve as structured metadata that can be exposed by APIs, e.g., https://microbadger.com/labels, along with tools to inspect the container binaries, e.g., `docker inspect`.
 For example, software versions, maintainer contact information, along with vendor specific metadata are commonly seen.
 The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardize field names across container tools, as shown below.
+These labels match the `org.label-schema.*` specification, which has been deprecated in favour or the new namespace but are still found a lot in existing containers.
 
 ```
 LABEL org.opencontainers.image.created='2019-12-10' \
@@ -382,13 +382,14 @@ LABEL org.opencontainers.image.vendor='nuest' \
 You can add multiple fields within the same instruction.
 Important metadata attributes to include as labels would include any of the following, ideally with globally unique identifiers:
 
-- Author and contact (e.g. email, project website; identified by a DOI; you will often see the deprecated `MAINTAINER` instruction - use a label instead
+- Author and contact (e.g., email, project website, or ORCID; you will often see the deprecated `MAINTAINER` instruction - use a label instead)
 - Research organizations (identified with https://ror.org/)
 - Funding agency/grant number
-- A repository link where the `Dockerfile` is published, e.g. a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your `Dockerfile` before publishing the record
+- A repository link where the `Dockerfile` is published, e.g., a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your `Dockerfile` before publishing the record
 - License
 
-There are several projects (https://codemeta.github.io/, https://citation-file-format.github.io/) focused on metadata citation, and you should consider using one if it seems appropriate for your use case.
+Proper software citation is still a work in progress [cf. @katz_software_2018] and you should follow current recommendations of projects such as CodeMeta ([https://codemeta.github.io/](https://codemeta.github.io/)) for describing software and the Citation File Format ([https://citation-file-format.github.io/](https://citation-file-format.github.io/)) to enable citations of software.
+<!-- https://github.com/force11/force11-sciwg/issues/55 -->
 
 ## Build arguments
 
@@ -425,7 +426,7 @@ It is likely going to be the case that over time you will develop workflows that
 In this case, you should consider adopting a standard workflow that will give you a clean slate for a new project.
 If you decide to build your own standard, collaborate with your community during development of the standard to ensure it will be useful to others. Part of your project template should be a protocol for publishing the container image to a suitable container registry, and taking into consideration of how the code can be given a DOI or proper publication (e.g., Zenodo, Journal of Open Source Software).
 
-As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g. [@marwick_rrtools_2019]) can provide files, directory organization, and build instructions that include basic steps for getting started.
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide files, directory organization, and build instructions that include basic steps for getting started.
 A good project template should get you started with a template for documentation, setting up testing via continuous integration (CI), building a container, and even choosing a license.
 In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.
 When developing or working on projects with containers you can easily switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
@@ -479,12 +480,12 @@ This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
 
 Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions how to import and run the workflow based on the image archive.
-Depositing the image with other project files (e.g. data, code, `Dockerfile`) in a public repository makes them likely to be preserved.
+Depositing the image with other project files (e.g., data, code, `Dockerfile`) in a public repository makes them likely to be preserved.
 Applying proper preservation strategies (cf. [@emsley_framework_2018]) can be highly complex, but simply running an image "as-is", i.e. with the default command and entrypoint (see \ruleref{rule:interactive}), and observing the output is quite likely to work for many years into the future.
 If the image does not work anymore, a user can still extract the image contents and explore the files of each layer manually, or if an import still works, with exploration tools like dive [@goodman_dive_2019].
 However, if you want to ensure usability and extendability, then you could run import, run, and export an image regularly to make sure the export format still works with the then current version of Docker.
 
-The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pin}) and regular image building (see above).
+The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
 
 Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
