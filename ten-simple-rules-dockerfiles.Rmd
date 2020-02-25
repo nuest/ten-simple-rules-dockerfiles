@@ -166,10 +166,11 @@ As an example, Ubuntu is heavily used for geospatial research, and so the `rocke
 
 Container tags may also provide an indication as the size of a container.
 Smaller images are often indicated by having `slim` or `minimal` as part of the tag.
-If you need to build smaller containers, consider a `busybox` base or a multi-stage build, which allows you to selectively copy files from one build step to another.
-Also take into account the libraries that you actually need.
+If you need to build smaller containers, consider a `busybox` base or a _multi-stage build_ [@docker_multi-stage_2020], which allows you to selectively copy files from one build step to another.
+Also take into account the software that you actually need, but mostly for clarity.
+In scientific contexts, the image size will be often the least of you concerns, because data size is much larger or image portability is not time critical.
 
-Base images that have complex software installed (e.g. machine learning libraries, specific BLAS library) are helpful and fine to use.
+Base images that have complex software installed (e.g. machine learning tool stacks, specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library) are helpful and fine to use.
 If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
 Trusting that the third party `Dockerfile` will persist for your analyses may be risky because that `Dockerfile` could disappear without warning. 
 Here is a selection of communities that produce widely used regular builds and updates:
