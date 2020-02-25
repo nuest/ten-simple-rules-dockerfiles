@@ -49,8 +49,8 @@ header-includes:
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
   - \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
 csl: plos.csl
-# Submission notes:
-# - The authors declare that no competing interests exist.
+Submission notes:
+ - The authors declare that no competing interests exist.
 ---
 
 <!-- please stick to one sentence per line! -->
@@ -58,8 +58,6 @@ csl: plos.csl
 <!-- add " {-}" after headings to remove numbering -->
 
 # Introduction {#introduction .unnumbered}
-
-\ruleref{rule:pinning}
 
 With access to version control systems (VCS, @wikipedia_contributors_version_2019) and collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the software used.
 The publication of these instructions and related files (also known as 'artefacts') are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details [@marwick_how_2015], but where the actual contribution to knowledge is the full software environment that produced a result [@donoho_invitation_2010].
@@ -374,7 +372,7 @@ These labels match the `org.label-schema.*` specification, which has been deprec
 LABEL org.opencontainers.image.created='2019-12-10' \
   org.opencontainers.image.authors='author@example.org' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
-  org.opencontainers.image.documentation='https://github.com/nuest/ten-simple-rules/README.md' \
+  org.opencontainers.image.documentation='https://github.com/...' \
   org.opencontainers.image.version='0.0.1'
 
 LABEL org.opencontainers.image.vendor='nuest' \
@@ -424,22 +422,22 @@ With plain Docker, you can override the defaults as part of the `docker run` com
 In any case you should document different variants, if you choose to provide them, in a `Makefile` [@wikipedia_contributors_make_2019].
 To support both one click execution and interactive interfaces and even allow for custom configuration, it's helpful to expose settings via a configuration file which can be bound from the host, via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
 
-_Interactive graphical interfaces_ such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container be used cross-platform via a regular web browser.
+_Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across platforms via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
 Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user using the `docker run` option `-p`/`--publish <host port>:<container port>`.
 A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019] or [ContainDS](https://containds.com/) for assisstance.
 The container should also print to the screen the used ports along with any login credentials needed.
-For example, as done in the last few lines of the output of running a Jupyter Notebook server locally.
+For example, as done in the last few lines of the output of running a Jupyter Notebook server locally (lines abbreviated).
 
-```{bash, eval=FALSE}
+```{bash datascience_notebook, eval=FALSE}
 docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
 ```
 ```
 [...]
 [I 15:44:31.323 NotebookApp] The Jupyter Notebook is running at:
-[I 15:44:31.323 NotebookApp] http://9027563c6465:8888/?token=6a92d5a638b948f36f9e7d66af20fb976dc4a0be547abb2e
-[I 15:44:31.323 NotebookApp]  or http://127.0.0.1:8888/?token=6a92d5a638b948f36f9e7d66af20fb976dc4a0be547abb2e
-[I 15:44:31.323 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[I 15:44:31.323 NotebookApp] http://9027563c6465:8888/?token=6a92d [..]
+[I 15:44:31.323 NotebookApp]  or http://127.0.0.1:8888/?token=6a92 [..]
+[I 15:44:31.323 NotebookApp] Use Control-C to stop this server and [..]
 ```
 
 _Interactive usage of a command-line interfaces_ (CLI) are quite straightforward to access from containers, if users are familiar with them.
@@ -447,10 +445,10 @@ Running the container will provide a shell where a tool can be used and help or 
 For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
 If your workflow can be executed via a CLI you may use that to validate correct functionality of an image in automated builds, e.g. using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, e.g. via an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
 
-The followig example runs a simple R command using a setting passed as an environment variable and then exists.
-It uses the same Jupyter image as above.
+The followig example runs a simple R command counting the lines in this articles source file.
+The file path is passed as an environment variable.
 
-```{bash}
+```{bash env_param_pass, eval=FALSE}
 docker run \
   --env CONFIG_PARAM="/data/ten-simple-rules-dockerfiles.Rmd" \
   --volume $(pwd):/data \
@@ -459,6 +457,11 @@ docker run \
 l = length(readLines(Sys.getenv('CONFIG_PARAM')));
 print(paste('Number of lines: ', l))
 "
+```
+```
+> l = length(readLines(Sys.getenv('CONFIG_PARAM')));
+> print(paste('Number of lines: ', l))
+[1] "Number of lines:  568"
 ```
 
 If there is only a regular desktop application, the hosts window manager can be connected to the container.
