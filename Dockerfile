@@ -1,4 +1,4 @@
-FROM rocker/verse:3.6.1
+FROM rocker/verse:3.6.2
 # docker build -t ten-simple-rules .
 
 RUN r -e 'tinytex::tlmgr_install(pkgs = c("changepage", \ 
@@ -12,5 +12,4 @@ RUN r -e 'tinytex::tlmgr_install(pkgs = c("changepage", \
     "fancyhdr", \
     "forarray", \
     "xstring", \
-    "ec", \
-    "zref"))'
+    "ec"))'
