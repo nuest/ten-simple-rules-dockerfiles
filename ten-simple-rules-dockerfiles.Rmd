@@ -143,31 +143,33 @@ In this case, proceed with following the remaining rules to write your `Dockerfi
 # 2. Use versioned and automatically built base images {-}
 \rulelabel{2}{rule:base}
 
-It is good practice to use base images that are maintained by the Docker library.
+It's good practice to use base images that are maintained by the Docker library.
 While some organizations can be trusted to update containers with security fixes (e.g., `rocker/r-ver`), for most individual accounts that build containers, it is likely that containers will not be updated regularly.
-It is even possible that images or `Dockerfile`s disappear.
-Thus a good understanding of how base images and image tags work is crucial, as the tag that you choose has implications for your container build.
+It is even possible that images or `Dockerfile`s may disappear.
+Thus a good understanding of how base images and image tags work is crucial, as the tag that you choose has implications for your image build.
 You should know how to use `FROM` statements to trace all the way up to the original container base, an abstract base called `scratch`.
-Doing this kind of trace is essential to be aware of all of the steps that were taken to generate your container and who took them.
+Doing this kind of trace is essential because it makes clear all of the steps that were taken to generate your container and who took them.
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
 If you want to use an unofficial image, do save a copy of the Dockerfile(s) created by others.
 Alternatively, copy relevant instructions into your own Dockerfile, acknowledge the source in a comment, and configure an automated build for your own image.
-Automated builds can be complex to set up, and the details are out of scope of this article.
-The documentation and tools of container registries, e.g., [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) instances, but also of CI platforms, e.g., [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), a GitHub actions for `repo2docker` [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019], or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build), can help you get started.
-Using an automated build can help you avoid publishing an image in a public registry with `docker push`, which is not ideal because using `docker push` in this way opaquely breaks the linkage between a `Dockerfile` and its resulting image.
+Automated builds can be complex to set up, and details are out of scope of this article.
+The documentation for, and toolsets provided by  container registries such as [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as CI platforms such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci) or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) can help you get started; tools may also be available to automate builds using intermediate tools, such as the `repo2docker` Github action [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019],
+You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image.
 
 A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it is a moving target so that it is more likely that an updated base could break your workflow.
 Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
-As an example, the Python container on Docker Hub will be released with new versions of Python.
-If you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
+Official builds are often tagged with corresponding release version numbers as well as with the `latest` tag.
+For example, if you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
 In this case, a tag like `python:3.5` might be a good choice, where the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes that won't break your code, i.e., changes that are backwards compatible, are applied (cf. semantic versioning, [@preston-werner_semantic_2013]).
-When you choose a base image, choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
+When you choose a base image, try to choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
 As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.
-Especially when data is involved, containers can grow quickly in size, and you should keep this in mind.
-If you need to built smaller containers, consider a `busybox` base or a multi-stage build, which allows to selectively keep files from one build step to another.
-Smaller images often are indicated by having `slim` or `minimal` as part of the tag.
+
+Container tags may also provide an indication as the size of a container.
+Smaller images are often indicated by having `slim` or `minimal` as part of the tag.
+If you need to build smaller containers, consider a `busybox` base or a multi-stage build, which allows you to selectively copy files from one build step to another.
 Also take into account the libraries that you actually need.
-Base images that have complex software installed (e.g., machine learning libraries, specific BLAS library) are helpful and fine to use.
+
+Base images that have complex software installed (e.g. machine learning libraries, specific BLAS library) are helpful and fine to use.
 If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
 Trusting that the third party `Dockerfile` will persist for your analyses may be risky because that `Dockerfile` could disappear without warning. 
 Here is a selection of communities that produce widely used regular builds and updates:
