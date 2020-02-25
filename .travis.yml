@@ -19,6 +19,7 @@ script:
   - mkdir -p site
   - docker cp tsrd:/tmp/tsrd.pdf site/ten-simple-rules-dockerfiles.pdf
   - ls -l
+  - ls -l site
 
 # only works for one branch, because of reset
 after_success:
