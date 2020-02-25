@@ -320,20 +320,26 @@ RUN pip install -r requirements.txt
 This modularisation is a potential risk for understandability and consistency (cf. Rule 3), which can be mitigated by carefully organizing all these files in the same version-controlled project.
 The version pinning capabilities of these file formats are described in their respective documentation.
 
-# 5. Bind mount data and control code {-}
+# 5. Add user scripts and data into containers by mounting volumes {-}
 \rulelabel{5}{rule:mount}
 
-Do not put data and workflow configuration or code only into the container.
-It is better to _bind_, or _mount_, these files from the host machine into the container, and using the container image primarily for the software and dependencies.
-This is especially the case if the container is intended to be used as an interactive environment.
-This ensures that data persists when the container instance or image is removed from your system.
-Other typical cases for binding or mounting is when your data is very large (usually over hundreds of GB) or has access restrictions. 
-For example, a private dataset with personal information (e.g. health, financial, location, etc.) should never be added to an image. 
-In these cases, you should provide clear instructions to the user in the `README` for how to obtain actual or dummy data.
-When publishing your workspace, e.g. on Zenodo, having the crucial content as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
+The role of containers is to provide the methods, not to encapsulate datasets.
+It is better to insert data files and scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
+This insertion is achieved by using _volume mounts_.
+Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more easily accessible to other users if published in an online research compendium.
+You can `COPY` dummy or test data into the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual.
+
+Standalone _script files_ are distinct from other software as they are not packaged and versioned, and are treated as files, not as managed software.
+If you developed software for a specific analysis in form of a software package, you should publish in a public source code or software repository and follow \ruleref{rule:pinning} for installing it.
+You should avoid installing software packages from source after `COPY`ing the code it into the image, because the connection between the file outside of the image and the one copied in is easily lost.
+Consider using the suitable package system even for small scripts if the functions are reusable across datasets or workflows by you or others.
+
+Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or personal information.
+For these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
+When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
 
 You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
-If the target path exists in the image, the bind mount will replace it for the specific container.
+If the target path exists within the image, the bind mount will replace it for the started container.
 
 ```
 # mount directory
@@ -344,19 +350,11 @@ docker run --volume /home/user/project:/project:ro mycontainer
 
 # mount directory with write access relative to current path (Linux)
 docker run --volume $(pwd)/inputdata:/data:rw mycontainer
-
-# mount directory relative to current path (MacOS)
-# mount directory relative to current path (Windows)
 ```
 
-Be careful about what volumes are bound to the host, because many applications generate log and other output files during runtime.
-How you bind external resources into the container should be included in the example commands (see \ruleref{rule:mount}).
+How your container expects external resources to be mounted into the container should be included in the example commands (see \ruleref{rule:formatting}).
 In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
-
-In specific cases is it feasible to add data or code into the container using `ADD`/`COPY`. 
-For example, to ensure you can distribute a reproducible analysis it may be essential to add small data files and software required for the container to function. 
-If part of the software developed for a specific analysis is published as a conventional package you should follow \ruleref{rule:pinning} for installing it from a public repository, but you may also want to install it from source after copying it into the image.
 
 # 6. Capture structured environment metadata {-}
 \rulelabel{6}{rule:metadata}
