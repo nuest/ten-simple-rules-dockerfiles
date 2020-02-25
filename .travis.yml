@@ -15,13 +15,13 @@ branches:
 # - access to GITHUB_PAT for rate limit
 # - --user is needed to write into mounted directory
 script:
-  - docker run --interactive --rm --volume $(pwd):/tsrd nuest/ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
+  - docker run --interactive --name tsrd --volume $(pwd):/tsrd nuest/ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_file = "/tmp/tsrd.pdf")'
+  - mkdir -p site
+  - docker cp tsrd:/tmp/tsrd.pdf site/ten-simple-rules-dockerfiles.pdf
   - ls -l
 
 # only works for one branch, because of reset
 after_success:
-  - mkdir -p site
-  - cp ten-simple-rules-dockerfiles.pdf site/ten-simple-rules-dockerfiles.pdf
   - cd site
   - ls -l
   - git init
