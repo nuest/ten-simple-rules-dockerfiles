@@ -38,7 +38,7 @@ abstract: |
   It follows that choices that are made with respect to building containers can make or break a workflow's reproducibility.
   The build for the container image is often created based on the instructions in a plain-text file.
   For example, one such container technology, Docker, provides instructions using a `Dockerfile`.
-  By following the rules in this article researchers writing a `Dockerfile` can effectively build and distribute containers.
+  By following the rules in this article researchers writing a `Dockerfile` can effectively create containers suitable for sharing with fellow scientists, for inclusing in scholarly communication such as education or scientific papers, and for an effective and sustainable personal workflow.
 #author_summary: |
 #  TBD
 bibliography: bibliography.bib
@@ -59,50 +59,50 @@ Submission notes:
 
 # Introduction {#introduction .unnumbered}
 
-With access to version control systems (VCS, @wikipedia_contributors_version_2019) and collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share algorithms, but also instructions for executing research workflows, including building and testing of the software used.
-The publication of these instructions and related files (also known as 'artefacts') are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details [@marwick_how_2015], but where the actual contribution to knowledge is the full software environment that produced a result [@donoho_invitation_2010].
+With access to version control systems (VCS, @wikipedia_contributors_version_2019) and collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share abstract algorithms and study designs, but also instructions for executing whole research workflows, including building and testing of the software used.
+The publication of these instructions and related files (also known as 'artefacts') are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details of research [@marwick_how_2015], but where the actual contribution to knowledge includes the full software environment that produced a result [@donoho_invitation_2010].
 A _research compendium_ is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
-Within such a compendium, it is desirable to include instructions, i.e. a human- and machine-readable recipe, for building containers that capture the computing environment, i.e., all software and data dependencies.
-By providing this recipe, authors of scientific articles greatly improve their documentation and apply one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
+Within such a compendium, it is desirable to include instructions, i.e. a human- _and_ machine-readable recipe, for building containers that capture the computing environment, i.e., all software and data dependencies.
+By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
+Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
-Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows (cf. Rule 10 of @sandve_ten_2013).
+Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
-While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no extensive examination for how to write the actual instructions to create the containers.
+While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed manual for how to write the actual instructions to create the containers.
 Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide most of the complexity from the researcher.
-Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes, even if the are not sure how the technology behind them actually works.
-Therefore researchers publishing a research compendium should craft their own definition of computing environments following good practices.
+Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
+Even if they are not sure how the technology behind them actually works, they can leverage containerisation, but should craft their own definition of computing environments following good practices.
 
 While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
 Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017) and our observations indicate it is the most widely used container technology in academic data science.
 The goal of this article is to guide you to write a `Dockerfile` so that it best facilitates interactive development and computer-based research, as well as the higher goals of reproducibility and preservation of knowledge.
 Such practices are generally not part of generic containerization tutorials and are rarely found in published `Dockerfile`s, which are often used as templates by novices.
-The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who do not have software development experience.
+The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who do not have extensive software development experience or formal training.
+A commitment to this article's rules can ensure that workflows are reproducible and reusable, that computing environments are understandable by others, and researchers can collaborate effectively.
+Their application should not be triggered by the publication of a finished project, but be weaved into day-to-day habits (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 
-To start with, we assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a single command, for example `make`.
+To start with, we assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a single command, for example `make my_workflow`, `Rscript analysis.R`, or `python3 paper-plots.py`.
 This execution should be able to be triggered by command-line instruction, which is possible for all generic programming languages and widely used workflow tools, but may also be opening and starting a process with a graphical user interface.
 A workflow that does not support scripted execution is out of scope for reproducible research, and does not fit well with containerization. 
 
-A commitment to these general practices can ensure that workflows are reproducible, and generation of a container is not merely triggered by the publication of a finished project (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
-By following the _conventions_ laid out in these ten rules, authors ensure readability by others and enable subsequent reuse and collaboration.
-
-## Docker {#docker .unnumbered}
+# Docker
 
 Docker is a container technology that is widely adopted and supported on many platforms, and has become highly useful in science.
-They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware, and thus do not require the same system resources.
-To build Docker containers, we write text files that follow a particular format called `Dockerfile`s [@docker_inc_dockerfile_2019]. 
-`Dockerfile`s are machine- and human-readable recipes for building images. 
-Images are inert, immutable, read-only files that includes the application (e.g., the programming language interpreter needed to run the workflow) and the environment required by the application to run.
-They consist of a sequence of instructions, which add layers to the image.
+They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware or operating system kernels, and thus do not require the same system resources.
+To create Docker containers, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019]. 
+`Dockerfile`s are machine- and human-readable recipes for building images.
+Images are inert, immutable, read-only files that include the application, e.g., the programming language interpreter needed to run a workflow, and the environment required by the application to run.
+A `Dockerfile` consists of a sequence of instructions to copy files and install software, which add layers to the image.
 These layers can be used for caching across image builds, which is important for minimizing build and download times.
-The images can then be run as stateful containers, which are the running instances of Docker images. 
-Containers can be modified, stopped, restarted and purged. 
+The images have a main executable that is started when they are run as stateful containers, which are the running instances of Docker images.
+Containers can be modified, stopped, restarted and purged.
 
-While Docker was the original technology to support this format, other container technologies have developed around the format (and thus support it) including: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
-The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker containers directly from a Docker registry. 
+While Docker was the original technology to support this format, other container technologies support the format including [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
+The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker images directly from a Docker registry. 
 Although the Singularity recipe format is different, the rules here are transferable to some extent.
-While some may argue for reasons to not publish reproducibly (e.g., lack of time and incentives, reluctance to share, cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile` or pre-built Docker or other type of container should become an increasingly easier task for the average researcher.
-If a researcher is able to find or create containers or `Dockerfile`s to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015). 
-In fact, the `Dockerfile` itself can be used as documentation to clearly show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
+While some may argue for reasons to not publish reproducibly, e.g., lack of time and incentives, reluctance to share (cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile`, a pre-built Docker image, or other type of container should become an increasingly easier task for the average researcher.
+If a researcher is able to find and create containers or write a `Dockerfile` to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015).
+In fact, the `Dockerfile` itself can be a powerful documentation to show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 
 # 1. Consider tools to assist with Dockerfile generation {-}
 \rulelabel{1}{rule:tools}
@@ -227,7 +227,8 @@ Following a common coding aphorism, we might say _"A Dockerfile written three mo
 Here is a selection of typical kinds of comments that are useful to include in a `Dockerfile`:
 
 ```
-# apt-get install specific version, use 'apt-cache madison <pkg>' to see available versions
+# apt-get install specific version, use 'apt-cache madison <pkg>' 
+# to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
 # RUN command spreading several lines
@@ -236,9 +237,14 @@ RUN R -e 'getOption("repos")' && \
     fortunes \
     here
 
-# this library must be installed from source to get version newer than in sources
+# this library must be installed from source to get version newer
+# than in sources
+RUN git clone http://url.of/repo && \
+  cd repo && \
+  make build && \
+  make install
 
-# following commands from instructions at LINK HERE
+# following commands from instructions at <LINK HERE>
 ```
 
 Clarity is always more important than brevity.
@@ -331,7 +337,7 @@ You can `COPY` dummy or test data into the image to be able to ensure that a con
 
 Standalone _script files_ are distinct from other software as they are not packaged and versioned, and are treated as files, not as managed software.
 If you developed software for a specific analysis in form of a software package, you should publish in a public source code or software repository and follow \ruleref{rule:pinning} for installing it.
-You should avoid installing software packages from source after `COPY`ing the code it into the image, because the connection between the file outside of the image and the one copied in is easily lost.
+You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost.
 Consider using the suitable package system even for small scripts if the functions are reusable across datasets or workflows by you or others.
 
 Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or personal information.
