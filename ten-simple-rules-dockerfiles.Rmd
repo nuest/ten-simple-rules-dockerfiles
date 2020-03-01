@@ -300,7 +300,7 @@ Here are some examples of terminal commands that will list the currently install
 In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
 Package managers generally provide reliable mirrors or endpoints to download software, and many packages are tested before release.
 Most package managers have a command line interface that can easily be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf. https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html cited by @rule_ten_2019)
-The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration to file formats that are not supported. <!--   <- is this right?   --> 
+The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration.
 As an example, here are configuration files supported by commonly used languages in scientific programming:
 
 - Python: `requirements.txt` (pip tool, @the_python_software_foundation_requirements_2019), `environment.yml` (Conda, @continuum_analytics_managing_2017)
@@ -323,8 +323,11 @@ serves as more clear documentation in a `Dockerfile` than a `requirements.txt` f
 RUN pip install -r requirements.txt
 ```
 
-This modularisation is a potential risk for understandability and consistency (cf. Rule 3), which can be mitigated by carefully organizing all these files in the same version-controlled project.
-The version pinning capabilities of these file formats are described in their respective documentation.
+This modularisation is a potential risk for understandability and consistency, which can be mitigated by carefully organizing all these files in the same version-controlled project.
+You can also use package manager to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
+And finally, you can use many package managers to install software from source obtained from code management repositories, e.g., installing a specific tool identified by a GitHub version tag or commit hash.
+Be aware of the risk of depending on such repositories, especially if they are out of your control, although the installation command with a full URL should allow readers of your `Dockerfile` to dig deeper if problems arise and such an installation from source gives you a lot of freedom (including the one to shoot yourself in the foot).
+The version pinning capabilities of these file formats and package managers are described in their respective documentation.
 
 # 5. Add user scripts and data into containers by mounting volumes {-}
 \rulelabel{5}{rule:mount}
@@ -334,11 +337,14 @@ It is better to insert data files and scripts files from the local machine into 
 This insertion is achieved by using _volume mounts_.
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more easily accessible to other users if published in an online research compendium.
 You can `COPY` dummy or test data into the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual.
+You should use `COPY` if you actually copy files because it is explicit.
+`ADD` supports additional features and you should only use it if you leverage them: (i) a URL as a source, for which you may use it instead of a `RUN` instruction to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)), which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of.
 
 Standalone _script files_ are distinct from other software as they are not packaged and versioned, and are treated as files, not as managed software.
 If you developed software for a specific analysis in form of a software package, you should publish in a public source code or software repository and follow \ruleref{rule:pinning} for installing it.
-You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost.
-Consider using the suitable package system even for small scripts if the functions are reusable across datasets or workflows by you or others.
+You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost (cf.&nbsp;\ruleref{rule:mount}).
+Consider using the suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
+If you cannot publish a software project albeit it being in a language's package structure, you should make sure the files are always published together with the Dockerfile (see&nbsp;\ruleref{rule:publish}).
 
 Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or personal information.
 For these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
@@ -494,7 +500,6 @@ In the case of more complex web applications that require applications and web s
 `docker-compose` also allows definition of services using multiple containers via it's own `docker-compose.yml` file.
 This file can help to template options including mounted volumes, to permissions, environment variable, and exposed ports.
 
-
 # 9. Publish one Dockerfile per project in a code repository with version control {-}
 \rulelabel{9}{rule:publish}
 
@@ -505,8 +510,9 @@ Continuous integration increases stability and trust, and gives the ability to p
 If your `Dockerfile` includes an interactive user interface, you can also adapt it so that it is ready-to-use as a Binder instance [@jupyter_binder_2018], providing an online work environment to any user with a simple click of a link.
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
 
-While there are exceptions to the rule (cf. @kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
-If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see \ruleref{rule:interactive}) or to separate tools into different repositories.
+While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
+If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see&nbsp;\ruleref{rule:interactive}) or to separate tools into different repositories.
+Yet most importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same repository.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 \rulelabel{10}{rule:usage}
