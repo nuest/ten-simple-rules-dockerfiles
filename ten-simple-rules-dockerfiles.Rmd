@@ -197,7 +197,7 @@ Use long versions of parameters for readability (e.g., `--input` instead of `-i`
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
 
 You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
-The consistency added by linting also helps keeping your edits to a `Dockerfile` in a version control system (VCS) meaningful (see \ruleref{rule:publish}).
+The consistency added by linting also helps keeping your edits to a `Dockerfile` in a VCS meaningful (see \ruleref{rule:publish}).
 Note however that a linter's rules may not primarily serve the intention of reproducible scientific workflows.
 
 As you are writing the `Dockerfile`, be mindful of how other people will read it. 
@@ -431,7 +431,6 @@ To support both one click execution and interactive interfaces and even allow fo
 _Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across platforms via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
 Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user using the `docker run` option `-p`/`--publish <host port>:<container port>`.
-A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019] or [ContainDS](https://containds.com/) for assisstance.
 The container should also print to the screen the used ports along with any login credentials needed.
 For example, as done in the last few lines of the output of running a Jupyter Notebook server locally (lines abbreviated).
 
@@ -446,7 +445,9 @@ docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
 [I 15:44:31.323 NotebookApp] Use Control-C to stop this server and [..]
 ```
 
-_Interactive usage of a command-line interfaces_ (CLI) are quite straightforward to access from containers, if users are familiar with them.
+A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019] or [ContainDS](https://containds.com/) for assisstance in managing containers on their machine without using the Docker CLI.
+
+_Interactive usage of a command-line interfaces_ is quite straightforward to access from containers, if users are familiar with this style of user interface.
 Running the container will provide a shell where a tool can be used and help or error messages can assist the user.
 For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
 If your workflow can be executed via a CLI you may use that to validate correct functionality of an image in automated builds, e.g. using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, e.g. via an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
@@ -497,8 +498,8 @@ This file can help to template options including mounted volumes, to permissions
 # 9. Publish one Dockerfile per project in a code repository with version control {-}
 \rulelabel{9}{rule:publish}
 
-Because a `Dockerfile` is a plain text-based format, it works well with version control systems.
-Including a `Dockerfile` alongside your code and (if size permits) data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf. @emsley_framework_2018).
+Because a `Dockerfile` is a plain text-based format, it works well with VCS.
+Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf. @emsley_framework_2018).
 Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building your image in an independent build environment.
 Continuous integration increases stability and trust, and gives the ability to publish images automatically.
 If your `Dockerfile` includes an interactive user interface, you can also adapt it so that it is ready-to-use as a Binder instance [@jupyter_binder_2018], providing an online work environment to any user with a simple click of a link.
@@ -535,8 +536,8 @@ After a prune is performed, it follows naturally to rebuild a container for loca
 This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
 
 Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
-You should include instructions how to import and run the workflow based on the image archive.
-Depositing the image with other project files (e.g., data, code, `Dockerfile`) in a public repository makes them likely to be preserved.
+You should include instructions how to import and run the workflow based on the image archive and add your own image tags for clarity.
+Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but is is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
 Applying proper preservation strategies (cf. [@emsley_framework_2018]) can be highly complex, but simply running an image "as-is", i.e. with the default command and entrypoint (see \ruleref{rule:interactive}), and observing the output is quite likely to work for many years into the future.
 If the image does not work anymore, a user can still extract the image contents and explore the files of each layer manually, or if an import still works, with exploration tools like dive [@goodman_dive_2019].
 However, if you want to ensure usability and extendability, then you could run import, run, and export an image regularly to make sure the export format still works with the then current version of Docker.
