@@ -128,7 +128,6 @@ The resulting container image installs the dependencies listed in the requiremen
 A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
 For this reason, it is good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
 It's also recommended to add custom labels to your container build to define metadata for your analyses even if you are using tools (see&nbsp;\ruleref{rule:metadata}).
-The container should be built to be optimized for its use case, whether it is intended to be shared or used by a single user.
 
 Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
 `containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
@@ -585,11 +584,13 @@ To demonstrate the ten rules, we maintain a GitHub repository with example `Dock
 # Conclusion {#conclusion .unnumbered}
 
 Reproducibility in research is an endeavor of incremental improvement and best efforts, not about achieving the perfect solution, which may be not achievable for many researchers with limited resources, and the definition of which may change over time.
-In this article we have provided guidance for using `Dockerfile`s in computational research. 
-Our goal is to help the researcher to work towards creating a "time capsule" [@blank_twitter_2019] which, given some expertise and the right tools, can be used to come as close as possible to the original workflow with reasonably little effort.
+Containerisation can support researchers.
+Containers can be optimized for very different use cases, such as supporting many hosts, being small in size for quick deployments in cloud infrastructures, but in this article we have provided guidance for using `Dockerfile`s to create containers for use and communication in computational research.
+Our goal is to help the researcher to work towards creating a "time capsule" [@blank_twitter_2019] in form of a research compendium.
+Given some expertise and the right tools, such a compendium can come as close as needed to the original workflow with reasonably little effort for better science.
 Even if such a capsule decays over time, the effort to create and document it provides incredibly useful and valuable transparency for the project.
-We encourage researchers to value these steps taken by their peers to use `Dockerfile`s to create "time capsules", and promote change in the way scholars communicate (cf. @stark_before_2018's notion of "preproducibility" ).
-So please, make a best effort with your current knowledge, and strive to write efficient, readable `Dockerfile`s that are realistic about what might break and what is unlikely to break.
+We encourage researchers to value these steps taken by their peers to use `Dockerfile`s to create "time capsules", and promote change in the way scholars communicate towards an open and friendly "preproducibility" [@stark_before_2018].
+So please, make a best effort with your current knowledge, and strive to write readable `Dockerfile`s for functional containers, that are realistic about what might break and what is unlikely to break.
 In a similar vein, we accept that you should freely break these rules if another way makes more sense _for your use case_.
 Most importantly, share and exchange your `Dockerfile` freely and collaborate in your community to spread the knowledge about containers as a tool for research and scholarly collaboration and communication.
 Together we can develop common practices and shared materials for better transparency, higher efficiency, and faster innovation.
