@@ -157,7 +157,7 @@ But the image also has an automatically generated image name using a hash, which
 So if you tag an image, use the tag when you start a container.
 
 Because of these options, a good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your own image.
-You should know how to use `FROM` statements to trace all the way up to the original container base, an abstract base called `scratch`.
+You should know how to use `FROM` instructions to trace all the way up to the original container base, an abstract base called `scratch`.
 Doing this kind of trace is essential because it makes clear all of the steps that were taken to generate your container and who took them.
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
 If you want to use an unofficial image, do save a copy of the `Dockerfile`s created by others.
@@ -216,7 +216,7 @@ Note however that a linter's rules may not primarily serve the intention of repr
 
 As you are writing the `Dockerfile`, be mindful of how other people will read it. 
 Are your choices and commands being executed clear, or is further comment warranted?
-To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or VCS commit messages to give context for your specific decisions.
+To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or VCS commit messages to give context for your specific decisions, for example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job at explainig the reasoning and steps of the contained instructions.
 Comments should include helpful usage guides and links for readers inspecting the `Dockerfile`, including future you. 
 Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your `Dockerfile` is managed in a VCS (see \ruleref{rule:publish}).
 It can even be helpful to include comments about commands that did not work so you do not fall repeat past mistakes.
@@ -267,9 +267,10 @@ Depending on the programming language used, your project may already contain fil
 This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mount}).
 A single long `Dockerfile` with sections and helpful comments can be complete and thus more understandable than a collection of separate files.
 
-Generally, aim to design the `RUN` statements so that each performs one scoped action (e.g., download, compile, and install one tool).
-Each statement will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
-A `RUN` statement longer than a page requires scrolling, diminishing readability.
+Generally, aim to design the `RUN` instructions so that each performs one scoped action, e.g., download, compile, and install one tool.
+Each instruction will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
+Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied.
+A `RUN` instruction longer than a page requires scrolling, diminishing readability.
 This may be challenging for the next reader to digest and you should consider splitting it up, being aware of the extra layers added to the image.
 
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed. 
@@ -278,7 +279,7 @@ If you intend to build the image more than once (perhaps during development) and
 You should list commands _in order_ of least likely to change to most likely to change and use the `--no-cache` flag to force a re-build of all layers.
 Docker will execute the instructions in the order as they appear in the `Dockerfile`.
 When one instruction is completed, the result is cached, and the build moves to the next one.
-If you change something in the Dockerfile, and rebuild the container, each statement is inspected in turn.
+If you change something in the Dockerfile, and rebuild the container, each instruction is inspected in turn.
 If it hasn't changed, the cached layer is used and the build progresses.
 If the line has changed, that build step is executed afresh and then every following instruction will have to be rebuilt in case the line that changed influcences something for a following instruction.
 A recommended ordering based on these considerations is as follows.
@@ -331,7 +332,7 @@ As an example, here are configuration files supported by commonly used languages
 In some cases (e.g., Conda) the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
 In all of the above, the user is required to inspect the file or the build to see what is installed.
 For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:formatting}).
-For example, the `RUN` statement here:
+For example, the `RUN` instruction here:
 
 ```bash
 RUN pip install geopy==1.20.0 && \
