@@ -273,7 +273,12 @@ When you install several system libraries, it is good practice to add comments a
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed.
 If you intend to build the image more than once (perhaps during development) and you can take advantage of build caching to avoid execution of time-consuming instructions, e.g., install from a remote resource or a file that gets cached.
 You should list commands _in order_ of least likely to change to most likely to change and use the `--no-cache` flag to force a re-build of all layers.
-A recommended ordering based on this metric might be:
+Docker will execute the instructions in the order as they appear in the `Dockerfile`.
+When one instruction is completed, the result is cached, and the build moves to the next one.
+If you change something in the Dockerfile, and rebuild the container, each statement is inspected in turn.
+If it hasn't changed, the cached layer is used and the build progresses.
+If the line has changed, that build step is executed afresh and then every following instruction will have to be rebuilt in case the line that changed influcences something for a following instruction.
+A recommended ordering based on these considerations is as follows.
 
 1. system libraries
 2. language-specific libraries or modules
