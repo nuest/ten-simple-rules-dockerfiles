@@ -68,7 +68,7 @@ Such practice is one important part of common practices for scientific computing
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
-While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed manual for how to write the actual instructions to create the containers.
+While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed manual for how to write the actual instructions to create the containers beyond generic best practices outside of the scientific domain [@docker_inc_best_2020].
 Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide most of the complexity from the researcher.
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the technology behind them actually works, they can leverage containerisation, but should craft their own definition of computing environments following good practices.
@@ -141,15 +141,18 @@ In this case, proceed with following the remaining rules to write your `Dockerfi
 # 2. Use versioned and automatically built base images {-}
 \rulelabel{2}{rule:base}
 
-It's good practice to use base images that are maintained by the Docker library.
-While some organizations can be trusted to update containers with security fixes (e.g., `rocker/r-ver`), for most individual accounts that build containers, it is likely that containers will not be updated regularly.
-It is even possible that images or `Dockerfile`s may disappear.
+It's good practice to use base images that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
+You can identify these images by the missing the user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
+There are also repositories that are maintained by organisations or fellow researchers.
+While some organizations can be trusted to update containers with security fixes (e.g., the [Rocker Project](https://hub.docker.com/u/rocker-org) or [Jupyter](https://hub.docker.com/u/jupyter)), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
+It is even possible that images or `Dockerfile`s may disappear, or that images are published with malicious intent.
 Thus a good understanding of how base images and image tags work is crucial, as the tag that you choose has implications for your image build.
 You should know how to use `FROM` statements to trace all the way up to the original container base, an abstract base called `scratch`.
 Doing this kind of trace is essential because it makes clear all of the steps that were taken to generate your container and who took them.
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
-If you want to use an unofficial image, do save a copy of the Dockerfile(s) created by others.
-Alternatively, copy relevant instructions into your own Dockerfile, acknowledge the source in a comment, and configure an automated build for your own image.
+If you want to use an unofficial image, do save a copy of the `Dockerfile`s created by others.
+Alternatively, copy relevant instructions into your own `Dockerfile`, acknowledge the source in a comment, and configure an automated build for your own image.
+The official images and images by established organisations should be your preferred source of snippets if you craft you own `Dockerfile`
 Automated builds can be complex to set up, and details are out of scope of this article.
 The documentation for, and toolsets provided by  container registries such as [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as CI platforms such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci) or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) can help you get started; tools may also be available to automate builds using intermediate tools, such as the `repo2docker` Github action [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019],
 You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image.
