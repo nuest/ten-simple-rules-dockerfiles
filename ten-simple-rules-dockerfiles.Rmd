@@ -60,7 +60,7 @@ Submission notes:
 # Introduction {#introduction .unnumbered}
 
 With access to version control systems (VCS, @wikipedia_contributors_version_2019) and collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share abstract algorithms and study designs, but also instructions for executing whole research workflows, including building and testing of the software used.
-The publication of these instructions and related files (also known as 'artefacts') are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details of research [@marwick_how_2015], but where the actual contribution to knowledge includes the full software environment that produced a result [@donoho_invitation_2010].
+The publication of these instructions and related configuration files are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details of research [@marwick_how_2015], but where the actual contribution to knowledge includes the full software environment that produced a result [@donoho_invitation_2010].
 A _research compendium_ is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
 Within such a compendium, it is desirable to include instructions, i.e. a human- _and_ machine-readable recipe, for building containers that capture the computing environment, i.e., all software and data dependencies.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
@@ -71,7 +71,9 @@ Such containers have been demonstrated for capturing scientific notebooks [@rule
 While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed manual for how to write the actual instructions to create the containers beyond generic best practices outside of the scientific domain [@docker_inc_best_2020].
 Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide most of the complexity from the researcher.
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
-Even if they are not sure how the technology behind them actually works, they can leverage containerisation, but should craft their own definition of computing environments following good practices.
+Even if they are not sure how the technology behind them actually works, reserachers can leverage containerisation, but should craft their own definition of computing environments following good practices.
+The practices outlined here are strongly related to software engineering in general and research software engineering (RSEng) in particlar, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
+Research Software Engineers (RSEs) are not the target audience for this work, but we want to encourage you to reach out to your local or national RSE community if your needs go beyond the contents detailed here.
 
 While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
 Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017) and our observations indicate it is the most widely used container technology in academic data science.
@@ -124,7 +126,7 @@ As an example, we might install `jupyter-repo2docker` and then run it against a 
 jupyter-repo2docker https://github.com/norvig/pytudes
 ```
 
-The resulting container image installs the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to easily interact with any existing workflows in the repository.
+The resulting container image installs the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to interact with any existing workflows in the repository.
 A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
 For this reason, it is good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
 It's also recommended to add custom labels to your container build to define metadata for your analyses even if you are using tools (see&nbsp;\ruleref{rule:metadata}).
@@ -199,7 +201,7 @@ FROM rocker/r-ver:3.5.2
 \rulelabel{3}{rule:formatting}
 
 It is good practice to think of the `Dockerfile` as a human _and_ machine readable file. 
-This means that you should use indentation, new lines, and comments to make your `Dockerfile`s well documented and easily readable.
+This means that you should use indentation, new lines, and comments to make your `Dockerfile`s well documented and readable.
 Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
 Use `\` at the end of a line to break a single command into multiple lines.
 This will ensure that no single line gets too long to comfortably read.
@@ -314,7 +316,7 @@ Here are some examples of terminal commands that will list the currently install
 
 In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
 Package managers generally provide reliable mirrors or endpoints to download software, many packages are tested before release, and most importantly the provide access to specific versions.
-Most package managers have a command line interface that can easily be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf. https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html cited by @rule_ten_2019)
+Most package managers have a command line interface that can be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf. https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html cited by @rule_ten_2019)
 The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration.
 As an example, here are configuration files supported by commonly used languages in scientific programming:
 
@@ -357,7 +359,7 @@ Be sure to document a non-default user in detail and to examine the used users i
 The role of containers is to provide the methods, not to encapsulate datasets.
 It is better to insert data files and scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
 This insertion is achieved by using _volume mounts_.
-Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more easily accessible to other users if published in an online research compendium outside of the image.
+Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible to other users if published in an online research compendium outside of the image.
 You should use `COPY` if you actually copy files because it is explicit.
 `ADD` supports additional features and you should only use it if you leverage them: (i) a URL as a source, for which you may use it instead of a `RUN` instruction to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)), which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of.
 
@@ -515,11 +517,11 @@ If you decide to build your own standard, collaborate with your community during
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide files, directory organization, and build instructions that include basic steps for getting started.
 A good project template should get you started with a template for documentation, setting up testing via continuous integration (CI), building a container, and even choosing a license.
 In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.
-When developing or working on projects with containers you can easily switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
+When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
 You can even run projects in parallel without interference.
 At most, if a port is shared by two projects to expose a user interface in the browser, you would need to configure non-conflicting ports.
 
-In the case of more complex web applications that require applications and web servers, databases, and workers or messaging, the entire infrastructure can easily be brought up or down with a combination of templates and orchestration tools like `docker-compose` [@docker-compose_2019].
+In the case of more complex web applications that require applications and web servers, databases, and workers or messaging, the entire infrastructure can be brought up or down with a combination of templates and orchestration tools like `docker-compose` [@docker-compose_2019].
 `docker-compose` also allows definition of services using multiple containers via it's own `docker-compose.yml` file.
 This file can help to template options including mounted volumes, permissions, environment variables, and exposed ports.
 
@@ -554,8 +556,8 @@ It can almost be guaranteed  future changes will interfere with the image build 
 The longer that you wait to rebuild the image, the more change happens, the higher the risk that your build will not work, and the harder it becomes to identify and fix the problem.
 If you are using an interactive container and find that you need to manually install a package or change a parameter, it is best practice to add this dependency to the container and rebuild it right away, but one tends to take shortcuts.
 Therefore, a habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveals issues requiring manual interference, i.e., changes to code or configuration not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
-This habit can be easily supported by using continuous deployment or CI strategies.
-If the container is linked to an automated build, then pushing updates to a VCS repository with a `Dockerfile` can easily trigger an build image build and a validating execution of the new images within a CI pipeline.
+This habit can be supported by using continuous deployment or CI strategies.
+If a VCS repository with a `Dockerfile` is linked to an automated build, then a CI pipelien can build images and execute a validating run the new image, e.g., using contained demo data (see&nbsp;\ruleref{rule:mount}).
 
 In the case of needing setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
 The effective use of a `Makefile` can help avoiding undocumented steps or manual, extra commands to be run on the local machine.
