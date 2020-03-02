@@ -146,7 +146,14 @@ You can identify these images by the missing the user portion of the image name,
 There are also repositories that are maintained by organisations or fellow researchers.
 While some organizations can be trusted to update containers with security fixes (e.g., the [Rocker Project](https://hub.docker.com/u/rocker-org) or [Jupyter](https://hub.docker.com/u/jupyter)), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
 It is even possible that images or `Dockerfile`s may disappear, or that images are published with malicious intent.
-Thus a good understanding of how base images and image tags work is crucial, as the tag that you choose has implications for your image build.
+Images furthermore have _tags_ associated with them with specific meanings, usually as a version number but sometimes also variants of images.
+Tags are defined at image built time and appear in image name after the `:` when you use an image, e.g., `python:3.6`.
+By _convention_ a missing tag is assumed to be the word `latest`.
+When you re-build you images locally using the same tag, the tag is always associated with the newest built.
+But the image also has an automatically generated image name using a hash, which will _not_ be updated.
+So if you tag an image, use the tag when you start a container.
+
+Because of these options, a good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your own image.
 You should know how to use `FROM` statements to trace all the way up to the original container base, an abstract base called `scratch`.
 Doing this kind of trace is essential because it makes clear all of the steps that were taken to generate your container and who took them.
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
@@ -159,9 +166,10 @@ You should avoid publishing an image in a public registry with `docker push`, be
 
 A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it is a moving target so that it is more likely that an updated base could break your workflow.
 Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
-Official builds are often tagged with corresponding release version numbers as well as with the `latest` tag.
-For example, if you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected. 
-In this case, a tag like `python:3.5` might be a good choice, where the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes that won't break your code, i.e., changes that are backwards compatible, are applied (cf. semantic versioning, [@preston-werner_semantic_2013]).
+Official builds are often tagged with corresponding release version numbers, the newest of which also has the `latest` tag.
+For example, if you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected.
+Therefore a tag like `python:3.5` is a preferable choice, where the lack of the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes _will_ be included.
+These _bugfix_ version changes should not break your code, i.e., are backwards compatible (cf. semantic versioning, [@preston-werner_semantic_2013]), and if they break your code you might rely on a bug in the used software.
 When you choose a base image, try to choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
 As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.
 
