@@ -373,8 +373,10 @@ You should avoid installing software packages from source after `COPY`ing the co
 Consider using the suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
 If you cannot publish a software project albeit it being in a language's package structure, you should make sure the files are always published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
 
-Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or personal information.
-Never include such data in an image.
+Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
+Do not include such data in an image.
+To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file, which excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
+Ignoring data files also speeds up the build in case of very large files or many small files, the latter of which makes it common to ignore for example the `.git` folder of the Git VCS.
 You should include dummy or test data into the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual.
 For all these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
 When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
@@ -406,6 +408,7 @@ For example, by default, writing a new file from inside the container will be ow
 
 Labels and build arguments can be very helpful to both provide metadata and allow for customization of a build.
 This structured metadata is machine-readable may help tools more than humans (see&nbsp;\ruleref{rule:formatting} for user documentation within a `Dockerfile`).
+In addition to the metadata creation by users, Docker captures useful information in the image metadata automatically, such as the version of Docker used for building the image, which you can access with the [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
 
 ## Labels
 
@@ -450,7 +453,7 @@ ARG MYVERSION=1.0.0
 Along with specifying versions, e.g., a git commit hash, or adding a date and timestamp, build arguments can be useful to provide the context of the build, e.g., building user, production versus development environment, and automated or not.
 Examples of build arguments that are useful to include to describe a container are:
 
-<!-- examples needed -->  
+<!-- examples needed -->
 
 # 7. Enable interactive usage and one-click execution {-}
 \rulelabel{7}{rule:interactive}
@@ -568,7 +571,7 @@ The longer that you wait to rebuild the image, the more change happens, the high
 If you are using an interactive container and find that you need to manually install a package or change a parameter, it is best practice to add this dependency to the container and rebuild it right away, but one tends to take shortcuts.
 Therefore, a habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveals issues requiring manual interference, i.e., changes to code or configuration not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
 This habit can be supported by using continuous deployment or CI strategies.
-If a VCS repository with a `Dockerfile` is linked to an automated build, then a CI pipelien can build images and execute a validating run the new image, e.g., using contained demo data (see&nbsp;\ruleref{rule:mount}).
+If a VCS repository with a `Dockerfile` is linked to an automated build, then a CI pipeline can build images and execute a validating run the new image, e.g., using contained demo data (see&nbsp;\ruleref{rule:mount}).
 
 In the case of needing setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
 The effective use of a `Makefile` can help avoiding undocumented steps or manual, extra commands to be run on the local machine.
@@ -581,6 +584,7 @@ This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
 Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions how to import and run the workflow based on the image archive and add your own image tags for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but is is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
+Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker runtime environment.
 Applying proper preservation strategies (cf. [@emsley_framework_2018]) can be highly complex, but simply running an image "as-is", i.e. with the default command and entrypoint (see \ruleref{rule:interactive}), and observing the output is quite likely to work for many years into the future.
 If the image does not work anymore, a user can still extract the image contents and explore the files of each layer manually, or if an import still works, with exploration tools like dive [@goodman_dive_2019].
 However, if you want to ensure usability and extendability, then you could run import, run, and export an image regularly to make sure the export format still works with the then current version of Docker.
