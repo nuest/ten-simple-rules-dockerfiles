@@ -551,7 +551,9 @@ If your `Dockerfile` includes an interactive user interface, you can also adapt 
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
-If you find that you need to provide more than one, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see&nbsp;\ruleref{rule:interactive}) or to separate tools into different repositories.
+Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
+We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
+If you find that you need to use more than one container to run your workflow, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see&nbsp;\ruleref{rule:interactive}) or to separate tools into different repositories.
 Yet most importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same repository.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
