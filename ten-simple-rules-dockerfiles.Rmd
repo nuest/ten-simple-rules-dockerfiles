@@ -449,7 +449,8 @@ Examples of build arguments that are useful to include to describe a container a
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
 But they are also useful for a "headless" execution of a full workflows, e.g. as demonstrated in [@verstegen_pluc_mozambique_2019].
 A workflow that does not at all support headless execution may even be seen as not reproducible.
-These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions.
+These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions (see&nbsp;\ruleref{rule:templates} for having multi-container environments).
+An images main purpose is reflected by the default process and configuration, though the `CMD` and `ENTRYPOINT` can also be changed at runtime.
 It is considered good practice to have a combination of default command and entrypoint that meets reasonable user expectations.
 For example, a container known to be a workflow should execute the workflow, or provide instructions for how to do so.
 Since you are likely the primary user of the `Dockerfile` and image, so you should choose a selection or combination that works for you, only then accomodate other user's needs.
@@ -521,9 +522,10 @@ When developing or working on projects with containers you can switch between is
 You can even run projects in parallel without interference.
 At most, if a port is shared by two projects to expose a user interface in the browser, you would need to configure non-conflicting ports.
 
-In the case of more complex web applications that require applications and web servers, databases, and workers or messaging, the entire infrastructure can be brought up or down with a combination of templates and orchestration tools like `docker-compose` [@docker-compose_2019].
+In the case of more complex applications that require web servers, databases, and workers or messaging, the entire infrastructure can be brought up or down with a combination of templates and orchestration tools like `docker-compose` [@docker-compose_2019].
 `docker-compose` also allows definition of services using multiple containers via it's own `docker-compose.yml` file.
 This file can help to template options including mounted volumes, permissions, environment variables, and exposed ports.
+A `docker-compose` configuration also helps to keep one _purpose_ per container, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
 
 # 9. Publish one Dockerfile per project in a code repository with version control {-}
 \rulelabel{9}{rule:publish}
