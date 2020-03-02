@@ -300,6 +300,7 @@ If a pre-built image is provided on Docker Hub, you should direct the user to it
 The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
 The more specific, the better, because using the desired version leads to reproducible builds.
 The practice of specifying versions of software is called _version pinning_ (e.g., on `apt`: https://blog.backslasher.net/my-pinning-guidelines.html).
+For stable workflows in a scientific context, it is generally advised to freeze the computing environment explicitly and not rely on the "current" or "latest" software, which is a moving target.
 
 ## System libraries
 
