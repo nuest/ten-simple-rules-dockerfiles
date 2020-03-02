@@ -356,15 +356,16 @@ You can switch the user running subsequent `RUN`, `CMD` and `ENTRYPOINT` instruc
 This is useful if a software aborts installations as the `root` user, or to avoid permission problems when using the container (see&nbsp;\ruleref{rule:mount}).
 Be sure to document a non-default user in detail and to examine the used users in base images if you encounter errors on user permissions.
 
-# 5. Add user scripts and data into containers by mounting volumes {-}
+# 5. Add user scripts and data into containers by mounting directories {-}
 \rulelabel{5}{rule:mount}
 
 The role of containers is to provide the methods, not to encapsulate datasets.
 It is better to insert data files and scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
-This insertion is achieved by using _volume mounts_.
+This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible to other users if published in an online research compendium outside of the image.
 You should use `COPY` if you actually copy files because it is explicit.
 `ADD` supports additional features and you should only use it if you leverage them: (i) a URL as a source, for which you may use it instead of a `RUN` instruction to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)), which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of.
+Unless specific features are needed, bind mounts are also preferable to [storage volumes](https://docs.docker.com/storage/volumes/).
 
 Standalone _script files_ are distinct from other software as they are not packaged and versioned, and are treated as files, not as managed software.
 If you developed software for a specific analysis in form of a software package, you should publish in a public source code or software repository and follow \ruleref{rule:pinning} for installing it.
@@ -378,6 +379,10 @@ You should include dummy or test data into the image to be able to ensure that a
 For all these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
 When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
 
+A mount can can also be used to access _output data_ from a container.
+This can be an extra mount, or the same `data` directory.
+Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, that require very detailed instructions for users.
+
 You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
 
@@ -388,8 +393,8 @@ docker run --volume /home/user/project:/project mycontainer
 # mount directory as read-only
 docker run --volume /home/user/project:/project:ro mycontainer
 
-# mount directory with write access relative to current path (Linux)
-docker run --volume $(pwd)/inputdata:/data:rw mycontainer
+# mount multple directories, one with write access relative to current path (Linux)
+docker run --volume /homse/user/Download/article-x-supplement/data:/data:ro --volume $(pwd)/outputs:/output-data:rw mycontainer
 ```
 
 How your container expects external resources to be mounted into the container should be included in the example commands (see \ruleref{rule:formatting}).
@@ -400,6 +405,7 @@ For example, by default, writing a new file from inside the container will be ow
 \rulelabel{6}{rule:metadata}
 
 Labels and build arguments can be very helpful to both provide metadata and allow for customization of a build.
+This structured metadata is machine-readable may help tools more than humans (see&nbsp;\ruleref{rule:formatting} for user documentation within a `Dockerfile`).
 
 ## Labels
 
