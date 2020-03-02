@@ -33,6 +33,17 @@ docker build -t ten-simple-rules-dockerfiles .
 docker run --interactive --rm --name tensimpledockerfiles --user $UID --volume $(pwd):/tsrd ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
 ```
 
+## Useful snippets
+
+- Get all author's GitHub handles:
+  ```bash
+  cat *.Rmd | grep ' # https://github.com/' | sed 's|    # https://github.com/|@|'
+  ```
+- Get all author's emails:
+  ```bash
+  cat *.Rmd | grep 'email:' | sed 's|    email: ||'
+  ```
+
 ## License
 
 This manuscript is published under a [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0) license, see file [LICENSE.md](LICENSE.md).
