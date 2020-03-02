@@ -314,7 +314,7 @@ Here are some examples of terminal commands that will list the currently install
 ## Extension packages and programming language modules
 
 In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
-Package managers generally provide reliable mirrors or endpoints to download software, and many packages are tested before release.
+Package managers generally provide reliable mirrors or endpoints to download software, many packages are tested before release, and most importantly the provide access to specific versions.
 Most package managers have a command line interface that can easily be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf. https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html cited by @rule_ten_2019)
 The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration.
 As an example, here are configuration files supported by commonly used languages in scientific programming:
