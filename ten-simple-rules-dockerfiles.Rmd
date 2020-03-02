@@ -358,8 +358,7 @@ Be sure to document a non-default user in detail and to examine the used users i
 The role of containers is to provide the methods, not to encapsulate datasets.
 It is better to insert data files and scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
 This insertion is achieved by using _volume mounts_.
-Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more easily accessible to other users if published in an online research compendium.
-You can `COPY` dummy or test data into the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual.
+Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more easily accessible to other users if published in an online research compendium outside of the image.
 You should use `COPY` if you actually copy files because it is explicit.
 `ADD` supports additional features and you should only use it if you leverage them: (i) a URL as a source, for which you may use it instead of a `RUN` instruction to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)), which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of.
 
@@ -370,7 +369,9 @@ Consider using the suitable package system with pinned versions even for small s
 If you cannot publish a software project albeit it being in a language's package structure, you should make sure the files are always published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
 
 Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or personal information.
-For these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
+Never include such data in an image.
+You should include dummy or test data into the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual.
+For all these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
 When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
 
 You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
