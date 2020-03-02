@@ -112,15 +112,20 @@ In fact, the `Dockerfile` itself can be a powerful documentation to show from wh
 Writing a `Dockerfile` from scratch is not that simple, and even experts sometimes take shortcuts.
 Thus, it is a good strategy to first look to tools that can help to generate a `Dockerfile` for you.
 Such tools have likely thought about and implemented good practices, and they may have added newer practices when reapplied at a later point in time.
-It is always a good practice to start with your specific use case.
-You first want to determine if there is an already existing container that you can use, and in this case, use it and add to your workflow documentation instructions for doing so.
+Therefore the most important rule is to apply a multi-step process for your specific use case.
+First, you want to determine if there is an already existing container that you can use, and in this case, use it and add to your workflow documentation instructions for doing so.
 As an example, you might be doing some kind of interactive development.
-For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with the software that you need. 
-In the case that there isn't an existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
-Well maintained means that recent container bases are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
-As an example, repo2docker [@jupyter_binder_2018] is a tool that is maintained by Jupyter Labs that can help to transform a repository in the format of some known kind of package (notebook, Python, R, etc.) into a container.
-Such a package contains well-defined files for defining software dependencies and versions, which repo2docker can understand.
-As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python package with the following command.
+For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with all the software that you need.
+Second, in the case that there isn't an existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
+These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
+Well-maintained includes the tool's own stability and usability, but also that suitable base images are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
+Third, you may want to write you own `Dockerfile` from scratch if these tools do not suffice for your needs.
+_In this case, follow the remaining rules._
+
+## Tools for container generation
+
+Repo2docker [@jupyter_binder_2018] is a tool that is maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a repository with common simple configuration files for defining software dependencies and versioninto a container.
+As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python workflow with dependencies on the [Python Package Index](https://pypi.org/) (PyPI) with the following command.
 
 ```bash
 jupyter-repo2docker https://github.com/norvig/pytudes
@@ -135,9 +140,6 @@ Additional tools to assist with writing `Dockerfile`s include `containerit` [@nu
 `containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
 It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
 `dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
-
-However, in the case that a tool or interactive container environment is not available, or their capabilities to configure specific resources or install bespoke tools are limited, you will likely need to write a `Dockerfile` from scratch.
-In this case, proceed with following the remaining rules to write your `Dockerfile`.
 
 # 2. Use versioned and automatically built base images {-}
 \rulelabel{2}{rule:base}
