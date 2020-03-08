@@ -1,0 +1,47 @@
+os: linux
+
+services:
+  - docker
+
+language: generic
+
+branches:
+  only:
+    - master
+
+#install:
+#  - docker build --tag ten-simple-rules-dockerfiles .
+
+# - access to GITHUB_PAT for rate limit
+# - --user is needed to write into mounted directory
+script:
+  - docker run --interactive --name tsrd --volume $(pwd):/tsrd nuest/ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_file = "/tmp/tsrd.pdf")'
+  - mkdir -p site
+  - docker cp tsrd:/tmp/tsrd.pdf site/ten-simple-rules-dockerfiles.pdf
+  - ls -l
+  - ls -l site
+
+# only works for one branch, because of reset
+after_success:
+  - cd site
+  - ls -l
+  - git init
+  - git config user.name "${GH_USER_NAME}"
+  - git config user.email "${GH_USER_EMAIL}"
+  - git remote add upstream "https://${GH_TOKEN}@${GH_REF}"
+  - git fetch upstream
+  - git reset upstream/gh-pages
+  - git add -A .
+  - rev=$(git rev-parse --short HEAD)
+  - git commit -m "Rebuild at ${rev}"
+  - git push -q upstream HEAD:gh-pages
+
+env:
+  global:
+    # GITHUB_PAT to solve GH API rate limit
+    - secure: "at0zw2gJ+KR1Y9I7IGeiy0uyBHizVCcYfZ2iKjvxVUSNyMf7IB0X+ffODnJkVC/5aX0AMO8xIYZA35Q19DzF9WF73RkdcWU77cvmeyiwX2k/bgSFKvmILwBt/alrcksfh0HRr0NniTtU+Ip5ywhlCwR52nE5h58x0DJkfvSAI7HqZqjEJqwZZAvnYeW6+XH1isUDtMgqkgwUDmCgX3NPu3dlCD8RcfNbRnSWGebwW/BVPKG2/w/VwxnPwquPXQNcj7lar6UZSHMVap+RtqUcEVLnUcsgWzrtXjdD3GRsWAqT0HW2YyYv9pV5vwNUiKQlFs8FxKF9XjwMF+lJ6PVRWPPXMG8QMgfx1tn2G2di05m3kXFN4Kmmn5b8l4Qb1lxDy7gZxp4HVtvnb7a1Cb41hy87G57piIJPNC8CBtR50jHsECU8dg5lDvBkMAecKcg2orQJdPwQBI63poeOlRLjTPJvDGLGnoKOjzzPMjVCHRCdLs2c1y/KFQvueTJ8T/E8dOzmLkQEMXg+tjUbvgYLyvRgyiu9sxQVVcokZF7eb53WppCuGcsyqNShQ0lF6L41ei/Qfb1N0a3JkBrWuHmxt1a7bmPmFTaR1h1DnV5v+dfaeOZKOp1ojWzT3yVKLKGh7ZKbip6OFBJxDfVD18Nptg6eCprzxyKKJe2gpSm2OE0="
+    - GH_USER_NAME: "nuest"
+    - GH_REF: "github.com/nuest/ten-simple-rules-dockerfiles"
+    # GH token and email
+    - secure: "Np0h+wPn8j3pcP9A66dfPwjQ9IMhe0yc1vyfhL29qKd0S2NQWVzhujXrPbrA6PjbJrR8+u/pdYn3viFE8rWyMhSF8gLoOwrb9nNlpoQgZjp+B1d1Bb/JC6+uWmofNh+c2wlyCN71AeBhcGVzOTV9wkSuzi+HbxKgtxoIg65+VwDrvgIuCDnrsXOKOOcikWG6bY6c5umEXI+5EnLIyHQzcuFi7CLJlroiqVYzK1KNIytuQMr67IUAP0Z50WzGcdWzV/r/RaMoZpgZstPHieVoVicWR3czjDb2BJaJK536gtHLZ1WRiamcvB2gfTyFlerG91wERqIWzPvCFMn0acVaAG7fFavBd9FQg64/1kg2H4RSjKdMgkN+JR5zRtJXMz0LEFPPhSsKfB9a/x0/hFMPLws4mFIRENHlmKkbYQTWuQTiVNqP+oa9DFyrf0aZY+yYkEx2quDi5nb/qiXxudvbcLjjAjI28Xqyf93oIW74nEEQJrKGP0v3LlOzfVRBPmWZvMRwCBgmvqEh7Ia7DPvxxbP7ttY9mp+wGCLiEA/d55vazEdrv1n8FPoMGjGrFuh0Wmglh2NKLmkV2eaEh9RtGJ8ToZNHPffONjtCq0UVzL043EApJlslQ4FxSjFygjjCGGqqtyqA4S4d0nRSPAvpIY5qRhHQT34GFmY5Nz3XSS4="
+    - secure: "MMn8elsq9Dmuj2iZn5kp52oPwDngtc2GbP9d+26HQhMpVdjIb5SXyAVVNc4mmUIeja+Bd4opRQriEYPpqKKAfzkhzquAioZI1A43dA9xPqva7nx3juEzeB/dekbM1H83/043BlkBejoTewO/JYI/NS0wlR+oLVyefohsA8kuInTgFaqFXaIap8hbcOb0YlFpsg5xdWcbpNAACvaxUkQOQ3lOx8CSdE7i+oK/HkqOAQRNcs7Ua3YmKE8ZjQ5iE/3mdlLY2rHydRcM/+AavvjCOB5kEl2dtaheMExQXmrCkwh9mQYV9Tbx8gPlCYqmhRfRvg1QLSXMfUOhrFKhnTLeRZD/AdtdeXXPGWzpFOJr8WkfEl6c9L0LnpJZXwWx1KRdD/iTS86e/Mg031nDFMY61p9vO/HSmDyOy4hp0lnyb41V0xRVxjoAYDSff/XXlrfbkZsoV7YtsF5y1wiH4fN1V54weZ70W5yyovJdXdPpS7LMJUadB28PkGzzwCYUshUW9qgrka0xp99M/As+4WycMNrEJ1Q7mOYC3ipg+Q5AMrt8uahRLY4piXc06GrNkh03ZXEaDk7KRAkl7N1jz8IQmT+XY1aB2wbtXH0MAWOQIacX6GcD+eoZ7XJ8vHEiQx0ec/dwjLTwQxadmOZB4j59NINSLpfTqwub3AnE1MPtT+I="

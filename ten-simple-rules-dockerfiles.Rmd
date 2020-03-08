@@ -2,198 +2,230 @@
 title: "Ten Simple Rules for Writing Dockerfiles for Reproducible Research"
 author:
   - name: Daniel Nüst
+    # https://github.com/nuest
     email: daniel.nuest@uni-muenster.de
-    affiliation: "Institute for Geoinformatics, University of M\"unster, M\"unster, Germany"
+    affiliation: 'Institute for Geoinformatics, University of Muenster, Muenster, Germany'
     corresponding: daniel.nuest@uni-muenster.de
+    orcid: 0000-0002-0024-5046
+  - name: Vanessa Sochat
+    # https://github.com/vsoch
+    email: vsochat@stanford.edu
+    affiliation: "Stanford Research Computing Center, Stanford University, Stanford, CA, US"
+    orcid: 0000-0002-4387-3819
+  - name: Ben Marwick
+    # https://github.com/benmarwick
+    affiliation: 'Department of Anthropology, University of Washington, Seattle, USA'
+    orcid: 0000-0001-7879-4531
+    email: bmarwick@uw.edu
   - name: Stephen Eglen
-    email: bob@example.com
-    affiliation: Another University
-# - name: Remi?
-#  - "NN (all contributors?!)"
-#  - Rule 4 of https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003858#s6 applies?
+    # https://github.com/sje30
+    email: sje30@cam.ac.uk
+    affiliation: "Department of Applied Mathematics and Theoretical Physics, University of Cambridge, Cambridge, Cambridgeshire, GB"
+    orcid: 0000-0001-8607-8025
+  - name: Tim Head
+    # https://github.com/betatim
+    email: betatim@gmail.com
+    affiliation: "Wild Tree Tech, Zurich, CH"
+    orcid: 0000-0003-0931-3698
+  - name: Tony Hirst
+    # https://github.com/psychemedia
+    email: tony.hirst@open.ac.uk
+    affiliation: "Department of Computing and Communications, The Open University, GB"
+    orcid: 0000-0001-6921-702X
 abstract: |
-          | Containerisation is a useful concept for capturing the increasingly complex virtual laboratories that underpin computational sciences today.
-          | A container image is often created based on the instructions in a plain-text file in the `Dockerfile` format.
-          | In a scholarly context, transparency and support of reproducibility are most desired aspects of containers.
-          | By following the rules in this article researchers writing a `Dockerfile` can increase the changes to apply containers effectily in their daily work but also enable fellow researchers to reproduce a workflow.
-author_summary: |
-  TBD
+  Containers are greatly improving computational science by packaging software and data dependencies.
+  In a scholarly context, transparency and support of reproducibility are the largest drivers for using these containers.
+  It follows that choices that are made with respect to building containers can make or break a workflow's reproducibility.
+  The build for the container image is often created based on the instructions in a plain-text file.
+  For example, one such container technology, Docker, provides instructions using a `Dockerfile`.
+  By following the rules in this article researchers writing a `Dockerfile` can effectively create containers suitable for sharing with fellow scientists, for inclusing in scholarly communication such as education or scientific papers, and for an effective and sustainable personal workflow.
+#author_summary: |
+#  TBD
 bibliography: bibliography.bib
 output: rticles::plos_article
+header-includes:
+  # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
+  - \usepackage[user,titleref]{zref}
+  - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
+  - \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
 csl: plos.csl
-
+Submission notes:
+ - The authors declare that no competing interests exist.
 ---
 
-# Introduction {#introduction .unnumbered}
-
-- containerisation is a useful and powerful to handle increasingly complex virtual laboratories for computational sciences
-- to some extent all sciences today use algorithms to analyse data
-- researchers need skills to handle virtual laboratories to ensure understandability and reproducibility
-- well-defined computational environments are crucial for reproducibility
-- portable computational environments are crucial for transparency, e.g. in peer-review
-- containerisation can help to work towards the ideal of transparence an reproducibility
-- the environment can then _host_ executable and human-readable notebooks with the scientific workflow [@rule_ten_2019]
-- several Ten Simple Rules articles answer these challenges [@sandve_ten_2013; @taschuk_ten_2017, @rule_ten_2019]
-- there are tutorials for using containers for reproducible research:
-  - https://nuest.github.io/docker-reproducible-research/
-  - https://chapmandu2.github.io/post/2018/05/26/reproducible-data-science-environments-with-docker/
-  - https://reproducible-analysis-workshop.readthedocs.io/en/latest/8.Intro-Docker.html
-  - ...
-- there are platforms using containers for transparency and reproducibility
-  - BinderHub
-  - o2r
-  - Whole Tale
-  - ...
-- Docker is a common containerisation solution, widely adopted in mainstream IT and therefore widely available and support on many platforms, which makes it usable for non-IT experts in science
-- `Dockerfile`s are machine- and human-readable recipes for creating a container
-- Other containerisation tools also support the `Dockerfile` format: [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah), [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), or [buildkit](https://github.com/moby/buildkit); Singularity [@kurtzer_singularity_2017] can import Docker containers and has it's own "singularity recipee", to which the rules here are transferable
-
-**BUT** many scientists are not developers, and not all good practices found in tutorials for Docker apply to reproducible and transparent research
-
-- @boettiger_introduction_2015 lists reasons for not publishing reproducibly include lack of time & incentives and unfittingness for a researcher's workflow, and gives technical challenges of virtual laboratories, namely dependency hell, imprecise documentation, code rot, and handling/learning multiple tools
-  - learn to write a `Dockerfile` with this article and use it as the _only_
-environment that you execute your workflows in (cf. README of @marwick_madjebebe_2015), then it will not be extra work
-    > _"I developed and tested the package on this Docker container, so this is the only platform that I'm confident it works on, and so recommend to anyone wanting to use this package to generate the vignette, etc."_
-  - VMs are not an alternative because too much of a black box
-- In RR, Dockerfiles can document where data and code came from and likely also where a third party might still get them
-
-This article takes a look at how to write a `Dockerfile` so that it facilitates a day-to-day research workflow as well as the higher goals of reproducibility. A commitment to transparent, open and reproducible workflows can be put to life by using containers based on `Dockerfile`s every day, not as an afterthought triggered by a publication (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
-By following the _conventions_ layed out in these ten rules, authors ensure readability by others and ideally subsequent reuse and collaboration.
-
+<!-- please stick to one sentence per line! -->
 <!-- Citations: @Figueredo:2009dg, citep: [@Figueredo:2009dg], multiple citep: [@Figueredo:2009dg; @other_2018] -->
 <!-- add " {-}" after headings to remove numbering -->
 
-# 1. Use versioned and automatically built base images {-}
+# Introduction {#introduction .unnumbered}
 
-- understand how base images work
-- _never_ use `:latest`
-- pick a base image with a Linux distribution that supports the required software stack, and ideally that is widely used in your community, e.g. Ubuntu for geospatial research
-- base images (all the way to the top) must be based on Dockerfiles themselves
-- library base images are well maintained and security tested, but alternatives might be more suitable for research purposes / RR (example `rocker/r-ver`)
-- base images that have complex software installed (e.g. ML libraries, specific BLAS library) are helpful and fine to use, just ensure there is a Dockerfile publicly available that they use (and add a link to that file in your Dockerfile)
-- ideally the images are maintained by an active community/_your community_
-- existing communities
-  - [Rocker](https://www.rocker-project.org/) for R [@boettiger_introduction_2017]
-  - [Docker containers for Bioconductor](https://bioconductor.org/help/docker/) for bioinformatics
-  - [NeuroDebian images](https://hub.docker.com/_/neurodebian) for neuroscience [@halchenko_open_2012]
-  - [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html for Notebook-based computing
-  - [Taverna Server](https://hub.docker.com/r/taverna/taverna-server) for running Taverna workflows
+With access to version control systems (VCS, @wikipedia_contributors_version_2019) and collaboration platforms based on these, such as [GitHub](https://github.com) or [GitLab](https://gitlab.com), it has become increasingly easy to not only share abstract algorithms and study designs, but also instructions for executing whole research workflows, including building and testing of the software used.
+The publication of these instructions and related configuration files are a response to the increasing complexity of computer-based research, which is too complicated for "papers" based on the traditional journal article format to fully communicate the details of research [@marwick_how_2015], but where the actual contribution to knowledge includes the full software environment that produced a result [@donoho_invitation_2010].
+A _research compendium_ is a compilation of data, code, and documentation that accompanies, or is itself, a scholarly publication for increased transparency and reproducibility (cf. [https://research-compendium.science](https://research-compendium.science)).
+Within such a compendium, it is desirable to include instructions, i.e. a human- _and_ machine-readable recipe, for building containers that capture the computing environment, i.e., all software and data dependencies.
+By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
+Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
+The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
+Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
-```
-FROM docker.io/rocker/r-ver:3.5.2
-```
+While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed manual for how to write the actual instructions to create the containers beyond generic best practices outside of the scientific domain [@docker_inc_best_2020].
+Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they hide most of the complexity from the researcher.
+Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
+Even if they are not sure how the technology behind them actually works, reserachers can leverage containerisation, but should craft their own definition of computing environments following good practices.
+The practices outlined here are strongly related to software engineering in general and research software engineering (RSEng) in particlar, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
+Research Software Engineers (RSEs) are not the target audience for this work, but we want to encourage you to reach out to your local or national RSE community if your needs go beyond the contents detailed here.
 
-# 2. Use indentation, newlines, and comments for documentation, readability and structure
+While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
+Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017) and our observations indicate it is the most widely used container technology in academic data science.
+The goal of this article is to guide you to write a `Dockerfile` so that it best facilitates interactive development and computer-based research, as well as the higher goals of reproducibility and preservation of knowledge.
+Such practices are generally not part of generic containerization tutorials and are rarely found in published `Dockerfile`s, which are often used as templates by novices.
+The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who do not have extensive software development experience or formal training.
+A commitment to this article's rules can ensure that workflows are reproducible and reusable, that computing environments are understandable by others, and researchers can collaborate effectively.
+Their application should not be triggered by the publication of a finished project, but be weaved into day-to-day habits (cf. thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 
-- use comments to provide a guide to others and future you, _"A Dockerfile written three months ago may just as well have been written by someone else"_ (following a common coding aphorism)
-- document for your future self first but tend to overexplain (cf. Rule 1 of @rule_ten_2019), provide extended docs if others ask for it
-- can use comments to add sections to the Dockerfile to reduce the need to externalise when files get long
-  - modularisation is a two-edged sword (point out [`podman`'s `#include` directive](https://www.mankier.com/1/podman-build)?)
-- carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in onr `RUN` with `&&`
-- use `\` for newlines
-- put each dependency on it's own line, makes it easier to spot changes in version control
-- don't let lines get too long
-- split up an instruction (especially relevant for `RUN`) when you have to scroll to see all of it
-- use a linter to follow common practices and consistency
-- **Use comments to document decisions and usage**
-  - make the `Dockerfile` self-explanatory by adding comments for specific decisions
-  - add reasons and links to followed tutorials (failed attempts may be found in the history)
-  - similar to "literate programming"
-  - include commands that did _not_ work, especially if they seem simpler, so you're not falling into the same trap twice
+To start with, we assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a single command, for example `make my_workflow`, `Rscript analysis.R`, or `python3 paper-plots.py`.
+This execution should be able to be triggered by command-line instruction, which is possible for all generic programming languages and widely used workflow tools, but may also be opening and starting a process with a graphical user interface.
+A workflow that does not support scripted execution is out of scope for reproducible research, and does not fit well with containerization.
 
-```
-# apt-get install specific version
+# Docker
 
-# RUN command spreading several lines
-RUN install2.r \
-  fortunes \
-  here
+Docker is a container technology that is widely adopted and supported on many platforms, and has become highly useful in science.
+They are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware or operating system kernels, and thus do not require the same system resources.
+To create Docker containers, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019]. 
+`Dockerfile`s are machine- and human-readable recipes for building images.
+Images are inert, immutable, read-only files that include the application, e.g., the programming language interpreter needed to run a workflow, and the environment required by the application to run.
+A `Dockerfile` consists of a sequence of instructions to copy files and install software, which add layers to the image.
+These layers can be used for caching across image builds, which is important for minimizing build and download times.
+The images have a main executable that is started when they are run as stateful containers, which are the running instances of Docker images.
+Containers can be modified, stopped, restarted and purged.
 
-# this library must be installed from source to get version newer than in sources
+While Docker was the original technology to support this format, other container technologies support the format including [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
+The Singularity container software [@kurtzer_singularity_2017] is optimized for high performance computing and although it uses its own format, the _Singularity recipe_, it can import Docker images directly from a Docker registry. 
+Although the Singularity recipe format is different, the rules here are transferable to some extent.
+While some may argue for reasons to not publish reproducibly, e.g., lack of time and incentives, reluctance to share (cf. @boettiger_introduction_2015) and there are substantial technical challenges to maintain software and documentation, providing a `Dockerfile`, a pre-built Docker image, or other type of container should become an increasingly easier task for the average researcher.
+If a researcher is able to find and create containers or write a `Dockerfile` to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015).
+In fact, the `Dockerfile` itself can be a powerful documentation to show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 
-# following commands from instructions at LINK HERE
-```
+# 1. Consider tools to assist with Dockerfile generation {-}
+\rulelabel{1}{rule:tools}
 
-# 3. Pin versions {-}
+Writing a `Dockerfile` from scratch is not that simple, and even experts sometimes take shortcuts.
+Thus, it is a good strategy to first look to tools that can help to generate a `Dockerfile` for you.
+Such tools have likely thought about and implemented good practices, and they may have added newer practices when reapplied at a later point in time.
+Therefore the most important rule is to apply a multi-step process for your specific use case.
+First, you want to determine if there is an already existing container that you can use, and in this case, use it and add to your workflow documentation instructions for doing so.
+As an example, you might be doing some kind of interactive development.
+For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with all the software that you need.
+Second, in the case that there isn't an existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
+These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
+Well-maintained includes the tool's own stability and usability, but also that suitable base images are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
+Third, you may want to write you own `Dockerfile` from scratch if these tools do not suffice for your needs.
+_In this case, follow the remaining rules._
 
-**system libraries**
+## Tools for container generation
 
-- you can install specific versions of system packages with the respective package manager, also called version pinning
-  - on apt: https://blog.backslasher.net/my-pinning-guidelines.html
-- do so if the version is relevant, e.g. to demonstrate a bug, or likely to become a problem, e.g. because of ...
-- do so if you are aware of the system library being relevant to your workflow
-- you can find out about the currently installed versions
-  - Debian/Ubuntu: `dpkg --list`
-  - Alpine: `apk -vv info|sort`
-  - CentOS: `yum list installed` or `rpm -qa`
-- _installing from source_ is a useful way to install very specific versions, at the cost of needing build libraries (which could be removed again with build stages, but that's advanced)
+Repo2docker [@jupyter_binder_2018] is a tool that is maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a repository with common simple configuration files for defining software dependencies and versioninto a container.
+As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python workflow with dependencies on the [Python Package Index](https://pypi.org/) (PyPI) with the following command.
 
-**extension packages and programming language modules**
-
-- package managers of programming languages are a good solution to install a collection of dependencies for a language
-- package managers have a CLI and can be used from `RUN` commands
-- freezing the environment, cf. https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html cited by @rule_ten_2019
-- there is a risk in outsourcing configuration to the file formats supported by package managers > use only when direct installation in Dockerfile becomes complex; example files:
-  - Python: `requirements .txt`, `xxx.yml` (Conda)
-  - R: `DESCRIPTION`
-  - Java: `mvn.xml`
-  - JavaScript: `package.json` of `npm`
-- how to do in Python (`== x.y.z`)
-- do it in R with `versions` package, or by using MRAN (e.g. via `r-ver` image)- JavaScript?
-- Julia: `add Package@1.0` > https://julialang.github.io/Pkg.jl/v1/managing-packages/#Adding-packages-1
-- Use common command-line ready installation commands of programming languages
-  - better readbiliy, potentially even performance (`RUN install2.r sp` instead of `RUN R -e "install.packages('sf')"`, although the latter is "base R")
-  
-# 4. Mount data and control code {-}
-
-- do not use `ADD`/`COPY` to insert data or code into an image
-- better mount them to have them outside of the image
-- easier access, does not require Docker knowledge by third parties to reause code and data
-- mounting ensures you are always ready to throw containers and even images away
-- use the `--user` option to avoid problems with file permissions when mounting
-- if you have a "stable" published software library, install it from source from the source code repo or from the software repository (so that users find the project in the future)
-- how to mount the data can be put in the example commands (see 4.)
-- prefer the long versions of CLI parameters for readability
-
-```
-docker run --volume ...
+```bash
+jupyter-repo2docker https://github.com/norvig/pytudes
 ```
 
-# 5. Use labels and build arguments for relevant links and metadata {-}
+The resulting container image installs the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to interact with any existing workflows in the repository.
+A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
+For this reason, it is good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
+It's also recommended to add custom labels to your container build to define metadata for your analyses even if you are using tools (see&nbsp;\ruleref{rule:metadata}).
 
-- advantage of labels: are structured, can be exposed by APIs, e.g. https://microbadger.com/labels
-- use namespaced-names
-- http://label-schema.org/rc1/ respectively https://github.com/opencontainers/image-spec
-- repository link for Dockerfile
-- author (`MAINTAINER` is deprecated)
-- license
-- usage instructions
-- https://microbadger.com/labels
-- DOI of research compendium (Zenodo preregister instead of GitHub automatic integration)
-- **Use build arguments to capture build metadata**
-  - add git commit hash to label
-  - add date and time to label
+Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
+`containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
+It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
+`dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
 
-# 6. Enable interactive usage and one-click execution {-}
+# 2. Use versioned and automatically built base images {-}
+\rulelabel{2}{rule:base}
 
-- using `CMD` and `ENTRYPOINT` make sure that it is possible to run the container interactively _and_ as a one-click execution > give examples (see below)
-- the default execution should either execute the workflow (headless) or start an analysis environment
-  - if your workflow/sofware does not support headless execution (Excel?), switch tools
-  - or have default with UI and only document headless execution via example commands
-- may also use the same `Dockerfile` for different purposes, e.g. include an app (e.g. Shiny) for interactive use by user
-- if you want to expose a user interface **use the browser** on and exposed port, unless you're using an existing Desktop you, then you can use `x11docker` []
-- one useful alternative: Notebook user interfaces in the browser (Jupyter, RStudio)
-- document both variants with example commands
-- a headless execution can be executed in a continuous integration (CI) after every project update, potentially on a test dataset for speed-up, 
-- see also Rule 7: Build a pipeline in @rule_ten_2019
-- you can also make your workflow configurable, e.g. by bespoke configuration files, environment variables passed to the container [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018]; however, know this is a trade-off from plain `Dockerfile`-based solutions, which is a proven industry standard
-- 
+It's good practice to use base images that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
+You can identify these images by the missing the user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
+There are also repositories that are maintained by organisations or fellow researchers.
+While some organizations can be trusted to update containers with security fixes (e.g., the [Rocker Project](https://hub.docker.com/u/rocker-org) or [Jupyter](https://hub.docker.com/u/jupyter)), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
+It is even possible that images or `Dockerfile`s may disappear, or that images are published with malicious intent.
+Images furthermore have _tags_ associated with them with specific meanings, usually as a version number but sometimes also variants of images.
+Tags are defined at image built time and appear in image name after the `:` when you use an image, e.g., `python:3.6`.
+By _convention_ a missing tag is assumed to be the word `latest`.
+When you re-build you images locally using the same tag, the tag is always associated with the newest built.
+But the image also has an automatically generated image name using a hash, which will _not_ be updated.´
+So if you tag an image, use the tag when you start a container.
 
-# 7. End the `Dockerfile` with build and run commands
+Because of these options, a good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your own image.
+You should know how to use `FROM` instructions to trace all the way up to the original container base, an abstract base called `scratch`.
+Doing this kind of trace is essential because it makes clear all of the steps that were taken to generate your container and who took them.
+If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
+If you want to use an unofficial image, do save a copy of the `Dockerfile`s created by others.
+Alternatively, copy relevant instructions into your own `Dockerfile`, acknowledge the source in a comment, and configure an automated build for your own image.
+The official images and images by established organisations should be your preferred source of snippets if you craft you own `Dockerfile`
+Automated builds can be complex to set up, and details are out of scope of this article.
+The documentation for, and toolsets provided by  container registries such as [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as CI platforms such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci) or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) can help you get started; tools may also be available to automate builds using intermediate tools, such as the `repo2docker` Github action [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019],
+You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image.
 
-- put `docker run` and `docker build` commands in comments at the end of the file (_may be own rule?_), especially relevant if arguments are used such as port exposure or mount points
-- should be copy-and-pasteable
-- use multiple comment characters to make clear what is command and what is documentation
+A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it is a moving target so that it is more likely that an updated base could break your workflow.
+Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
+Official builds are often tagged with corresponding release version numbers, the newest of which also has the `latest` tag.
+For example, if you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected.
+Therefore a tag like `python:3.5` is a preferable choice, where the lack of the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes _will_ be included.
+These _bugfix_ version changes should not break your code, i.e., are backwards compatible (cf. semantic versioning, [@preston-werner_semantic_2013]), and if they break your code you might rely on a bug in the used software.
+When you choose a base image, try to choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
+As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.
+
+Container tags may also provide an indication as the size of a container.
+Smaller images are often indicated by having `slim` or `minimal` as part of the tag.
+If you need to build smaller containers, consider a `busybox` base or a _multi-stage build_ [@docker_multi-stage_2020], which allows you to selectively copy files from one build step to another.
+Also take into account the software that you actually need, but mostly for clarity.
+In scientific contexts, the image size will be often the least of you concerns, because data size is much larger or image portability is not time critical.
+
+Base images that have complex software installed (e.g. machine learning tool stacks, specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library) are helpful and fine to use.
+If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
+Trusting that the third party `Dockerfile` will persist for your analyses may be risky because that `Dockerfile` could disappear without warning. 
+Here is a selection of communities that produce widely used regular builds and updates:
+
+- [Rocker](https://www.rocker-project.org/) for R [@boettiger_introduction_2017]
+- [Docker containers for Bioconductor](https://bioconductor.org/help/docker/) for bioinformatics
+- [NeuroDebian images](https://hub.docker.com/_/neurodebian) for neuroscience [@halchenko_open_2012]
+- [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html for Notebook-based computing
+- [Taverna Server](https://hub.docker.com/r/taverna/taverna-server) for running Taverna workflows
+
+For example, here is how we would use a base image `r-ver` with tag `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`).
+
+```
+FROM rocker/r-ver:3.5.2
+```
+
+# 3. Use formatting, document within, and favor clarity
+\rulelabel{3}{rule:formatting}
+
+It is good practice to think of the `Dockerfile` as a human _and_ machine readable file. 
+This means that you should use indentation, new lines, and comments to make your `Dockerfile`s well documented and readable.
+Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
+Use `\` at the end of a line to break a single command into multiple lines.
+This will ensure that no single line gets too long to comfortably read.
+Use long versions of parameters for readability (e.g., `--input` instead of `-i`).
+When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
+
+You can use a linter [@wikipedia_contributors_lint_2019] to avoid small mistakes and follow good practices from software development communities.
+The consistency added by linting also helps keeping your edits to a `Dockerfile` in a VCS meaningful (see \ruleref{rule:publish}).
+Note however that a linter's rules may not primarily serve the intention of reproducible scientific workflows.
+
+As you are writing the `Dockerfile`, be mindful of how other people will read it. 
+Are your choices and commands being executed clear, or is further comment warranted?
+To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or VCS commit messages to give context for your specific decisions, for example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job at explainig the reasoning and steps of the contained instructions.
+Comments should include helpful usage guides and links for readers inspecting the `Dockerfile`, including future you. 
+Dependencies can be grouped in this fashion, which also makes it easier to spot changes if your `Dockerfile` is managed in a VCS (see \ruleref{rule:publish}).
+It can even be helpful to include comments about commands that did not work so you do not fall repeat past mistakes.
+If you find that you need to remember an undocumented step, that is an indication that it should be documented in the `Dockerfile`.
+
+Labels are useful to provide a more structured form of documentation about software, especially for users of supporting infrastructure that might not expose the actual `Dockerfile` (see \ruleref{rule:metadata})¸.
+It is often helpful to provide commented lines with `docker build` and `docker run` within the `Dockerfile` to show how to build and run the image, even though these lines are not necessary for a valid `Dockerfile`, this is a convenient place to record them. 
+These comments can be especially relevant if volume mounts or ports are important for using the container, and by putting them at the end of the file, they are more likely to be seen, easy to copy-paste after a container build, and to be in consistent state compared to documentation in another file.
+Here is an example of a commented section to show build and usage.
 
 ```
 # Build the images with
@@ -204,97 +236,397 @@ docker run --volume ...
 ##> docker cp gwf:/output/ ./output
 ```
 
-# 8. Favour clarity  {-}
+If you were to discover a previously written `Dockerfile` and not remember the container identifier you used, it would be represented in the `Dockerfile` in the `--name` parameter, preserved in a comment.
+Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
+Here is a selection of typical kinds of comments that are useful to include in a `Dockerfile`:
 
-- don't worry about image size, clarity is more important (i.e. no complex RUN instructions that remove files after using rightaway)
-  - make `RUN` instructions do one thing (e.g. install one software, install many softwares from _one_ source, ...)
-  - a single `RUN` instruction should not be longer then "one page" > no scrolling
-- have commands _in order_ of least likely to change to most likely to change > even helps readers!
-  1. system libraries (you can use comments to document which library is required by which language-specific package)
-  2. language-specific libraries or modules
-    1. from repositories (binaries)
-    2. from source
-  3. own software/scripts (if not mounted)
-  4. labels
-  5. `RUN`/`ENTRYPOINT`
-- how to access the layer commands from an existing image (`docker inspect..`)
-- Only switch directoryies with `WORKDIR` {-}
-  - might need to move to different directories for bespoke configuration or building from source
-  - is is much more transparent than `cd X` or `cd ...` in `RUN` statements
-- if need be use _layered builds_ to only keep specific files from one build step to another, e.g. for build dependencies if building software from source
+```
+# apt-get install specific version, use 'apt-cache madison <pkg>' 
+# to see available versions
+RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# 9. Publish a Dockerfile per project in a code repository with version control {-}
+# RUN command spreading several lines
+RUN R -e 'getOption("repos")' && \
+  install2.r \
+    fortunes \
+    here
 
-- `Dockerfile` is a plain text-based format and therefore you should put it under version control
-- just as code, the `Dockerfile` should be for humans to understand and just incidentally for machines to be interpretable (qoute Abelson? see also https://www.quora.com/How-true-is-Programs-are-meant-to-be-read-by-humans-and-only-incidentally-for-computers-to-execute)
-- using and publishing a `Dockerfile` to create a container will increase chances of preservation (cf. @emsley_framework_2018)
-- Consult Ten Simple Rules paper by Perez-Riverol et al. [@perez-riverol_ten_2016]
-- add the link to the online repository to a label, to point back to the source of the file
-- versioning on a collaboration platform exposes your environment configuration and enables collaboration/feedback
-- you can build and run (e.g. on a test dataset!) you Dockerfile in CI (cf. automation below)
-- keep `Dockerfile` in the same project with your workflow and data (cf. research compendium concept?)
-- **this should be the repository with the workflow and data** (cf. research compendium)
-  - Use one `Dockerfile` per workflow or project and put one "thing" in; **TO DISCUSS**: argue against the above rule and recommend having a process manager and multiple processes in one container
-  - start with a clean slate for a new project - shared lines are quickly copied over, and Docker's build caching will bring some performance
-  - allows you to quickly switch between projects and not worry about breaking things you are not working on
-  - have one obvious main process per project, e.g. `R` or RStudio
-  - if you have a complex set-up of several proecceses, e.g. with a database, then put it in a separate container and connect them via `docker-compose`
-- use git commit messages extensively to describe the reasons behind changes; the messages may even contain failed attempts/commands
-- add a clear license
-- publish the image of the workflow to a suitable repository (where it gets a DOI) at the time of publication of the workflow
-- you may use multiple containers and `Dockerfiles` for complex workflows (cf. @kim_bio-docklets_2017) but then you're probably out of scope of this article
+# this library must be installed from source to get version newer
+# than in sources
+RUN git clone http://url.of/repo && \
+  cd repo && \
+  make build && \
+  make install
 
-# 10. Use the container daily, rebuild the image weekly {-}
+# following commands from instructions at <LINK HERE>
+```
 
-- use the container built by the `Dockerfile` in your regular work, it is the only way to make sure it is really stable (cf. Marwick's "this container is the only way I have ever run this workflow")
-- no showstopper for using UIs (web-based, e.g. Jupyter, RStudio, but also `x11docker`)
-- during development and analysis, interactive use (e.g. R session, Jupyter Notebook) has advantages, and even the most disciplined might install a package or change a parameter manually
-- regularly delete all containers and rebuild images based on your `Dockerfile`
-- you are more likely to remember the undocumented steps if done regularly
-- increases trust in configuration, encourages effetiveness and fully scripted configuration
-- keep a `Makefile` next to the Dockerfile so you don't fall into the trap of not regularly rebuilding your digital laboratory (better to have build and run commands - i.e. the usage - in two places and potentially diverging than the actual `Dockerfile`)
-- **Don't replicate environment configuration outside of the Dockerfile for convenience**
-  - make the Dockerfile work for your day-to-day research instead of having a second set of configurations in on the "local" machine
-  - having two approaches will eventually break, only a perceived convenience
-  - avoid an untidy laboratory in practice behind a shiny appearance of a `Dockerfile`
-  - you can install interactive UIs as part of the Dockerfile and use them just like Desktop UIs (Jupyter, RStudio, use )
-- if you can, get a colleague to run the workflow for you, or even better switch Dockerfiles and give feedback - this gives both of you an extra layer of confidence
-- add a CRON job that deletes the image every week?
+Clarity is always more important than brevity.
+For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image size, you should keep the script in the container for a future user to inspect.
+Depending on the programming language used, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
+This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mount}).
+A single long `Dockerfile` with sections and helpful comments can be complete and thus more understandable than a collection of separate files.
 
-----------
+Generally, aim to design the `RUN` instructions so that each performs one scoped action, e.g., download, compile, and install one tool.
+Each instruction will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
+Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied.
+A `RUN` instruction longer than a page requires scrolling, diminishing readability.
+This may be challenging for the next reader to digest and you should consider splitting it up, being aware of the extra layers added to the image.
 
-**Box: Automatic generation of Dockerfiles**
+When you install several system libraries, it is good practice to add comments about why the dependencies are needed. 
+This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed.
+If you intend to build the image more than once (perhaps during development) and you can take advantage of build caching to avoid execution of time-consuming instructions, e.g., install from a remote resource or a file that gets cached.
+You should list commands _in order_ of least likely to change to most likely to change and use the `--no-cache` flag to force a re-build of all layers.
+Docker will execute the instructions in the order as they appear in the `Dockerfile`.
+When one instruction is completed, the result is cached, and the build moves to the next one.
+If you change something in the Dockerfile, and rebuild the container, each instruction is inspected in turn.
+If it hasn't changed, the cached layer is used and the build progresses.
+If the line has changed, that build step is executed afresh and then every following instruction will have to be rebuilt in case the line that changed influcences something for a following instruction.
+A recommended ordering based on these considerations is as follows.
 
-- there are tools you can auto-generate a `Dockerfile`
-- can be a good as a starting point, careful to avoid a lock-in
-- they have limitations, namely ...
-- `repo2docker`, `dockter`, `containerit`
-- these are useful if you don't need very specific versions etc. and for specific use cases, but sometimes requires a specific project structure (PyPI `requirements.txt`) or reproducible document (R Markdown file)
+1. system libraries
+2. language-specific libraries or modules
+  1. from repositories (binaries)
+  2. from source
+3. own software/scripts (if not mounted)
+4. labels
+5. `RUN`/`ENTRYPOINT`
 
-----------
+Finally, as a supplement to content inside the `Dockerfile`, it is good practice to also write a section in a `README` alongside the `Dockerfile` for exactly how to build, run, and otherwise interact with the container. 
+If a pre-built image is provided on Docker Hub, you should direct the user to it in your `README`.
+
+# 4. Define version numbers for reproducible builds {-}
+\rulelabel{4}{rule:pinning}
+
+The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
+The more specific, the better, because using the desired version leads to reproducible builds.
+The practice of specifying versions of software is called _version pinning_ (e.g., on `apt`: https://blog.backslasher.net/my-pinning-guidelines.html).
+For stable workflows in a scientific context, it is generally advised to freeze the computing environment explicitly and not rely on the "current" or "latest" software, which is a moving target.
+
+## System libraries
+
+System library versions can largely come from the base image tag that you choose to use, e.g., `ubuntu:18.04`, because the operating system's software repositories are very unlikely to introduce breaking changes, but predominantly fix errors with newer versions.
+However, you can also install specific versions of system packages with the respective package manager.
+For example, you might want to demonstrate a bug, prevent a bug in an updated version, or pin a working version if you suspect an update could lead to a problem.
+Generally, system libraries are more stable than software modules supporting analysis scripts, but in some cases they can be highly relevant to your workflow.
+_Installing from source_ is a useful way to install very specific versions, however it comes at the cost of needing build libraries.
+Here are some examples of terminal commands that will list the currently installed versions of software on your system:
+
+- Debian/Ubuntu: `dpkg --list`
+- Alpine: `apk -vv info|sort`
+- CentOS: `yum list installed` or `rpm -qa`
+
+## Extension packages and programming language modules
+
+In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
+Package managers generally provide reliable mirrors or endpoints to download software, many packages are tested before release, and most importantly the provide access to specific versions.
+Most package managers have a command line interface that can be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf. https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html cited by @rule_ten_2019)
+The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration.
+As an example, here are configuration files supported by commonly used languages in scientific programming:
+
+- Python: `requirements.txt` (pip tool, @the_python_software_foundation_requirements_2019), `environment.yml` (Conda, @continuum_analytics_managing_2017)
+- R: `DESCRIPTION` file format [@r_core_team_description_1999] and `r` ("little R", @eddelbuettel_littler_2019)
+- JavaScript: `package.json` of `npm` [@npm_creating_2019]
+- Julia: `Project.toml` and `Manifest.toml` [@julia_tomls_2019]
+
+In some cases (e.g., Conda) the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
+In all of the above, the user is required to inspect the file or the build to see what is installed.
+For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:formatting}).
+For example, the `RUN` instruction here:
+
+```bash
+RUN pip install geopy==1.20.0 && \
+    pip install uszipcode==0.2.2
+```
+serves as more clear documentation in a `Dockerfile` than a `requirements.txt` file that lists the same:
+
+```bash
+RUN pip install -r requirements.txt
+```
+
+This modularisation is a potential risk for understandability and consistency, which can be mitigated by carefully organizing all these files in the same version-controlled project.
+You can also use package manager to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
+And finally, you can use many package managers to install software from source obtained from code management repositories, e.g., installing a specific tool identified by a GitHub version tag or commit hash.
+Be aware of the risk of depending on such repositories, especially if they are out of your control, although the installation command with a full URL should allow readers of your `Dockerfile` to dig deeper if problems arise and such an installation from source gives you a lot of freedom (including the one to shoot yourself in the foot).
+The version pinning capabilities of these file formats and package managers are described in their respective documentation.
+
+As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile`.
+It is common to install all software as the default user `root`.
+In fact it is _required_ for system dependencies.
+You can switch the user running subsequent `RUN`, `CMD` and `ENTRYPOINT` instructions with the `USER` instruction, but you have to make sure yourself that the user exists within the image.
+This is useful if a software aborts installations as the `root` user, or to avoid permission problems when using the container (see&nbsp;\ruleref{rule:mount}).
+Be sure to document a non-default user in detail and to examine the used users in base images if you encounter errors on user permissions.
+
+# 5. Add user scripts and data into containers by mounting directories {-}
+\rulelabel{5}{rule:mount}
+
+The role of containers is to provide the methods, not to encapsulate datasets.
+It is better to insert data files and scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
+This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
+Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible to other users if published in an online research compendium outside of the image.
+You should use `COPY` if you actually copy files because it is explicit.
+`ADD` supports additional features and you should only use it if you leverage them: (i) a URL as a source, for which you may use it instead of a `RUN` instruction to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)), which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of.
+Unless specific features are needed, bind mounts are also preferable to [storage volumes](https://docs.docker.com/storage/volumes/).
+
+Standalone _script files_ are distinct from other software as they are not packaged and versioned, and are treated as files, not as managed software.
+If you developed software for a specific analysis in form of a software package, you should publish in a public source code or software repository and follow \ruleref{rule:pinning} for installing it.
+You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost (cf.&nbsp;\ruleref{rule:mount}).
+Consider using the suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
+If you cannot publish a software project albeit it being in a language's package structure, you should make sure the files are always published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
+
+Storing _data files_ outside of the container further allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
+Do not include such data in an image.
+To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file, which excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
+Ignoring data files also speeds up the build in case of very large files or many small files, the latter of which makes it common to ignore for example the `.git` folder of the Git VCS.
+You should include dummy or test data into the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual.
+For all these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
+When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
+
+A mount can can also be used to access _output data_ from a container.
+This can be an extra mount, or the same `data` directory.
+Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, that require very detailed instructions for users.
+
+You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
+If the target path exists within the image, the bind mount will replace it for the started container.
+
+```
+# mount directory
+docker run --volume /home/user/project:/project mycontainer
+
+# mount directory as read-only
+docker run --volume /home/user/project:/project:ro mycontainer
+
+# mount multple directories, one with write access relative to current path (Linux)
+docker run --volume /homse/user/Download/article-x-supplement/data:/data:ro --volume $(pwd)/outputs:/output-data:rw mycontainer
+```
+
+How your container expects external resources to be mounted into the container should be included in the example commands (see \ruleref{rule:formatting}).
+In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
+For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
+
+# 6. Capture structured environment metadata {-}
+\rulelabel{6}{rule:metadata}
+
+Labels and build arguments can be very helpful to both provide metadata and allow for customization of a build.
+This structured metadata is machine-readable may help tools more than humans (see&nbsp;\ruleref{rule:formatting} for user documentation within a `Dockerfile`).
+In addition to the metadata creation by users, Docker captures useful information in the image metadata automatically, such as the version of Docker used for building the image, which you can access with the [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
+
+## Labels
+
+Labels serve as structured metadata that can be exposed by APIs, e.g., https://microbadger.com/labels, along with tools to inspect the container binaries, e.g., `docker inspect`.
+For example, software versions, maintainer contact information, along with vendor specific metadata are commonly seen.
+The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardize field names across container tools, as shown below.
+These labels match the `org.label-schema.*` specification, which has been deprecated in favour or the new namespace but are still found a lot in existing containers.
+
+```
+LABEL org.opencontainers.image.created='2019-12-10' \
+  org.opencontainers.image.authors='author@example.org' \
+  org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
+  org.opencontainers.image.documentation='https://github.com/...' \
+  org.opencontainers.image.version='0.0.1'
+
+LABEL org.opencontainers.image.vendor='nuest' \
+  org.opencontainers.image.title='Demo title' \
+  org.opencontainers.image.description='Demo description'
+```
+
+You can add multiple fields within the same instruction.
+Important metadata attributes to include as labels would include any of the following, ideally with globally unique identifiers:
+
+- Author and contact (e.g., email, project website, or ORCID; you will often see the deprecated `MAINTAINER` instruction - use a label instead)
+- Research organizations (identified with https://ror.org/)
+- Funding agency/grant number
+- A repository link where the `Dockerfile` is published, e.g., a GitHub project or a repository record with a DOI, e.g., Zenodo, where you can pre-register a DOI and add it to your `Dockerfile` before publishing the record
+- License
+
+Proper software citation is still a work in progress [cf. @katz_software_2018] and you should follow current recommendations of projects such as CodeMeta ([https://codemeta.github.io/](https://codemeta.github.io/)) for describing software and the Citation File Format ([https://citation-file-format.github.io/](https://citation-file-format.github.io/)) to enable citations of software.
+<!-- https://github.com/force11/force11-sciwg/issues/55 -->
+
+## Build arguments
+
+Build arguments can provide more dynamic metadata and also allow for customization of a build.
+As an example, the following build argument would default to `1.0.0` but allow you to change it with `--build-arg MYVERSION=2.0.0` when building the image:
+
+```
+ARG MYVERSION=1.0.0
+```
+
+Along with specifying versions, e.g., a git commit hash, or adding a date and timestamp, build arguments can be useful to provide the context of the build, e.g., building user, production versus development environment, and automated or not.
+Examples of build arguments that are useful to include to describe a container are:
+
+<!-- examples needed -->
+
+# 7. Enable interactive usage and one-click execution {-}
+\rulelabel{7}{rule:interactive}
+
+Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
+But they are also useful for a "headless" execution of a full workflows, e.g. as demonstrated in [@verstegen_pluc_mozambique_2019].
+A workflow that does not at all support headless execution may even be seen as not reproducible.
+These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions (see&nbsp;\ruleref{rule:templates} for having multi-container environments).
+An images main purpose is reflected by the default process and configuration, though the `CMD` and `ENTRYPOINT` can also be changed at runtime.
+It is considered good practice to have a combination of default command and entrypoint that meets reasonable user expectations.
+For example, a container known to be a workflow should execute the workflow, or provide instructions for how to do so.
+Since you are likely the primary user of the `Dockerfile` and image, so you should choose a selection or combination that works for you, only then accomodate other user's needs.
+A possible weakness with using containers is the limitation on only providing one default command and entrypoint.
+However tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
+With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base.
+In any case you should document different variants, if you choose to provide them, in a `Makefile` [@wikipedia_contributors_make_2019].
+To support both one click execution and interactive interfaces and even allow for custom configuration, it's helpful to expose settings via a configuration file which can be bound from the host, via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
+
+_Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across platforms via a regular web browser.
+The HTML-based user interface is exposed over HTTP.
+Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user using the `docker run` option `-p`/`--publish <host port>:<container port>`.
+The container should also print to the screen the used ports along with any login credentials needed.
+For example, as done in the last few lines of the output of running a Jupyter Notebook server locally (lines abbreviated).
+
+```{bash datascience_notebook, eval=FALSE}
+docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
+```
+```
+[...]
+[I 15:44:31.323 NotebookApp] The Jupyter Notebook is running at:
+[I 15:44:31.323 NotebookApp] http://9027563c6465:8888/?token=6a92d [..]
+[I 15:44:31.323 NotebookApp]  or http://127.0.0.1:8888/?token=6a92 [..]
+[I 15:44:31.323 NotebookApp] Use Control-C to stop this server and [..]
+```
+
+A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019] or [ContainDS](https://containds.com/) for assisstance in managing containers on their machine without using the Docker CLI.
+
+_Interactive usage of a command-line interfaces_ is quite straightforward to access from containers, if users are familiar with this style of user interface.
+Running the container will provide a shell where a tool can be used and help or error messages can assist the user.
+For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
+If your workflow can be executed via a CLI you may use that to validate correct functionality of an image in automated builds, e.g. using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, e.g. via an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
+
+The followig example runs a simple R command counting the lines in this articles source file.
+The file path is passed as an environment variable.
+
+```{bash env_param_pass, eval=FALSE}
+docker run \
+  --env CONFIG_PARAM="/data/ten-simple-rules-dockerfiles.Rmd" \
+  --volume $(pwd):/data \
+  jupyter/datascience-notebook:7a0c7325e470 \
+  R --quiet -e "
+l = length(readLines(Sys.getenv('CONFIG_PARAM')));
+print(paste('Number of lines: ', l))
+"
+```
+```
+> l = length(readLines(Sys.getenv('CONFIG_PARAM')));
+> print(paste('Number of lines: ', l))
+[1] "Number of lines:  568"
+```
+
+If there is only a regular desktop application, the hosts window manager can be connected to the container.
+This has notable security implications, which are reduced by using the "X11 forwarding" natively supported by Singularity [@singularity_frequently_2019], which can execute Docker containers, or by leveraging supporting tools such as `x11docker` [@viereck_x11docker_2019].
+Bidge containers [@yaremenko_docker-x11-bridge_2019] and exposing a regular desktop via the browser (e.g., for Jupyter Hub [@yuvipanda_jupyter-desktop-server_2019]) are further alternatives.
+This variety of approaches render seemingly more convenient uncontainerised environments, i.e. just using the local machine, unneccessary in favour of reproducibility and portability.
+
+# 8. Establish templates for new projects {-}
+\rulelabel{8}{rule:templates}
+
+It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
+In this case, you should consider adopting a standard workflow that will give you a clean slate for a new project.
+If you decide to build your own standard, collaborate with your community during development of the standard to ensure it will be useful to others. Part of your project template should be a protocol for publishing the container image to a suitable container registry, and taking into consideration of how the code can be given a DOI or proper publication (e.g., Zenodo, Journal of Open Source Software).
+
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide files, directory organization, and build instructions that include basic steps for getting started.
+A good project template should get you started with a template for documentation, setting up testing via continuous integration (CI), building a container, and even choosing a license.
+In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.
+When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
+You can even run projects in parallel without interference.
+At most, if a port is shared by two projects to expose a user interface in the browser, you would need to configure non-conflicting ports.
+
+In the case of more complex applications that require web servers, databases, and workers or messaging, the entire infrastructure can be brought up or down with a combination of templates and orchestration tools like `docker-compose` [@docker-compose_2019].
+`docker-compose` also allows definition of services using multiple containers via it's own `docker-compose.yml` file.
+This file can help to template options including mounted volumes, permissions, environment variables, and exposed ports.
+A `docker-compose` configuration also helps to keep one _purpose_ per container, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
+
+# 9. Publish one Dockerfile per project in a code repository with version control {-}
+\rulelabel{9}{rule:publish}
+
+Because a `Dockerfile` is a plain text-based format, it works well with VCS.
+Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf. @emsley_framework_2018).
+Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building your image in an independent build environment.
+Continuous integration increases stability and trust, and gives the ability to publish images automatically.
+If your `Dockerfile` includes an interactive user interface, you can also adapt it so that it is ready-to-use as a Binder instance [@jupyter_binder_2018], providing an online work environment to any user with a simple click of a link.
+Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
+
+While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
+Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
+We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
+If you find that you need to use more than one container to run your workflow, use `docker-compose` and consider if it's possible to use build arguments to flip between states (e.g., development vs. production, see&nbsp;\ruleref{rule:interactive}) or to separate tools into different repositories.
+Yet most importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same repository.
+
+# 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
+\rulelabel{10}{rule:usage}
+
+Using containers for research workflows does not only require technical understanding, but also an awareness of risks that can be managed efficiently by following a number of good _habits_, which we outline below.
+While there is no firm rule, if you use a container daily, is good practice to rebuild that container every once or two weeks.
+At the time of publication of research results it is good practice to save a copy of the image in a public data repository so that readers of the publication can access the resources that produced the published results. 
+
+First, use your container every time you work on a project and not just as a final step during publication.
+If the container is the only platform you use, the confidence in proper documentation of the computing environment can be very high [@marwick_readme_2015].
+You should prioritize this usage over others, e.g., non-interactive execution of a full workflow, because it gives you personally the highest value and does not limit your use or others' use of your data and code at all (see \ruleref{rule:interactive}).
+
+Second, for reproducibility, we can treat containers as transient and disposable, and even intentionally rebuild an image at regular intervals.
+Ideally, containers that we built years ago should rebuild seamlessly, but this is not necessarily the case, especially with rapidly changing technology relevant to machine learning and data science.
+It can almost be guaranteed  future changes will interfere with the image build process or even the functionality of the software within the image.
+The longer that you wait to rebuild the image, the more change happens, the higher the risk that your build will not work, and the harder it becomes to identify and fix the problem.
+If you are using an interactive container and find that you need to manually install a package or change a parameter, it is best practice to add this dependency to the container and rebuild it right away, but one tends to take shortcuts.
+Therefore, a habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveals issues requiring manual interference, i.e., changes to code or configuration not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
+This habit can be supported by using continuous deployment or CI strategies.
+If a VCS repository with a `Dockerfile` is linked to an automated build, then a CI pipeline can build images and execute a validating run the new image, e.g., using contained demo data (see&nbsp;\ruleref{rule:mount}).
+
+In the case of needing setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
+The effective use of a `Makefile` can help avoiding undocumented steps or manual, extra commands to be run on the local machine.
+A fully scripted configuration makes it easier for both you and future users, and can increase trust in your workflow.
+
+Third, from time to time you can reduce the system resources occupied by Docker images and their layers or unused containers, volumes and networks by running `docker system prune --all`.
+After a prune is performed, it follows naturally to rebuild a container for local usage, or to pull it again from a newly built registry image.
+This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
+
+Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
+You should include instructions how to import and run the workflow based on the image archive and add your own image tags for clarity.
+Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but is is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
+Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker runtime environment.
+Applying proper preservation strategies (cf. [@emsley_framework_2018]) can be highly complex, but simply running an image "as-is", i.e. with the default command and entrypoint (see \ruleref{rule:interactive}), and observing the output is quite likely to work for many years into the future.
+If the image does not work anymore, a user can still extract the image contents and explore the files of each layer manually, or if an import still works, with exploration tools like dive [@goodman_dive_2019].
+However, if you want to ensure usability and extendability, then you could run import, run, and export an image regularly to make sure the export format still works with the then current version of Docker.
+
+The exported image and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
+
+Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
+You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
 
 # Example Dockerfiles
 
-To demonstrate the 10 rules, we have a git repository with example `Dockerfile`s, some of which we took from public repositories and updated to adhere to the rules (`Dockerfile.before` and `Dockerfile.after`).
+To demonstrate the ten rules, we maintain a GitHub repository with example `Dockerfile`s, some of which we took from public repositories and updated to adhere to the rules (see `Dockerfile.original`): [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/)
 
 # Conclusion {#conclusion .unnumbered}
 
-Reproducibility in research is an endeavour of best efforts, not about achieving the perfect solution, as that is probably not achievable or changing over time.
-This article provides guidance for using `Dockerfile`s in computational/computer-based research to work towards a "time capsule" (see https://twitter.com/DougBlank/status/1135904909663068165?s=09) that given some expertise and the right tools can be used to come as close as possible to the original virtual laboratory used for a specific.
-Such an increase in transparency and conscious effort is valuable for the creators of analyses, even if the capsule decays over time.
-The effort should also be valued by others and may change the way scholars collaborate and communicate (cf. notion of "preproducibility" by @stark_before_2018)
-So please, don't go insane with writing `Dockerfile`s, but be realistic about what might break and what is unlikely to break.
-In a similar vein, these rules may be broken if another way works better for _your use case_.
-The rules in this article help you mastering the `Dockerfile` format for research and provide a solid basis for engaging in more complex but also in simpler assisted usage of containers (cf. Box: Aumatic Generation).
-Corner cases aside, share and exchange your `Dockerfile` freely and collaborate in your community to spread the knowledge about containers as a tool for research.
-Together you can develop common practices or even shared base images (exemplified by communities listed in Rule 1).
+Reproducibility in research is an endeavor of incremental improvement and best efforts, not about achieving the perfect solution, which may be not achievable for many researchers with limited resources, and the definition of which may change over time.
+Containerisation can support researchers.
+Containers can be optimized for very different use cases, such as supporting many hosts, being small in size for quick deployments in cloud infrastructures, but in this article we have provided guidance for using `Dockerfile`s to create containers for use and communication in computational research.
+Our goal is to help the researcher to work towards creating a "time capsule" [@blank_twitter_2019] in form of a research compendium.
+Given some expertise and the right tools, such a compendium can come as close as needed to the original workflow with reasonably little effort for better science.
+Even if such a capsule decays over time, the effort to create and document it provides incredibly useful and valuable transparency for the project.
+We encourage researchers to value these steps taken by their peers to use `Dockerfile`s to create "time capsules", and promote change in the way scholars communicate towards an open and friendly "preproducibility" [@stark_before_2018].
+So please, make a best effort with your current knowledge, and strive to write readable `Dockerfile`s for functional containers, that are realistic about what might break and what is unlikely to break.
+In a similar vein, we accept that you should freely break these rules if another way makes more sense _for your use case_.
+Most importantly, share and exchange your `Dockerfile` freely and collaborate in your community to spread the knowledge about containers as a tool for research and scholarly collaboration and communication.
+Together we can develop common practices and shared materials for better transparency, higher efficiency, and faster innovation.
 
 # Acknowledgements {#acknowledgements .unnumbered}
 
-o2r by DFG
+DN is supported by the project Opening Reproducible Research II (\href{https://o2r.info/}{https://o2r.info/}; \href{https://www.uni-muenster.de/forschungaz/project/12343}{https://www.uni-muenster.de/forschungaz/project/12343}) funded by the German Research Foundation (DFG) under project number PE 1632/17-1.
 
-# Contributions  {#contributions .unnumbered}
+# Contributions {#contributions .unnumbered}
 
-DN conceived the idea, wrote the first darft, contributed to all rules.
+DN conceived the idea, outlined the first rules, and contributed to all rules.
+VS wrote the first draft and contributed to all rules.
+BM revised the text and contributed to all rules.
+SE contributed to the overall structure and selected rules.
+THe contributed to the rule structure and particularly Rule&nbsp;1.
+THi gave extensive feedback on early drafts and contributed to the discussion.
+This articles was written collaboratively on GitHub, where all [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
