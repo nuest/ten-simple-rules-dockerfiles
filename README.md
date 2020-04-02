@@ -28,10 +28,7 @@ See more options [in the Rocker docs](https://github.com/rocker-org/rocker-versi
 
 ## Run container for building the PDF
 
-```bash
-docker build -t ten-simple-rules-dockerfiles .
-docker run --interactive --rm --name tensimpledockerfiles --user $UID --volume $(pwd):/tsrd ten-simple-rules-dockerfiles Rscript -e 'setwd("/tsrd"); rmarkdown::render("ten-simple-rules-dockerfiles.Rmd")'
-```
+See the end of the `Dockerfile` for instructions.
 
 ## Useful snippets
 
