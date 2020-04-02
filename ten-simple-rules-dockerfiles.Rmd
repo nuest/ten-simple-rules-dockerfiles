@@ -548,6 +548,7 @@ Containers are very well suited for day-to-day development tasks (see also \rule
 But they are also useful for a "headless" execution of a full workflows.
 For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, or this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which could include cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml#L18).
 A workflow that does not support headless execution may even be seen as irreproducible.
+
 These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions.
 An images main purpose is reflected by the default process and configuration, though the `CMD` and `ENTRYPOINT` can also be changed at runtime.
 It is considered good practice to have a combination of default command and entrypoint that meets reasonable user expectations.
@@ -555,12 +556,36 @@ For example, a container known to be a workflow should execute the workflow, or 
 Since you are likely the primary user of the `Dockerfile` and image, so you should choose a selection or combination that works for you, only then accomodate other user's needs.
 A possible weakness with using containers is the limitation on only providing one default command and entrypoint.
 However tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
-With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base.
-In any case you should document different variants, if you choose to provide them, in a `Makefile` [@wikipedia_contributors_make_2019].
-To support both one click execution and interactive interfaces and even allow for custom configuration, it's helpful to expose settings via a configuration file which can be bound from the host, via environment variables [@knoth_reproducibility_2017], or special Docker-based wrappers such as Kliko [@molenaar_klikoscientific_2018].
+With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;2.
+In any case you should document different variants ver well, potentially capture build and run commans a `Makefile` [@wikipedia_contributors_make_2019].
+To support advanced custom configuration, it's helpful to expose settings via a configuration file, which can be bind mounted from the host [cf. @verstegen_pluc_mozambique_2019], via environment variables [cf. @knoth_reproducibility_2017], or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
+\footnotesize
 
-[SJE: I think I get the two style of working -- batch and interactive might be my way of thinking about them.  But it feels a bit clunky above and certainly too detailed.  might be better served with two example dockerfiles: once doing a batch analysis, and the other whose goal is to allow some interaction.]
+```Dockerfile
+# base image (interactive)
+FROM jupyter/TODO
+
+# Usage instructions:
+# $ docker build --tag workflow:1.0 .
+# $ docker run workflow:1.0
+```
+
+```Dockerfile
+# interactive image
+FROM workflow:1.0
+
+ENTRYPOINT ["python"]
+CMD ["/workspace/run-all.sh"]
+
+# Usage instructions:
+# $ docker build --tag workflow-runner:1.0 --file Dockerfile.runner .
+# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced --volume /tmp/results:/workspace/output_data workflow-runner:1.0
+```
+
+\normalsize
+
+_Listing 2_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with filename `Dockerfile.runner`
 
 _Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across platforms via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
@@ -578,8 +603,6 @@ docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
 [I 15:44:31.323 NotebookApp]  or http://127.0.0.1:8888/?token=6a92 [..]
 [I 15:44:31.323 NotebookApp] Use Control-C to stop this server and [..]
 ```
-
-[SJE: that's good, does rstudio do similar?  need to check.]
 
 A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019] or [ContainDS](https://containds.com/) for assistance in managing containers on their machine without using the Docker CLI.
 
@@ -668,8 +691,7 @@ Third, from time to time you can reduce the system resources occupied by Docker 
 After a prune is performed, it follows naturally to rebuild a container for local usage, or to pull it again from a newly built registry image.
 This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
 
-
-[SJE:  "sure, okay, I'd like to export an image.  Give me a recipe to show me how to do it, e.g. for this paper!"]
+<!-- [SJE:  "sure, okay, I'd like to export an image.  Give me a recipe to show me how to do it, e.g. for this paper!"] -->
 Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions how to import and run the workflow based on the image archive and add your own image tags for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but is is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
