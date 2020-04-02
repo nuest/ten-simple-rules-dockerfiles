@@ -88,6 +88,10 @@ This execution should be able to be triggered by command-line instruction, which
 <!--, but may also be opening and starting a process with a graphical user interface.-->
 A workflow that does not support scripted execution is out of scope for reproducible research, and does not fit well with containerisation.
 
+Furthermore, workflows interacting with many petabytes of data and executed in high-performance computing (HPC) infrastructures are out of scope.
+While containers _can_ be helpful for analysing data at scale, the complexity of theses pipelines, e.g., using HPC job managers or cloud infrastructures, requires a collection of "Ten Simple Rules" articles in their own right.
+Instead, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server, though they may take some time and resources to execute, such as a terabyte of data and 16 cores running over the weekend.
+
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the technology behind them actually works, reserachers can leverage containerisation, but should craft their own definition of computing environments following good practices, which are provided here.
 These practices are strongly related to software engineering in general and research software engineering (RSEng) in particlar, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
@@ -125,49 +129,94 @@ While some may argue for reasons to not publish reproducibly, e.g., lack of time
 If a researcher is able to find and create containers or write a `Dockerfile` to address their most common use cases, then arguably it will not be extra work after this initial set up (cf. README of @marwick_madjebebe_2015).
 In fact, the `Dockerfile` itself can be a powerful documentation to show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 
+------
+<!-- TODO: we need line numbers here -->
+
+```
+FROM rocker/verse
+
+# install Java, needed for X
+
+# install Y, needed for Z
+RUN apt-get update \
+  && install command \
+  && accross multiple lines with \
+    even \
+    more \
+    arguments
+
+# Taken from https://github.com/rocker-org/geospatial/blob/master/Dockerfile
+RUN install2.r --error \
+    RColorBrewer \
+    RandomFields \
+    RNetCDF
+
+WORKDIR /work
+
+COPY myscript.sh
+
+# ???
+RUN snakemake --use-conda <other params>
+RUN nextflow workflow.nf --in 'dataset/*.fa'
+RUN java -jar cromwell-XY.jar run myWorkflow.wdl
+
+# Create the plots
+RUN Rscript plots.R
+
+# command unchanged for devlopment, uncomment the following line to have a "run workflow only" container
+# CMD["./myscript.sh"]
+
+# Usage:
+# docker build --tag ten-simple-example:1.0.0 .
+# docker run -p 8787:8787 ten-simple-example:1.0.0
+```
+
+_Listing&nbsp;1: `Dockerfile` full example.
+
+------
+
 # 1. Consider tools to assist with Dockerfile generation {-}
 \rulelabel{1}{rule:tools}
 
-Rule 1 could informally be described as "Don't bother to write a
-Dockerfile!"  Writing a `Dockerfile` from scratch can be difficult
-and even experts sometimes take shortcuts.  Thus, it is a good
-strategy to first look to tools that can help to generate a
-`Dockerfile` for you.  Such tools have likely thought about and
-implemented good practices, and they may have added newer practices
-when reapplied at a later point in time.  Therefore the most important
-rule is to apply a multi-step process for your specific use case.
-First, you want to determine if there is an already existing container
-that you can use, and in this case, use it and add to your workflow
-documentation instructions for doing so.  As an example, you might be
-doing some kind of interactive development.  For interactive
-development environments such as notebooks and development servers or
-databases, you can readily find containers [SJE: where do you look to find containers?] that come installed with
-all the software that you need.  Second, in the case that there isn't
-an existing container for your needs, you might next look to
-well-maintained tools to help with `Dockerfile` generation.  These
-tools can add required software packages to an existing image without
-you having to manually write a `Dockerfile` at all.  Well-maintained
-includes the tool's own stability and usability, but also that
-suitable base images are used, likely from the official Docker library
-[@docker_inc_official_2019], to ensure that the container has the most
-recent security fixes for the operating system in question.  Third,
-you may want to write you own `Dockerfile` from scratch if these tools
-do not suffice for your needs.  _In this case, follow the remaining
-rules._
+Rule 1 could informally be described as "Don't bother to write a Dockerfile!".
+Writing a `Dockerfile` from scratch can be difficult and even experts sometimes take shortcuts.
+Thus, it is a good strategy to first look to tools that can help to generate a `Dockerfile` for you.
+Such tools have likely thought about and implemented good practices, and they may have added newer practices when reapplied at a later point in time.
+Therefore the most important rule is to apply a multi-step process for your specific use case.
+
+First, you want to determine if there is an already existing container that you can use, and in this case, use it and add to your workflow documentation instructions for doing so.
+As an example, you might be doing some kind of interactive development.
+For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with
+all the software that you need.
+You look for information about images (a) in the documentation of the used software, (b) the Docker image registry _Docker Hub_, [https://hub.docker.com/](https://hub.docker.com/), or (c) in the source code projects of the used software, as many developers today rely on containers for development, testing, and teaching.
+
+Second, in the case that there isn't an existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
+These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
+"Well-maintained" includes the tool's own stability and usability, but also that suitable base images are used, likely from the official Docker library
+[@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
+See below box "Tools for container generation" for details.
+
+Third, you may want to write you own `Dockerfile` if these tools do not suffice for your needs.
+_In this case, follow the remaining rules._
+
+------
 
 ## Tools for container generation
 
-Repo2docker [@jupyter_binder_2018] is a tool that is maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a [SJE github/gitlab? any other repos?] repository with common simple configuration files for defining software dependencies and versioninto a container.
+Repo2docker [@jupyter_binder_2018] is a tool that is maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a source code or data repository, e.g. GitHub, GitLab, or Zenodo, into a container.
+The tool relies on common configuration files for defining software dependencies and versions, and supports a few more special files for, see the [supported configuration files](https://repo2docker.readthedocs.io/en/latest/config_files.html).
 As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python workflow with dependencies on the [Python Package Index](https://pypi.org/) (PyPI) with the following command.
-
+  
 ```bash
 jupyter-repo2docker https://github.com/norvig/pytudes
 ```
 
 The resulting container image installs the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to interact with any existing workflows in the repository.
-A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share, but rather any researchers interested in interaction with the code inside should build their own container.
-For this reason, it is good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
-It's also recommended to add custom labels to your container build to define metadata for your analyses even if you are using tools (see&nbsp;\ruleref{rule:metadata}).
+Since repo2docker is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready", you and others can also get an online workspace with a single click.`
+A precaution that needs to be taken is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share, but rather any researchers interested in interaction with the code inside should run repo2docker themselves and create their own container.
+Because repo2docker is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
+<!--For this reason, it is good practice to look at any help command provided by the tool and check for configuration options for user names, user ids, and similar.
+It's also recommended to add custom labels to your container build to define metadata for your analyses even if you are using tools (see&nbsp;\ruleref{rule:metadata}).-->
 
 Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
 `containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
