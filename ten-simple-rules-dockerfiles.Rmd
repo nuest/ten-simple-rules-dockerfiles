@@ -223,64 +223,57 @@ Additional tools to assist with writing `Dockerfile`s include `containerit` [@nu
 It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
 `dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
 
-# 2. Use versioned and automatically built base images {-}
+------
+
+# 2. Use versioned images {-}
 \rulelabel{2}{rule:base}
 
-[SJE: this feels WAY too long.  can't we say it much shorter, i.e. it is good to pin version numbers if you want a stable archive of reproducible code, or use "latest" to check that your code continues to work as other software environments evolve.  I think having a table here with some recommendations for e.g. python, R and julia, base images would go a long way to practically serve about 80% + of data scienceusers? The bullet pointed list at the end of the section is probably most useful.]
-
+A good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your container.
 It's good practice to use base images that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
 You can identify these images by the missing the user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
-There are also repositories that are maintained by organisations or fellow researchers.
-While some organizations can be trusted to update containers with security fixes (e.g., the [Rocker Project](https://hub.docker.com/u/rocker-org) or [Jupyter](https://hub.docker.com/u/jupyter)), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
-It is even possible that images or `Dockerfile`s may disappear, or that images are published with malicious intent.
-Images furthermore have _tags_ associated with them with specific meanings, usually as a version number but sometimes also variants of images.
-Tags are defined at image built time and appear in image name after the `:` when you use an image, e.g., `python:3.6`.
-By _convention_ a missing tag is assumed to be the word `latest`.
-When you re-build you images locally using the same tag, the tag is always associated with the newest built.
-But the image also has an automatically generated image name using a hash, which will _not_ be updated.´
-So if you tag an image, use the tag when you start a container.
+However, these images only provide basic programming languages or very widely used software.
+So you will likely use images maintained by organisations or fellow researchers.
+While some organisations can be trusted to update containers with security fixes (see list below), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
+It is even possible that images or `Dockerfile`s may disappear, or that images are published with malicious intent, though we have not heard of any such case in academia.
+Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`.
+Do save a copy of the `Dockerfile`, e.g., by cloning the public repository where the `Dockerfile`s are maintained.
 
-Because of these options, a good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your own image.
-You should know how to use `FROM` instructions to trace all the way up to the original container base, an abstract base called `scratch`.
+Images have _tags_ associated with them with specific meanings, e.g., a version indicator such as `1.2` or `dev`, or variants such as `slim` attempting to reduce image size.
+Tags are defined at image built time and appear in image name after the `:` when you use an image, e.g., `python:1.2`.
+By _convention_ a missing tag is assumed to be the word `latest`, which gives you the latest updates but also a moving target for your computing environment that can break your workflow.
+Note that a version tag means that the tagged software is frozen, but it does not mean the image will not change, as backwards compatible fixes (cf.&nbsp;semantic versioning, [@preston-werner_semantic_2013]), e.g., version `1.2.3` fixing a security problem in version `1.2.2` or updates to an underlying system library, will still be included.
+
+For data science workflows, you should always rely on version-specific image tags both for base images that you use, and for images that you build yourself and then run.
+Also do not worry about image size, because the size will be often be much smaller than the data anyway.
+<!--When you re-build you images locally using the same tag, the tag is always associated with the newest built.
+But the image also has an automatically generated image name using a hash, which will _not_ be updated.´
+So if you tag an image, use the tag when you start a container.-->
+<!--You should know how to use `FROM` instructions to trace all the way up to the original container base, an abstract base called `scratch`.
 Doing this kind of trace is essential because it makes clear all of the steps that were taken to generate your container and who took them.
 If you want to build on a third party image, carefully consider the author/maintainer and _never_ use an image without a published `Dockerfile`.
-If you want to use an unofficial image, do save a copy of the `Dockerfile`s created by others.
-Alternatively, copy relevant instructions into your own `Dockerfile`, acknowledge the source in a comment, and configure an automated build for your own image.
-The official images and images by established organisations should be your preferred source of snippets if you craft you own `Dockerfile`
-Automated builds can be complex to set up, and details are out of scope of this article.
-The documentation for, and toolsets provided by  container registries such as [Docker Hub](https://docs.docker.com/docker-hub/builds/) or [GitLab](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as CI platforms such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci) or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) can help you get started; tools may also be available to automate builds using intermediate tools, such as the `repo2docker` Github action [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019],
-You should avoid publishing an image in a public registry with `docker push`, because it is opaquely breaking the linkage between `Dockerfile` and image.
+If you want to use an unofficial image, do save a copy of the `Dockerfile`s created by others.-->
+It is good practice to publish an image in an image registry, and we refer you to the documentation on automated builds for details, see [Docker Hub Builds](https://docs.docker.com/docker-hub/builds/) or [GitLab's Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images).
+Do not `docker push` a locally built image, because that counteracts the considerations outlined above.
+<!--as well as CI platforms such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci) or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) can help you get started; tools may also be available to automate builds using intermediate tools, such as the `repo2docker` Github action [@husain_repo2docker-action_2019; @scottyhq_repo2docker-githubci_2019],
+-->
+<!--When you choose a base image, try to choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
+As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.-->
+<!--If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build.
+Trusting that the third party `Dockerfile` will persist for your analyses may be risky because that `Dockerfile` could disappear without warning.-->
 
-A tag like `latest` is good in that security fixes and updates are likely present, however it is bad in that it is a moving target so that it is more likely that an updated base could break your workflow.
-Other tags that should be avoided are `dev`, `devel`, or `nightly` that may provide possibly unstable versions of the software.
-Official builds are often tagged with corresponding release version numbers, the newest of which also has the `latest` tag.
-For example, if you build a container with `python:latest` that only supports Python version 3, when the base is updated to Python 4 it's likely that your software won't work as expected.
-Therefore a tag like `python:3.5` is a preferable choice, where the lack of the third component of the version, i.e., `3.5.x`, ensures that security patches and bugfixes _will_ be included.
-These _bugfix_ version changes should not break your code, i.e., are backwards compatible (cf. semantic versioning, [@preston-werner_semantic_2013]), and if they break your code you might rely on a bug in the used software.
-When you choose a base image, try to choose one with a Linux distribution that supports the software stack you are using, and also take into account the bases that are widely used by your community.
-As an example, Ubuntu is heavily used for geospatial research, and so the `rocker/geospatial` image would be a good choice for spatial data science with R, or `jupyter/tensorflow-notebook` could be a good choice for machine learning with Python.
+The following list a selection of communities that produce widely used regularly updated images, including ready-to-use images with preinstalled software stacks.
+Do take advantage of images with complex software environments pre-installed, e.g., machine learning tool stacks, specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library.
 
-Container tags may also provide an indication as the size of a container.
-Smaller images are often indicated by having `slim` or `minimal` as part of the tag.
-If you need to build smaller containers, consider a `busybox` base or a _multi-stage build_ [@docker_multi-stage_2020], which allows you to selectively copy files from one build step to another.
-Also take into account the software that you actually need, but mostly for clarity.
-In scientific contexts, the image size will be often the least of you concerns, because data size is much larger or image portability is not time critical.
-
-Base images that have complex software installed (e.g. machine learning tool stacks, specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library) are helpful and fine to use.
-If you do not want to rely on a third party or other individual to maintain the recipe and container, you should copy the `Dockerfile` to your own repository, and also provide a deployment for it via your own automated build. 
-Trusting that the third party `Dockerfile` will persist for your analyses may be risky because that `Dockerfile` could disappear without warning. 
-Here is a selection of communities that produce widely used regular builds and updates:
-
-- [Rocker](https://www.rocker-project.org/) for R [@boettiger_introduction_2017]
-- [Docker containers for Bioconductor](https://bioconductor.org/help/docker/) for bioinformatics
+- [Rocker](https://www.rocker-project.org/) for R and RStudio images [@boettiger_introduction_2017]
+- [Bioconductor Docker images](https://bioconductor.org/help/docker/) for bioinformatics with R
 - [NeuroDebian images](https://hub.docker.com/_/neurodebian) for neuroscience [@halchenko_open_2012]
-- [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html for Notebook-based computing
+- [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html) for Notebook-based computing
 - [Taverna Server](https://hub.docker.com/r/taverna/taverna-server) for running Taverna workflows
 
-For example, here is how we would use a base image `r-ver` with tag `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`).
+For example, here is how we would use a base image `verse`, which provides the populary Tidyverse suite of packages [@Wickham2019], with R version `3.5.2` from the `rocker` organisation on Docker Hub (`docker.io`, which is the default and can be omitted).
 
 ```
-FROM rocker/r-ver:3.5.2
+FROM docker.io/rocker/r-ver:3.5.2
 ```
 
 # 3. Use formatting, document within, and favor clarity
