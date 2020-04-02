@@ -95,6 +95,10 @@ Furthermore, workflows interacting with many petabytes of data and executed in h
 While containers _can_ be helpful for analysing data at scale, the complexity of theses pipelines, e.g., using HPC job managers or cloud infrastructures, requires a collection of "Ten Simple Rules" articles in their own right.
 Instead, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server, though they may take some time and resources to execute, such as a terabyte of data and 16 cores running over the weekend.
 
+In the case of more complex applications that require multiple applications, e.g., web servers, databases, and worker containers, it might be better to have a _set of containers_ using `docker-compose` [@docker-compose_2019].
+A `docker-compose.yml` configuration file allows for defining volumes, environment variables, and exposed ports and helps to stick to  _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
+Using `docker-compose` for a data science workflow is out of scope for this article.
+
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the technology behind them actually works, reserachers can leverage containerisation, but should craft their own definition of computing environments following good practices, which are provided here.
 These practices are strongly related to software engineering in general and research software engineering (RSEng) in particlar, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
@@ -148,7 +152,6 @@ RUN apt-get update \
     # needed for ...:
     more \
     arguments
-
 
 # Taken from https://github.com/rocker-org/geospatial/blob/master/Dockerfile
 RUN install2.r --error \
@@ -538,14 +541,14 @@ How your container expects external resources to be mounted into the container s
 In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
-# 7. Enable interactive usage and one-click execution {-}
-\rulelabel{7}{rule:interactive}
+# 8. Enable interactive usage and one-click execution {-}
+\rulelabel{8}{rule:interactive}
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
 But they are also useful for a "headless" execution of a full workflows.
 For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, or this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which could include cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml#L18).
 A workflow that does not support headless execution may even be seen as irreproducible.
-These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions (see&nbsp;\ruleref{rule:templates} for having multi-container environments).
+These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions.
 An images main purpose is reflected by the default process and configuration, though the `CMD` and `ENTRYPOINT` can also be changed at runtime.
 It is considered good practice to have a combination of default command and entrypoint that meets reasonable user expectations.
 For example, a container known to be a workflow should execute the workflow, or provide instructions for how to do so.
@@ -609,34 +612,12 @@ This has notable security implications, which are reduced by using the "X11 forw
 Bidge containers [@yaremenko_docker-x11-bridge_2019] and exposing a regular desktop via the browser (e.g., for Jupyter Hub [@yuvipanda_jupyter-desktop-server_2019]) are further alternatives.
 This variety of approaches render seemingly more convenient uncontainerised environments, i.e. just using the local machine, unneccessary in favour of reproducibility and portability.
 
-# 8. Establish templates for new projects {-}
-\rulelabel{8}{rule:templates}
-
-
-[SJE: this seemed a bit lacking in meat, compared to the other rules.  Do you have an example Dockerfile template that you are thinking of?]
-
-It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
-In this case, you should consider adopting a standard workflow that will give you a clean slate for a new project.
-If you decide to build your own standard, collaborate with your community during development of the standard to ensure it will be useful to others. Part of your project template should be a protocol for publishing the container image to a suitable container registry, and taking into consideration of how the code can be given a DOI or proper publication (e.g., Zenodo, Journal of Open Source Software).
-
-As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide files, directory organisation, and build instructions that include basic steps for getting started.
-A good project template should get you started with a template for documentation, setting up testing via continuous integration (CI), building a container, and even choosing a license.
-In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.
-When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
-You can even run projects in parallel without interference.
-At most, if a port is shared by two projects to expose a user interface in the browser, you would need to configure non-conflicting ports.
-
-In the case of more complex applications that require web servers, databases, and workers or messaging, the entire infrastructure can be brought up or down with a combination of templates and orchestration tools like `docker-compose` [@docker-compose_2019].
-`docker-compose` also allows definition of services using multiple containers via it's own `docker-compose.yml` file.
-This file can help to template options including mounted volumes, permissions, environment variables, and exposed ports.
-A `docker-compose` configuration also helps to keep one _purpose_ per container, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
-
-# 9. Publish one Dockerfile per project in a code repository with version control {-}
+# 9. Use a Dockerfile per project and publish it with a version control system {-}
 \rulelabel{9}{rule:publish}
 
 Because a `Dockerfile` is a plain text-based format, it works well with VCS.
-Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf. @emsley_framework_2018).
-Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building your image in an independent build environment.
+Including a `Dockerfile` alongside your code and data in a research compendium is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf. @emsley_framework_2018).
+Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building and executing your image in an independent environment.
 Continuous integration increases stability and trust, and gives the ability to publish images automatically.
 If your `Dockerfile` includes an interactive user interface, you can also adapt it so that it is ready-to-use as a Binder instance [@jupyter_binder_2018], providing an online work environment to any user with a simple click of a link.
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
@@ -644,9 +625,18 @@ Furthermore, the commit messages in your version controlled repository preserve 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
 Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
 We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
-If you find that you really need to use more than one container to run your workflow, use `docker-compose`.
-Carefully consider if build-time variables to flip between states (e.g., development vs. production, see&nbsp;\ruleref{rule:interactive}) or to separate tools into different repositories could help, but be aware of their disadvantages.
+<!--If you find that you really need to use more than one container to run your workflow, use `docker-compose`.
+Carefully consider if build-time variables to flip between states (e.g., development vs. production, see&nbsp;\ruleref{rule:interactive}) or to separate tools into different repositories could help, but be aware of their disadvantages.-->
 Yet most importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same research compendium.
+
+It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
+When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
+You can even run projects in parallel without interference.
+In case you feel like constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide required files, e.g., for documention, CI, and licenses, and structure for getting started.
+<!--In the case of using a common `Dockerfile` or base, Docker's build caching will take shared lines into account and speed up build time even between projects.-->
+If you decide to build your own best practice, consider to collaborate with your community during development of the standard to ensure it will be useful to others.
+Part of your project template should be a protocol for publishing the `Dockerfile` and even an export of the image in a suitable location, e.g., a container registry or data repository, taking into consideration of how your workflow can receive a DOI for citation.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 \rulelabel{10}{rule:usage}
