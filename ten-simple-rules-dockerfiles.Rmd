@@ -77,7 +77,7 @@ Such practice is one important part of common practices for scientific computing
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
-While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020].
+While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
 This article introduces these instructions for the popular `Dockerfile` format with a focus on containers encapsulating data science workflows.
 
 # Prerequisites & scope
@@ -225,7 +225,7 @@ Additional tools to assist with writing `Dockerfile`s include `containerit` [@nu
 `containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
 It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
 `dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
-For any tool that you use, be sure to look at documentation for usage and configuration options, and options to add metadata (e.g., labels see&nbsp;\ruleref{rule:metadata}).
+For any tool that you use, be sure to look at documentation for usage and configuration options, and options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
 
 
 ------
