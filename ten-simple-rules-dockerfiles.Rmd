@@ -67,7 +67,8 @@ This sharing of computational assets is paramount to increase reproducibility of
 While "papers" based on the traditional journal article format can share high level details of research, computational research is oftentimes way too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
 In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerization is needed.
 
-Containerization plays an important role in providing instructions for packaging the building blocks of computer-based research (i.e. code, data, documentation, and the computing environment). While a container cannot package all of these blocks, it represents a human- _and_ machine-readable recipe to capture the computing environment and interact with data.
+Containerization plays an important role in providing instructions for packaging the building blocks of computer-based research (i.e. code, data, documentation, and the computing environment).
+While a container cannot package all of these blocks, it represents a human- _and_ machine-readable recipe to capture the computing environment and interact with data.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
 Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
@@ -79,7 +80,10 @@ This article introduces these instructions for the popular `Dockerfile` format w
 # Prerequisites & scope
 
 To start with, we assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a fixed set of commands, for example `make prepare_data` followed by `Rscript analysis.R`, or only `python3 my-workflow.py`.
-Since containers that you eventually share with others can only run open source software, tools like Mathematica and Matlab are out of scope for this example. A workflow that does not support scripted execution is also out of scope for reproducible research, as it does not fit well with containerization. Furthermore, workflows interacting with many petabytes of data and executed in high-performance computing (HPC) infrastructures are out of scope. Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right.
+Since containers that you eventually share with others can only run open source software, tools like Mathematica and Matlab are out of scope for this example.
+A workflow that does not support scripted execution is also out of scope for reproducible research, as it does not fit well with containerization.
+Furthermore, workflows interacting with many petabytes of data and executed in high-performance computing (HPC) infrastructures are out of scope.
+Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right.
 For this article, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server.
 The reader might scope the data requirement to less than a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
@@ -635,7 +639,7 @@ You should prioritize this usage over others, e.g., non-interactive execution of
 
 Second, for reproducibility, we can treat containers as transient and disposable, and even intentionally rebuild an image at regular intervals.
 Ideally, containers that we built years ago should rebuild seamlessly, but this is not necessarily the case, especially with rapidly changing technology relevant to machine learning and data science. 
-A habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveals issues requiring manual interference, i.e., changes to code or configuration not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
+A habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveal issues requiring manual interference, i.e., changes to code or configuration not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
 This habit can be supported by using continuous deployment or CI strategies.
 
 In the case of needing setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
