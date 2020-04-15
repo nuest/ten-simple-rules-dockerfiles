@@ -65,7 +65,7 @@ This sharing of code files is enabled by collaboration platforms such as [GitHub
 The sharing of the computing environment, on the other hand, is enabled by containerization, which allows for documenting and sharing entire workflows in a comprehensive way.
 This sharing of computational assets is paramount to increase reproducibility of computational resarch.
 While "papers" based on the traditional journal article format can share high level details of research, computational research is oftentimes way too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
-In that the actual contribution to knowledge includes the full computing environment that produced a result, containerization is needed [@donoho_invitation_2010].
+In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerization is needed.
 
 Containerization plays an important role in providing instructions for packaging the building blocks of computer-based research (i.e. code, data, documentation, and the computing environment). While a container cannot package all of these blocks, it represents a human- _and_ machine-readable recipe to capture the computing environment and interact with data.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
