@@ -4,6 +4,13 @@
 
 [Current draft as PDF](https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf)
 
+## Preprint feedback
+
+The manuscript is published as a preprint: TODO
+
+We welcome your feedback, e.g., by opening issues on this repository or with [OSF annotations](https://help.osf.io/hc/en-us/articles/360019738554-Annotate-a-Preprint).
+We especially welcome you help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
+
 ## Run container for editing the document
 
 First, build the container. It will install the dependencies that you
