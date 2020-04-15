@@ -111,13 +111,13 @@ Their application should not be triggered by the publication of a finished proje
 
 Docker [@wikipedia_contributors_docker_2019] is a container technology that is widely adopted and supported on many platforms, and has become highly useful for research.
 Containers are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware or operating system kernels, and thus do not require the same system resources.
-Several platforms for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they intentionally hide most of the complexity from the researcher.
+Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019]. 
 `Dockerfile`s are machine- and human-readable recipes for building images.
 Container images include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 A `Dockerfile` consists of a sequence of instructions to copy files and install software.
-Each instruction adds a layer to the image, which can be cached across image builds and platforms for minimizing build and download times.
+Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
 The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.
 Containers can be modified, stopped, restarted and purged.
 `Dockerfile`s, like Makefiles [@wikipedia_contributors_make_2019], are meant to be useful for both humans to read and for computers to execute.
@@ -553,7 +553,7 @@ CMD ["/workspace/run-all.sh"]
 
 _Listing 2_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with filename `Dockerfile.runner`
 
-_Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across platforms via a regular web browser.
+_Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across operating systems and both locally and remote via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
 Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user using the `docker run` option `-p`/`--publish <host port>:<container port>`.
 The container should also print to the screen the used ports along with any login credentials needed.
