@@ -290,7 +290,7 @@ Generally, aim to design the `RUN` instructions so that each performs one scoped
 Each instruction will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
 Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied (see \ruleref{rule:formatting}).
 
-While you will find `Dockerfile`s using [_build-time variables_](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg) to dynamically change parameters at build time, such a customization option reduces clarity for data science workflows based on research compendia.
+While you will find `Dockerfile`s using [_build-time variables_](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg) to dynamically change parameters at build time, such a customization option reduces clarity for data science workflows.
 
 # 4. Document within the Dockerfile
 \rulelabel{3}{rule:document}
@@ -336,8 +336,8 @@ The [`LABEL` instruction](https://docs.docker.com/engine/reference/builder/#labe
 You can view all labels with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
 Labels serve as structured metadata that can be leveraged by services, e.g., https://microbadger.com/labels.
 For example, software versions, license, and maintainer contact information are commonly seen and very useful if a `Dockerfile` is discovered out of context.
-While you can add arbitrarily complex information with labels, for research compendia the user-facing documentation is much more important.
-Important metadata that might be more utilized with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf. [https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
+While you can add arbitrarily complex information with labels, for data science scenarios the user-facing documentation is much more important.
+Relevant metadata that might be more utilized with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf. [https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
 
 The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardise field names across container tools, as shown below.
 These labels match the [`org.label-schema`-specification](http://label-schema.org/rc1/), which has been deprecated but is still found a lot in `Dockerfile`s.
@@ -612,7 +612,7 @@ Furthermore, the commit messages in your version controlled repository preserve 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
 Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
 We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
-Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same research compendium.
+Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 
 It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
 When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
