@@ -337,7 +337,7 @@ You can view all labels with [`docker inspect`](https://docs.docker.com/engine/r
 Labels serve as structured metadata that can be leveraged by services, e.g., https://microbadger.com/labels.
 For example, software versions, license, and maintainer contact information are commonly seen and very useful if a `Dockerfile` is discovered out of context.
 While you can add arbitrarily complex information with labels, for research compendia the user-facing documentation is much more important.
-Important metadata that might be more utilized with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium, e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
+Important metadata that might be more utilized with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf. [https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
 
 The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardise field names across container tools, as shown below.
 These labels match the [`org.label-schema`-specification](http://label-schema.org/rc1/), which has been deprecated but is still found a lot in `Dockerfile`s.
