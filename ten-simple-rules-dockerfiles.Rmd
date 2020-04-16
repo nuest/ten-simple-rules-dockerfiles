@@ -248,7 +248,7 @@ Note that a version tag means that the tagged software is frozen, but it does no
 
 For data science workflows, you should always rely on version-specific image tags both for base images that you use, and for images that you build yourself and then run.
 With keeping different versions (tags) available, it is good practice to publish an image in an image registry.
-We refer you to the documentation on automated builds for details, see [Docker Hub Builds](https://docs.docker.com/docker-hub/builds/) or [GitLab's Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as CI platforms such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) that can help you get started.
+We refer you to the documentation on automated builds for details, see [Docker Hub Builds](https://docs.docker.com/docker-hub/builds/) or [GitLab's Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as continuous integration (CI) services such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) that can help you get started.
 Do not `docker push` a locally built image, because that counteracts the considerations outlined above.
 If a pre-built image is provided in a public image registry, do not forget to direct the user to it in your documentation, e.g. in the `README` file or in an article.
 
@@ -611,6 +611,8 @@ Because a `Dockerfile` is a plain text-based format, it works well with version 
 Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
 Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building and executing your image in an independent environment.
 Continuous integration increases stability and trust, and gives the ability to publish images automatically.
+Automation strategies exist to build and test images for multiple platforms and software versions, even with CI.
+Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
