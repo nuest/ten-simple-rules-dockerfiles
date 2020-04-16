@@ -316,11 +316,11 @@ capturing scientific notebooks {[}5{]} and reproducible workflows
 While there are several tutorials for using containers for reproducible
 research {[}7--11{]}, there is no detailed \emph{manual for how to write
 the actual instructions to create the containers for computational
-research} besides generic best practices {[}12,13{]}. Guening
-et~al.~{[}14{]} give very helpful recommendations for packaging an
-individual reusable software in a container. This article introduces
-these instructions for the popular \texttt{Dockerfile} format with a
-focus on containers encapsulating data science workflows.
+research} besides generic best practices {[}12,13{]}. Guening et~al.
+{[}14{]} give very helpful recommendations for packaging an individual
+reusable software in a container. This article introduces these
+instructions for the popular \texttt{Dockerfile} format with a focus on
+containers encapsulating data science workflows.
 
 \hypertarget{prerequisites-scope}{%
 \section{Prerequisites \& scope}\label{prerequisites-scope}}
@@ -647,7 +647,8 @@ available, it is good practice to publish an image in an image registry.
 We refer you to the documentation on automated builds for details, see
 \href{https://docs.docker.com/docker-hub/builds/}{Docker Hub Builds} or
 \href{https://docs.gitlab.com/ee/user/packages/container_registry/index.html\#build-and-push-images}{GitLab's
-Container Registry} as well as CI platforms such as
+Container Registry} as well as continuous integration (CI) services such
+as
 \href{https://github.com/actions/starter-workflows/tree/master/ci}{GitHub
 actions}, or
 \href{https://circleci.com/orbs/registry/orb/circleci/docker\#commands-build}{CircleCI}
@@ -723,11 +724,12 @@ container for a future user to inspect. A common pattern you might
 encounter, but should not follow, is a single \texttt{RUN} instruction
 that updates the database of available packages, installs a software
 from a package repository, and then purges the cache of the package
-manager. In general, do not worry about image size because (a) your data
-is likely to have much larger storage requirements than the software,
-and (b) transparency and inspectability outweigh storage concerns in
-data science. If you really need to reduce the size, you may look into
-using multiple containers (cf.~{[}14{]}) or multi-stage builds {[}37{]}.
+manager. In general, if your container is mostly software dependencies
+you should not need to worry about image size because (a) your data is
+likely to have much larger storage requirements, and (b) transparency
+and inspectability outweigh storage concerns in data science. If you
+really need to reduce the size, you may look into using multiple
+containers (cf.~{[}14{]}) or multi-stage builds {[}37{]}.
 
 Depending on the programming language used, your project may already
 contain files to manage dependencies and you may use a package manager
@@ -1102,7 +1104,7 @@ are treated as files and managed software, i.e.~installed with a package
 manager and versioned. If you developed extensive software for a
 specific analysis, you should ideally publish it as a software package
 and follow \hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} for
-installing it (cf.~``A package first'' in {[}14{]}). Consider using the
+installing it (cf. ``A package first'' in {[}14{]}). Consider using the
 suitable package system with pinned versions even for small scripts if
 the functions are reusable across datasets or workflows by you or
 others. You should avoid installing software packages from source after
@@ -1351,7 +1353,12 @@ increase the impact and sustainability of your work (cf.~{[}57{]}).
 Online collaboration platforms (e.g., GitHub, GitLab) also make it easy
 to use CI services to test building and executing your image in an
 independent environment. Continuous integration increases stability and
-trust, and gives the ability to publish images automatically.
+trust, and gives the ability to publish images automatically. Automation
+strategies exist to build and test images for multiple platforms and
+software versions, even with CI. Such approaches are often used when
+developing popular software packages for a broad user base operating
+across a wide range of target platforms and environments, and they can
+be leveraged if you expect your workflow to fall into this category.
 Furthermore, the commit messages in your version controlled repository
 preserve a record of all changes to the \texttt{Dockerfile}.
 
@@ -1433,7 +1440,17 @@ strategies.
 
 In the case of needing setup or configuration for the first two habits,
 it is good practice to provide a \texttt{Makefile} alongside your
-container, which can capture the specific commands.
+container, which can capture the specific commands. Furthermore, when
+you rebuild the image, you can take a fresh look at the
+\texttt{Dockerfile} and improve it over time, because it will be hard to
+apply all rules at once. A linter can help you with such optimizations,
+e.g., \href{https://www.dockerfilelint.com/}{Dockerfilelint} or
+\href{https://hadolint.github.io/hadolint/}{hadolint} in the browser,
+extension to your integrated development environment, such as
+\href{https://github.com/microsoft/vscode-docker}{vscode-docker}, or
+standalone tools like
+\href{https://github.com/projectatomic/dockerfile_lint}{\texttt{dockerfile-lint}},
+which you can integrate in your \texttt{Makefile}.
 
 Third, from time to time you can reduce the system resources occupied by
 Docker images and their layers or unused containers, volumes and
@@ -1501,12 +1518,12 @@ with your current knowledge, and strive to write readable
 \texttt{Dockerfile}s for functional containers that are realistic about
 what might break and what is unlikely to break. In a similar vein, we
 accept that you should freely break these rules if another way makes
-more sense \emph{for your use case}. Most importantly, share and
-exchange your \texttt{Dockerfile} freely and collaborate in your
-community to spread the knowledge about containers as a tool for
-research and scholarly collaboration and communication. Together we can
-develop common practices and shared materials for better transparency,
-higher efficiency, and faster innovation.
+more sense \emph{for your use case}. Also do not overwhelm yourself by
+trying to follow all rules right away, but set up an iterative process
+to increase your computing environment's manageability over time. Most
+importantly, share and exchange your \texttt{Dockerfile} freely and
+collaborate in your community to spread the knowledge about containers
+as a tool for research and scholarly collaboration and communication.
 
 \hypertarget{acknowledgements}{%
 \section*{Acknowledgements}\label{acknowledgements}}
