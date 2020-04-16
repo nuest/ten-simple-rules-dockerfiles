@@ -282,7 +282,7 @@ When you need to change a directory, use `WORKDIR`, because it not only creates 
 Second, clarity is nearly always more important than brevity.
 For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image size (cf.&nbsp;@gruening_recommendations_2019), you should keep the script in the container for a future user to inspect.
 A common pattern you might encounter, but should not follow, is a single `RUN` instruction that updates the database of available packages, installs a software from a package repository, and then purges the cache of the package manager.
-In general, do not worry about image size because (a) your data is likely to have much larger storage requirements than the software, and (b) transparency and inspectability outweigh storage concerns in data science.
+n general, if your container is mostly software dependencies you should not need to worry about image size because (a) your data is likely to have much larger storage requirements, and (b) transparency and inspectability outweigh storage concerns in data science.
 If you really need to reduce the size, you may look into using multiple containers (cf.&nbsp;@gruening_recommendations_2019) or multi-stage builds [@docker_multi-stage_2020].
 
 Depending on the programming language used, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
