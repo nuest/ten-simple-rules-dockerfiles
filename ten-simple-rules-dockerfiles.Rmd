@@ -671,8 +671,8 @@ Even if imperfect, the effort to create and document scientific workflows provid
 We encourage researchers to value these steps taken by their peers to use `Dockerfile`s to practice reproducible research, and promote change in the way scholars communicate towards an open and friendly "preproducibility" [@stark_before_2018].
 So please, make a best effort with your current knowledge, and strive to write readable `Dockerfile`s for functional containers that are realistic about what might break and what is unlikely to break.
 In a similar vein, we accept that you should freely break these rules if another way makes more sense _for your use case_.
+Also do not overwhelm yourself by trying to follow all rules right away, but set up an iterative process to increase your computing environment's manageability over time.
 Most importantly, share and exchange your `Dockerfile` freely and collaborate in your community to spread the knowledge about containers as a tool for research and scholarly collaboration and communication.
-Together we can develop common practices and shared materials for better transparency, higher efficiency, and faster innovation.
 
 # Acknowledgements {#acknowledgements .unnumbered}
 
