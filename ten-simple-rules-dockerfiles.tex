@@ -316,11 +316,11 @@ capturing scientific notebooks {[}5{]} and reproducible workflows
 While there are several tutorials for using containers for reproducible
 research {[}7--11{]}, there is no detailed \emph{manual for how to write
 the actual instructions to create the containers for computational
-research} besides generic best practices {[}12,13{]}. Guening et~al.
-{[}14{]} give very helpful recommendations for packaging an individual
-reusable software in a container. This article introduces these
-instructions for the popular \texttt{Dockerfile} format with a focus on
-containers encapsulating data science workflows.
+research} besides generic best practices {[}12,13{]}. Guening
+et~al.~{[}14{]} give very helpful recommendations for packaging an
+individual reusable software in a container. This article introduces
+these instructions for the popular \texttt{Dockerfile} format with a
+focus on containers encapsulating data science workflows.
 
 \hypertarget{prerequisites-scope}{%
 \section{Prerequisites \& scope}\label{prerequisites-scope}}
@@ -720,16 +720,23 @@ example, if your container uses a script to run a complex install
 routine, instead of removing it from the container upon completion,
 which is commonly seen in production \texttt{Dockerfile}s aiming at
 small image size (cf.~{[}14{]}), you should keep the script in the
-container for a future user to inspect. A common pattern you might
-encounter, but should not follow, is a single \texttt{RUN} instruction
-that updates the database of available packages, installs a software
-from a package repository, and then purges the cache of the package
-manager. In general, if your container is mostly software dependencies
-you should not need to worry about image size because (a) your data is
-likely to have much larger storage requirements, and (b) transparency
-and inspectability outweigh storage concerns in data science. If you
-really need to reduce the size, you may look into using multiple
-containers (cf.~{[}14{]}) or multi-stage builds {[}37{]}.
+container for a future user to inspect. However, a common pattern you
+will encounter is a single and very lengthy \texttt{RUN} instruction
+chaining multiple commands, which installs software and cleans up
+afterwards. For example (a) the instruction updates the database of
+available packages, installs a software from a package repository, and
+purges the cache of the package manager, or (b) the instruction
+downloads a software's source archive, unpacks it, builds and installs
+the software, and then removes the downloaded archive and all temporary
+files. This pattern creates instructions that are harder to read, but it
+is very common and can even increase clarity within the image file
+system because installation and build artefacts are gone. In general, if
+your container is mostly software dependencies you should not need to
+worry about image size because (a) your data is likely to have much
+larger storage requirements, and (b) transparency and inspectability
+outweigh storage concerns in data science. If you really need to reduce
+the size, you may look into using multiple containers (cf.~{[}14{]}) or
+multi-stage builds {[}37{]}.
 
 Depending on the programming language used, your project may already
 contain files to manage dependencies and you may use a package manager
@@ -1104,7 +1111,7 @@ are treated as files and managed software, i.e.~installed with a package
 manager and versioned. If you developed extensive software for a
 specific analysis, you should ideally publish it as a software package
 and follow \hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} for
-installing it (cf. ``A package first'' in {[}14{]}). Consider using the
+installing it (cf.~``A package first'' in {[}14{]}). Consider using the
 suitable package system with pinned versions even for small scripts if
 the functions are reusable across datasets or workflows by you or
 others. You should avoid installing software packages from source after
