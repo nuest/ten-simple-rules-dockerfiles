@@ -38,7 +38,7 @@ abstract: |
   It follows that choices that are made with respect to building containers can make or break a workflow's reproducibility.
   The build for the container image is often created based on the instructions in the `Dockerfile` format.
   The rules presented here help researchers to write understandable `Dockerfile`s for typical data science workflows.
-  By following the rules in this article researchers can create containers suitable for sharing with fellow scientists, for inclusing in scholarly communication such as education or scientific papers, and for an effective and sustainable personal workflow.
+  By following the rules in this article researchers can create containers suitable for sharing with fellow scientists, for inclusion in scholarly communication such as education or scientific papers, and for an effective and sustainable personal workflow.
 #author_summary: |
 #  TBD
 bibliography: bibliography.bib
@@ -61,11 +61,11 @@ Submission notes:
 
 # Introduction {#introduction .unnumbered}
 
-Computing infrastructure has advanced to the point where not only can we share data underlying resarch articles, we can share the
+Computing infrastructure has advanced to the point where not only can we share data underlying research articles, we can share the
 code that processes these data.
 This sharing of code files is enabled by collaboration platforms such as [GitHub](https://github.com) or [GitLab](https://gitlab.com) and has become quite common.
 The sharing of the computing environment, on the other hand, is enabled by containerization, which allows for documenting and sharing entire workflows in a comprehensive way.
-This sharing of computational assets is paramount to increase reproducibility of computational resarch.
+This sharing of computational assets is paramount to increase reproducibility of computational research.
 While "papers" based on the traditional journal article format can share high level details of research, computational research is oftentimes way too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
 In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerization is needed.
 
@@ -95,7 +95,7 @@ A `docker-compose.yml` configuration file allows for defining volumes, environme
 
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the technology behind them actually works, researchers should leverage containerization following good practices.
-The practices that are to be discussed in this article are strongly related to software engineering in general and research software engineering (RSEng) in particlar, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
+The practices that are to be discussed in this article are strongly related to software engineering in general and research software engineering (RSEng) in particular, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
 Research Software Engineers (RSEs) are not the target audience for this work, but we want to encourage you to reach out to your local or national RSE community if your needs go beyond the rules of this work.
 
 While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
@@ -285,7 +285,7 @@ Do take advantage of images with complex software environments pre-installed, e.
 - [Jupyter Docker Stacks](https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html) for Notebook-based computing
 - [Taverna Server](https://hub.docker.com/r/taverna/taverna-server) for running Taverna workflows
 
-For example, here is how we would use a base image `verse`, which provides the populary Tidyverse suite of packages [@Wickham2019], with R version `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`, which is the default and can be omitted).
+For example, here is how we would use a base image `verse`, which provides the popular Tidyverse suite of packages [@Wickham2019], with R version `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`, which is the default and can be omitted).
 
 \footnotesize
 
@@ -332,7 +332,7 @@ While you will find `Dockerfile`s using [_build-time variables_](https://docs.do
 As you are writing the `Dockerfile`, be mindful of how other people (including future you!) will read it and why.
 Are your choices and commands being executed clearly, or is further comment warranted?
 To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or version control commit messages to give context for your specific decisions.
-For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job at explainig the reasoning and steps of the contained instructions.
+For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job at explaining the reasoning and steps of the contained instructions.
 If you copy instructions from another `Dockerfile`, acknowledge the source in a comment.
 It can even be helpful to include comments about commands that did not work so you do not repeat past mistakes.
 If you find that you need to remember an undocumented step, that is an indication that it should be documented in the `Dockerfile`.
@@ -580,8 +580,8 @@ The container entrypoint should _not_ execute the workflow, as the user is likel
 As the maintainer of the workflow, you should write clear instructions for how to properly interact with the container, both for yourself and others.
 A possible weakness with using containers is the limitation on only providing one default command and entrypoint.
 However tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
-With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;2.
-In any case you should document different variants ver well, potentially capture build and run commans a `Makefile` [@wikipedia_contributors_make_2019].
+With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;4.
+In any case you should document different variants very well, potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
 To support advanced custom configuration, it's helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables [@knoth_reproducibility_2017], or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
 \footnotesize
@@ -610,7 +610,7 @@ CMD ["/workspace/run-all.sh"]
 
 \normalsize
 
-_Listing 4_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with filename `Dockerfile.runner`. \newline
+_Listing 4_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with file name `Dockerfile.runner`. \newline
 
 _Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across operating systems and both locally and remote via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
@@ -640,7 +640,7 @@ Running the container will provide a shell where a tool can be used and help or 
 For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
 If your workflow can be executed via a command line client you may use that to validate correct functionality of an image in automated builds, e.g. using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, e.g. via an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
 
-The followig example runs a simple R command counting the lines in this articles source file.
+The following example runs a simple R command counting the lines in this articles source file.
 The file path is passed as an environment variable.
 
 \footnotesize
@@ -665,8 +665,8 @@ print(paste('Number of lines: ', l))
 
 If there is only a regular desktop application, the hosts window manager can be connected to the container.
 This has notable security implications, which are reduced by using the "X11 forwarding" natively supported by Singularity [@singularity_frequently_2019], which can execute Docker containers, or by leveraging supporting tools such as `x11docker` [@viereck_x11docker_2019].
-Bidge containers [@yaremenko_docker-x11-bridge_2019] and exposing a regular desktop via the browser (e.g., for Jupyter Hub [@yuvipanda_jupyter-desktop-server_2019]) are further alternatives.
-This variety of approaches render seemingly more convenient uncontainerised environments, i.e. just using the local machine, unneccessary in favour of reproducibility and portability.
+Bridge containers [@yaremenko_docker-x11-bridge_2019] and exposing a regular desktop via the browser (e.g., for Jupyter Hub [@yuvipanda_jupyter-desktop-server_2019]) are further alternatives.
+This variety of approaches render seemingly more convenient uncontainerised environments, i.e. just using the local machine, unnecessary in favor of reproducibility and portability.
 
 # 9. Use a Dockerfile per project and publish it with a version control system {-}
 \rulelabel{9}{rule:publish}
@@ -688,7 +688,7 @@ It is likely going to be the case that over time you will develop workflows that
 When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
 You can even run projects in parallel that don't share ports without interference.
 In case you feel like constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
-As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide required files, e.g., for documention, CI, and licenses, and structure for getting started.
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide required files, e.g., for documentation, CI, and licenses, and structure for getting started.
 If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
 Part of your project template should be a protocol for publishing the `Dockerfile` and even an export of the image in a suitable location, e.g., a container registry or data repository, taking into consideration of how your workflow can receive a DOI for citation.
 

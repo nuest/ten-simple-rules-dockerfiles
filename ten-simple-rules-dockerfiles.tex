@@ -267,7 +267,7 @@ in the \texttt{Dockerfile} format. The rules presented here help
 researchers to write understandable \texttt{Dockerfile}s for typical
 data science workflows. By following the rules in this article
 researchers can create containers suitable for sharing with fellow
-scientists, for inclusing in scholarly communication such as education
+scientists, for inclusion in scholarly communication such as education
 or scientific papers, and for an effective and sustainable personal
 workflow.
 
@@ -283,19 +283,20 @@ workflow.
 \addcontentsline{toc}{section}{Introduction}
 
 Computing infrastructure has advanced to the point where not only can we
-share data underlying resarch articles, we can share the code that
+share data underlying research articles, we can share the code that
 processes these data. This sharing of code files is enabled by
 collaboration platforms such as \href{https://github.com}{GitHub} or
 \href{https://gitlab.com}{GitLab} and has become quite common. The
 sharing of the computing environment, on the other hand, is enabled by
 containerization, which allows for documenting and sharing entire
 workflows in a comprehensive way. This sharing of computational assets
-is paramount to increase reproducibility of computational resarch. While
-``papers'' based on the traditional journal article format can share
-high level details of research, computational research is oftentimes way
-too complicated to be disseminated alongside in this format {[}1{]}. In
-that the actual contribution to knowledge includes the full computing
-environment that produced a result {[}2{]}, containerization is needed.
+is paramount to increase reproducibility of computational research.
+While ``papers'' based on the traditional journal article format can
+share high level details of research, computational research is
+oftentimes way too complicated to be disseminated alongside in this
+format {[}1{]}. In that the actual contribution to knowledge includes
+the full computing environment that produced a result {[}2{]},
+containerization is needed.
 
 Containerization plays an important role in providing instructions for
 packaging the building blocks of computer-based research (i.e.~code,
@@ -360,12 +361,12 @@ recipes suitable for their needs. Even if they are not sure how the
 technology behind them actually works, researchers should leverage
 containerization following good practices. The practices that are to be
 discussed in this article are strongly related to software engineering
-in general and research software engineering (RSEng) in particlar, which
-is concerned with quality, training, and recognition of software in
-science {[}17{]}. Research Software Engineers (RSEs) are not the target
-audience for this work, but we want to encourage you to reach out to
-your local or national RSE community if your needs go beyond the rules
-of this work.
+in general and research software engineering (RSEng) in particular,
+which is concerned with quality, training, and recognition of software
+in science {[}17{]}. Research Software Engineers (RSEs) are not the
+target audience for this work, but we want to encourage you to reach out
+to your local or national RSE community if your needs go beyond the
+rules of this work.
 
 While there are many different container technologies, this article
 focuses on Docker {[}18{]}. Docker is a highly suitable tool for
@@ -711,7 +712,7 @@ library.
 \end{itemize}
 
 For example, here is how we would use a base image \texttt{verse}, which
-provides the populary Tidyverse suite of packages {[}36{]}, with R
+provides the popular Tidyverse suite of packages {[}36{]}, with R
 version \texttt{3.5.2} from the \texttt{rocker} organization on Docker
 Hub (\texttt{docker.io}, which is the default and can be omitted).
 
@@ -810,7 +811,7 @@ comments that include links to online forums, code repository issues, or
 version control commit messages to give context for your specific
 decisions. For example
 \href{https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile}{this
-\texttt{Dockerfile} by Kaggle} does a good job at explainig the
+\texttt{Dockerfile} by Kaggle} does a good job at explaining the
 reasoning and steps of the contained instructions. If you copy
 instructions from another \texttt{Dockerfile}, acknowledge the source in
 a comment. It can even be helpful to include comments about commands
@@ -1280,12 +1281,12 @@ multiple entrypoints, environments, help messages, labels, and even
 install sequences. With plain Docker, you can override the defaults as
 part of the \texttt{docker\ run} command or in an extra
 \texttt{Dockerfile} using the primary image as a base, as shown in
-Listing~2. In any case you should document different variants ver well,
-potentially capture build and run commans a \texttt{Makefile} {[}26{]}.
-To support advanced custom configuration, it's helpful to expose
-settings via a configuration file, which can be bind mounted from the
-host {[}47{]}, via environment variables {[}49{]}, or via wrappers using
-Docker, such as Kliko {[}50{]}.
+Listing~4. In any case you should document different variants very well,
+potentially capture build and run commands in a \texttt{Makefile}
+{[}26{]}. To support advanced custom configuration, it's helpful to
+expose settings via a configuration file, which can be bind mounted from
+the host {[}47{]}, via environment variables {[}49{]}, or via wrappers
+using Docker, such as Kliko {[}50{]}.
 
 \footnotesize
 
@@ -1318,7 +1319,7 @@ Docker, such as Kliko {[}50{]}.
 \normalsize
 
 \emph{Listing 4}: Workflow \texttt{Dockerfile} and derived ``runner
-image'' \texttt{Dockerfile} with filename \texttt{Dockerfile.runner}.
+image'' \texttt{Dockerfile} with file name \texttt{Dockerfile.runner}.
 \newline
 
 \emph{Interactive graphical interfaces}, such as
@@ -1373,7 +1374,7 @@ checking successful responses from HTTP endpoints provided by the
 container, e.g.~via an HTTP response code of \texttt{200}, or by using a
 controller such as Selenium {[}52{]}.
 
-The followig example runs a simple R command counting the lines in this
+The following example runs a simple R command counting the lines in this
 articles source file. The file path is passed as an environment
 variable.
 
@@ -1405,11 +1406,11 @@ can be connected to the container. This has notable security
 implications, which are reduced by using the ``X11 forwarding'' natively
 supported by Singularity {[}53{]}, which can execute Docker containers,
 or by leveraging supporting tools such as \texttt{x11docker} {[}54{]}.
-Bidge containers {[}55{]} and exposing a regular desktop via the browser
-(e.g., for Jupyter Hub {[}56{]}) are further alternatives. This variety
-of approaches render seemingly more convenient uncontainerised
-environments, i.e.~just using the local machine, unneccessary in favour
-of reproducibility and portability.
+Bridge containers {[}55{]} and exposing a regular desktop via the
+browser (e.g., for Jupyter Hub {[}56{]}) are further alternatives. This
+variety of approaches render seemingly more convenient uncontainerised
+environments, i.e.~just using the local machine, unnecessary in favor of
+reproducibility and portability.
 
 \hypertarget{use-a-dockerfile-per-project-and-publish-it-with-a-version-control-system}{%
 \section*{9. Use a Dockerfile per project and publish it with a version
@@ -1463,14 +1464,14 @@ yourself, you should consider adopting a standard workflow that will
 give you a clean slate for a new project. As an example, cookie cutter
 templates {[}59{]}, project starter kits {[}REF{]}, or community
 templates (e.g., {[}60{]}) can provide required files, e.g., for
-documention, CI, and licenses, and structure for getting started. If you
-decide to build your own cookie cutter template, consider collaborating
-with your community during development of the standard to ensure it will
-be useful to others. Part of your project template should be a protocol
-for publishing the \texttt{Dockerfile} and even an export of the image
-in a suitable location, e.g., a container registry or data repository,
-taking into consideration of how your workflow can receive a DOI for
-citation.
+documentation, CI, and licenses, and structure for getting started. If
+you decide to build your own cookie cutter template, consider
+collaborating with your community during development of the standard to
+ensure it will be useful to others. Part of your project template should
+be a protocol for publishing the \texttt{Dockerfile} and even an export
+of the image in a suitable location, e.g., a container registry or data
+repository, taking into consideration of how your workflow can receive a
+DOI for citation.
 
 \hypertarget{use-the-container-daily-rebuild-the-image-weekly-clean-up-and-preserve-if-need-be}{%
 \section*{10. Use the container daily, rebuild the image weekly, clean
