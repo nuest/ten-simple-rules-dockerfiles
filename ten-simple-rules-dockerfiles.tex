@@ -450,9 +450,12 @@ obtain them again.
 \begin{Highlighting}[]
 \KeywordTok{FROM}\NormalTok{ rocker/verse:3.6.2}
 
-\CommentTok{# install Java, needed for X}
+\CommentTok{# install Java, needed for package rJava}
+\KeywordTok{RUN}\NormalTok{ apt-get update \textbackslash{}}
+\NormalTok{  && apt-get install -y default-jdk \textbackslash{}}
+\NormalTok{  && rm -rf /var/lib/apt/lists/*}
 
-\CommentTok{# install Y, needed for Z}
+\CommentTok{# install system dependencies for R packages}
 \KeywordTok{RUN}\NormalTok{ apt-get update \textbackslash{}}
 \NormalTok{  && apt-get install}
     \CommentTok{# needed for RNetCDF:}
@@ -467,19 +470,35 @@ obtain them again.
 \NormalTok{    RandomFields \textbackslash{}}
 \NormalTok{    RNetCDF}
 
+\KeywordTok{WORKDIR}\NormalTok{ /tmp}
+    
+\CommentTok{# Install latest version of crucial tool with bugfix from source}
+\KeywordTok{RUN}\NormalTok{ apt-get update \textbackslash{}}
+\NormalTok{  && apt-get install -y \textbackslash{}}
+\NormalTok{    build-essential \textbackslash{}}
+\NormalTok{  && wget https://download.url/crucialware/version-1.2.3.zip \textbackslash{}}
+\NormalTok{  && unzip *.zip -d crucialware \textbackslash{}}
+\NormalTok{  && cd crucialware \textbackslash{}}
+\NormalTok{  && ./configure && make && make install \textbackslash{}}
+\NormalTok{  && rm -rf /tmp/crucialware version-*.zip \textbackslash{}}
+\NormalTok{  && rm -rf /var/lib/apt/lists/*}
+  
+\CommentTok{# Install Python tools}
+\KeywordTok{COPY}\NormalTok{ requirements.txt requirements.txt}
+\KeywordTok{RUN}\NormalTok{ pip install -r requirements.txt}
+
+\CommentTok{# Add workflow scripts}
 \KeywordTok{WORKDIR}\NormalTok{ /work}
+\KeywordTok{COPY}\NormalTok{ myscript.sh myscript.sh}
+\KeywordTok{COPY}\NormalTok{ plots.R plots.R}
 
-\KeywordTok{COPY}\NormalTok{ myscript.sh}
+\CommentTok{# Uncomment the following lines to execute preprocessing and processing tasks during build}
+\CommentTok{#RUN snakemake --use-conda <other params>}
+\CommentTok{#RUN nextflow workflow.nf --in 'dataset/*.fa'}
+\CommentTok{#RUN java -jar cromwell-XY.jar run myWorkflow.wdl}
+\CommentTok{#RUN Rscript plots.R}
 
-\CommentTok{# ???}
-\KeywordTok{RUN}\NormalTok{ snakemake --use-conda <other params>}
-\KeywordTok{RUN}\NormalTok{ nextflow workflow.nf --in }\StringTok{'dataset/*.fa'}
-\KeywordTok{RUN}\NormalTok{ java -jar cromwell-XY.jar run myWorkflow.wdl}
-
-\CommentTok{# Create the plots}
-\KeywordTok{RUN}\NormalTok{ Rscript plots.R}
-
-\CommentTok{# CMD from base image used for development, uncomment the following line to have a }
+\CommentTok{# CMD from base image used for development, uncomment the following lines to have a }
 \CommentTok{# "run workflow only" container}
 \CommentTok{# CMD["./myscript.sh"]}
 
@@ -490,7 +509,9 @@ obtain them again.
 \CommentTok{# > docker run --it --port 80:8787 --volume ./input:/input \textbackslash{}}
 \CommentTok{#     --name gwf great_workflow}
 \CommentTok{# Extract the data:}
-\CommentTok{# > docker cp gwf:/output/ ./output}
+\CommentTok{# > docker cp gwf:/output/ ./outputData}
+\CommentTok{# Extract the figures:}
+\CommentTok{# > docker cp gwf:/work/figures/ ./figures}
 \end{Highlighting}
 \end{Shaded}
 
@@ -561,11 +582,15 @@ configuration files}. As an example, we might install
 with dependencies on the \href{https://pypi.org/}{Python Package Index}
 (PyPI) with the following command.
 
+\footnotesize
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{jupyter-repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
 \end{Highlighting}
 \end{Shaded}
+
+\normalsize
 
 The resulting container image installs the dependencies listed in the
 requirements file, along with providing an entrypoint to run a notebook
@@ -690,9 +715,15 @@ provides the populary Tidyverse suite of packages {[}36{]}, with R
 version \texttt{3.5.2} from the \texttt{rocker} organization on Docker
 Hub (\texttt{docker.io}, which is the default and can be omitted).
 
-\begin{verbatim}
-FROM docker.io/rocker/r-ver:3.5.2
-\end{verbatim}
+\footnotesize
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ docker.io/rocker/r-ver:3.5.2}
+\end{Highlighting}
+\end{Shaded}
+
+\normalsize
 
 \hypertarget{format-intentionally-and-favor-clarity}{%
 \section{3. Format intentionally and favor
@@ -730,7 +761,7 @@ downloads a software's source archive, unpacks it, builds and installs
 the software, and then removes the downloaded archive and all temporary
 files. This pattern creates instructions that are harder to read, but it
 is very common and can even increase clarity within the image file
-system because installation and build artefacts are gone. In general, if
+system because installation and build artifacts are gone. In general, if
 your container is mostly software dependencies you should not need to
 worry about image size because (a) your data is likely to have much
 larger storage requirements, and (b) transparency and inspectability
@@ -768,8 +799,8 @@ Dockerfile}\label{document-within-the-dockerfile}}
 
 \ztitlerefsetup{title=3} \zlabel{rule:document} \label{rule:document} \zrefused{rule:document}
 
-\hypertarget{comments}{%
-\subsection{Comments}\label{comments}}
+\hypertarget{explain-in-comments}{%
+\subsection{Explain in comments}\label{explain-in-comments}}
 
 As you are writing the \texttt{Dockerfile}, be mindful of how other
 people (including future you!) will read it and why. Are your choices
@@ -789,34 +820,41 @@ should be documented in the \texttt{Dockerfile}. All instructions can be
 grouped starting with a short comment, which also makes it easier to
 spot changes if your \texttt{Dockerfile} is managed in some version
 control system (see
-\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}).
+\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). Here is a
+selection of typical kinds of comments that are useful to include in a
+\texttt{Dockerfile}:
 
-Here is a selection of typical kinds of comments that are useful to
-include in a \texttt{Dockerfile}:
+\footnotesize
 
-\begin{verbatim}
-# apt-get install specific version, use 'apt-cache madison <pkg>' 
-# to see available versions
-RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# apt-get install specific version, use 'apt-cache madison <pkg>' }
+\CommentTok{# to see available versions}
+\KeywordTok{RUN}\NormalTok{ apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1}
 
-# RUN command spreading several lines
-RUN R -e 'getOption("repos")' && \
-  install2.r \
-    fortunes \
-    here
+\CommentTok{# RUN command spreading several lines}
+\KeywordTok{RUN}\NormalTok{ R -e }\StringTok{'getOption("repos")'}\NormalTok{ && \textbackslash{}}
+\NormalTok{  install2.r \textbackslash{}}
+\NormalTok{    fortunes \textbackslash{}}
+\NormalTok{    here}
 
-# this library must be installed from source to get version newer
-# than in sources
-RUN git clone http://url.of/repo && \
-  cd repo && \
-  make build && \
-  make install
+\CommentTok{# this library must be installed from source to get version newer}
+\CommentTok{# than in sources}
+\KeywordTok{RUN}\NormalTok{ git clone http://url.of/repo && \textbackslash{}}
+\NormalTok{  cd repo && \textbackslash{}}
+\NormalTok{  make build && \textbackslash{}}
+\NormalTok{  make install}
 
-# following commands from instructions at <LINK HERE>
-\end{verbatim}
+\CommentTok{# following commands from instructions at <LINK HERE>}
+\end{Highlighting}
+\end{Shaded}
 
-\hypertarget{labels}{%
-\subsection{Labels}\label{labels}}
+\normalsize
+
+\emph{Listing~2}: Example comments.
+
+\hypertarget{add-metadata-as-labels}{%
+\subsection{Add metadata as labels}\label{add-metadata-as-labels}}
 
 Docker captures useful information in the image metadata automatically,
 such as the version of Docker used for building the image. The
@@ -849,31 +887,38 @@ which has been deprecated but is still found a lot in
 
 \footnotesize
 
-```` LABEL org.opencontainers.image.created=`2019-12-10'\\
-org.opencontainers.image.authors=`Nüst, Sochat, Marwick, Eglen, Head,
-and Hirst'\\
-org.opencontainers.image.url=`https://github.com/nuest/ten-simple-rules'\\
-org.opencontainers.image.documentation=`https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf'\\
-org.opencontainers.image.version=`0.0.1'
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{LABEL}\NormalTok{ org.opencontainers.image.created=}\StringTok{'2019-12-10'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.opencontainers.image.authors=}\StringTok{'Nüst, Sochat, Marwick, Eglen, Head, and Hirst'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.opencontainers.image.url=}\StringTok{'https://github.com/nuest/ten-simple-rules'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.opencontainers.image.documentation=}
+\StringTok{'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.opencontainers.image.version=}\StringTok{'0.0.1'}
 
-\hypertarget{build-time-variable-with-a-default-set-with-build-arg-build_datedate--u-y-m-dthmsz}{%
-\section{build-time variable with a default, set with --build-arg
-BUILD\_DATE=\$(date -u
-+``\%Y-\%m-\%dT\%H:\%M:\%SZ'')}\label{build-time-variable-with-a-default-set-with-build-arg-build_datedate--u-y-m-dthmsz}}
+\CommentTok{# build-time variable with a default, set it in `docker build` as follows:}
+\CommentTok{#   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")}
+\KeywordTok{ARG}\NormalTok{ BUILD_DATE unspecified}
 
-ARG BUILD\_DATE unspecified
+\KeywordTok{LABEL}\NormalTok{ maintainer=}\StringTok{"daniel.nuest@uni-muenster.de"}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.label-schema.vendor=}\StringTok{'Ten Simple Corp.'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.label-schema.description=}\StringTok{'Reproducible workflow image (MIT license)'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.label-schema.build-date=$BUILD_DATE \textbackslash{}}
+\NormalTok{  org.label-schema.docker.schema-version=}\StringTok{"rc1"}
 
-LABEL maintainer=``daniel.nuest@uni-muenster.de''\\
-org.label-schema.vendor=`Ten Simple Corp.'\\
-org.label-schema.description=`A great image is important (published
-under MIT license)'\\
-org.label-schema.build-date=\$BUILD\_DATE\\
-org.label-schema.docker.schema-version=``rc1'' ```
+\KeywordTok{LABEL}\NormalTok{ edu.science.data.group.project=}\StringTok{'Find out something (Grant #123456)'}\NormalTok{ \textbackslash{}}
+\NormalTok{  edu.science.data.group.name=}\StringTok{'Data Science Lab'}\NormalTok{ \textbackslash{}}
+\NormalTok{  author.orcid=}\StringTok{"0000-0002-1825-0097"}
+\end{Highlighting}
+\end{Shaded}
 
 \normalsize
 
-\hypertarget{usage-instructions}{%
-\subsection{Usage instructions}\label{usage-instructions}}
+\emph{Listing~3}: Example labels.
+
+\hypertarget{include-usage-instructions}{%
+\subsection{Include usage
+instructions}\label{include-usage-instructions}}
 
 It is often helpful to provide usage instructions, i.e., how to
 \texttt{docker\ build} and \texttt{docker\ run} the image, \emph{within}
@@ -911,9 +956,8 @@ and then every following instruction will have to be executed in case
 the changed line influences a later instruction. You should regularly
 re-build the image using the \texttt{-\/-no-cache} option to learn about
 broken instructions as soon as possible
-(cf.~\hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}).¸
-
-A recommended ordering based on these considerations is as follows.
+(cf.~\hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}). A
+recommended ordering based on these considerations is as follows.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1032,6 +1076,8 @@ steps and versions directly into the \texttt{Dockerfile} (also for
 clarity, see \hyperref[{rule:clarity}]{Rule~\ztitleref{rule:clarity}}).
 For example, the \texttt{RUN} instruction here:
 
+\footnotesize
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{RUN}\NormalTok{ pip install geopy==1.20.0 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
@@ -1039,14 +1085,20 @@ For example, the \texttt{RUN} instruction here:
 \end{Highlighting}
 \end{Shaded}
 
+\normalsize
+
 serves as more clear documentation in a \texttt{Dockerfile} than a
 \texttt{requirements.txt} file that lists the same:
+
+\footnotesize
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{RUN}\NormalTok{ pip install -r requirements.txt}
 \end{Highlighting}
 \end{Shaded}
+
+\normalsize
 
 This modularization is a potential risk for understandability and
 consistency, which can be mitigated by carefully managing all these
@@ -1160,16 +1212,23 @@ files {[}46{]}, including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace
 it for the started container.
 
-\begin{verbatim}
-# mount directory
-docker run --volume /home/user/project:/project mycontainer
+\footnotesize
 
-# mount directory as read-only
-docker run --volume /home/user/project:/project:ro mycontainer
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# mount directory}
+\ExtensionTok{docker}\NormalTok{ run --volume /home/user/project:/project mycontainer}
 
-# mount multple directories, one with write access relative to current path (Linux)
-docker run --volume /homse/user/Download/article-x-supplement/data:/data:ro --volume $(pwd)/outputs:/output-data:rw mycontainer
-\end{verbatim}
+\CommentTok{# mount directory as read-only}
+\ExtensionTok{docker}\NormalTok{ run --volume /home/user/project:/project:ro mycontainer}
+
+\CommentTok{# mount multple directories, one with write access relative to current path (Linux)}
+\ExtensionTok{docker}\NormalTok{ run --volume /homse/user/article-x-supplement/data:/data:ro \textbackslash{}}
+\NormalTok{  --volume }\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs:/output-data:rw mycontainer}
+\end{Highlighting}
+\end{Shaded}
+
+\normalsize
 
 How your container expects external resources to be mounted into the
 container should be included in the example commands (see
@@ -1251,14 +1310,16 @@ Docker, such as Kliko {[}50{]}.
 
 \CommentTok{# Usage instructions:}
 \CommentTok{# $ docker build --tag workflow-runner:1.0 --file Dockerfile.runner .}
-\CommentTok{# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced --volume /tmp/results:/workspace/output_data workflow-runner:1.0}
+\CommentTok{# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced \textbackslash{}}
+\CommentTok{#     --volume /tmp/results:/workspace/output_data workflow-runner:1.0}
 \end{Highlighting}
 \end{Shaded}
 
 \normalsize
 
-\emph{Listing 2}: Workflow \texttt{Dockerfile} and derived ``runner
-image'' \texttt{Dockerfile} with filename \texttt{Dockerfile.runner}
+\emph{Listing 4}: Workflow \texttt{Dockerfile} and derived ``runner
+image'' \texttt{Dockerfile} with filename \texttt{Dockerfile.runner}.
+\newline
 
 \emph{Interactive graphical interfaces}, such as
 \href{https://rstudio.com/products/rstudio/}{RStudio},
@@ -1276,6 +1337,8 @@ any login credentials needed. For example, as done in the last few lines
 of the output of running a Jupyter Notebook server locally (lines
 abbreviated).
 
+\footnotesize
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{docker}\NormalTok{ run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470}
@@ -1289,6 +1352,8 @@ abbreviated).
 [I 15:44:31.323 NotebookApp]  or http://127.0.0.1:8888/?token=6a92 [..]
 [I 15:44:31.323 NotebookApp] Use Control-C to stop this server and [..]
 \end{verbatim}
+
+\normalsize
 
 A person who is unfamiliar with Docker but wants to use your image may
 rely on graphical tools like Kitematic {[}51{]} or
@@ -1312,6 +1377,8 @@ The followig example runs a simple R command counting the lines in this
 articles source file. The file path is passed as an environment
 variable.
 
+\footnotesize
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{docker}\NormalTok{ run \textbackslash{}}
@@ -1330,6 +1397,8 @@ variable.
 > print(paste('Number of lines: ', l))
 [1] "Number of lines:  568"
 \end{verbatim}
+
+\normalsize
 
 If there is only a regular desktop application, the hosts window manager
 can be connected to the container. This has notable security

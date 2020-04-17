@@ -135,9 +135,12 @@ In fact, the `Dockerfile` itself can be a powerful documentation to show from wh
 ```dockerfile
 FROM rocker/verse:3.6.2
 
-# install Java, needed for X
+# install Java, needed for package rJava
+RUN apt-get update \
+  && apt-get install -y default-jdk \
+  && rm -rf /var/lib/apt/lists/*
 
-# install Y, needed for Z
+# install system dependencies for R packages
 RUN apt-get update \
   && apt-get install
     # needed for RNetCDF:
@@ -152,19 +155,35 @@ RUN install2.r --error \
     RandomFields \
     RNetCDF
 
+WORKDIR /tmp
+    
+# Install latest version of crucial tool with bugfix from source
+RUN apt-get update \
+  && apt-get install -y \
+    build-essential \
+  && wget https://download.url/crucialware/version-1.2.3.zip \
+  && unzip *.zip -d crucialware \
+  && cd crucialware \
+  && ./configure && make && make install \
+  && rm -rf /tmp/crucialware version-*.zip \
+  && rm -rf /var/lib/apt/lists/*
+  
+# Install Python tools
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+# Add workflow scripts
 WORKDIR /work
+COPY myscript.sh myscript.sh
+COPY plots.R plots.R
 
-COPY myscript.sh
+# Uncomment the following lines to execute preprocessing and processing tasks during build
+#RUN snakemake --use-conda <other params>
+#RUN nextflow workflow.nf --in 'dataset/*.fa'
+#RUN java -jar cromwell-XY.jar run myWorkflow.wdl
+#RUN Rscript plots.R
 
-# ???
-RUN snakemake --use-conda <other params>
-RUN nextflow workflow.nf --in 'dataset/*.fa'
-RUN java -jar cromwell-XY.jar run myWorkflow.wdl
-
-# Create the plots
-RUN Rscript plots.R
-
-# CMD from base image used for development, uncomment the following line to have a 
+# CMD from base image used for development, uncomment the following lines to have a 
 # "run workflow only" container
 # CMD["./myscript.sh"]
 
@@ -175,7 +194,9 @@ RUN Rscript plots.R
 # > docker run --it --port 80:8787 --volume ./input:/input \
 #     --name gwf great_workflow
 # Extract the data:
-# > docker cp gwf:/output/ ./output
+# > docker cp gwf:/output/ ./outputData
+# Extract the figures:
+# > docker cp gwf:/work/figures/ ./figures
 ```
 
 \normalsize
@@ -212,9 +233,13 @@ Repo2docker [@jupyter_binder_2018] is a tool that is maintained by [Project Jupy
 The tool relies on common configuration files for defining software dependencies and versions, and supports a few more special files for, see the [supported configuration files](https://repo2docker.readthedocs.io/en/latest/config_files.html).
 As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python workflow with dependencies on the [Python Package Index](https://pypi.org/) (PyPI) with the following command.
   
+\footnotesize
+
 ```bash
 jupyter-repo2docker https://github.com/norvig/pytudes
 ```
+
+\normalsize
 
 The resulting container image installs the dependencies listed in the requirements file, along with providing an entrypoint to run a notebook server to interact with any existing workflows in the repository.
 Since repo2docker is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready", you and others can also get an online workspace with a single click.
@@ -226,7 +251,6 @@ Additional tools to assist with writing `Dockerfile`s include `containerit` [@nu
 It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
 `dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
 For any tool that you use, be sure to look at documentation for usage and configuration options, and options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
-
 
 ------
 
@@ -263,9 +287,12 @@ Do take advantage of images with complex software environments pre-installed, e.
 
 For example, here is how we would use a base image `verse`, which provides the populary Tidyverse suite of packages [@Wickham2019], with R version `3.5.2` from the `rocker` organization on Docker Hub (`docker.io`, which is the default and can be omitted).
 
-```
+\footnotesize
+
+```dockerfile
 FROM docker.io/rocker/r-ver:3.5.2
 ```
+\normalsize
 
 # 3. Format intentionally and favor clarity
 \rulelabel{3}{rule:formatting}
@@ -300,7 +327,7 @@ While you will find `Dockerfile`s using [_build-time variables_](https://docs.do
 # 4. Document within the Dockerfile
 \rulelabel{3}{rule:document}
 
-## Comments
+## Explain in comments
 
 As you are writing the `Dockerfile`, be mindful of how other people (including future you!) will read it and why.
 Are your choices and commands being executed clearly, or is further comment warranted?
@@ -310,10 +337,11 @@ If you copy instructions from another `Dockerfile`, acknowledge the source in a 
 It can even be helpful to include comments about commands that did not work so you do not repeat past mistakes.
 If you find that you need to remember an undocumented step, that is an indication that it should be documented in the `Dockerfile`.
 All instructions can be grouped starting with a short comment, which also makes it easier to spot changes if your `Dockerfile` is managed in some version control system (see \ruleref{rule:publish}).
-
 Here is a selection of typical kinds of comments that are useful to include in a `Dockerfile`:
 
-```
+\footnotesize
+
+```dockerfile
 # apt-get install specific version, use 'apt-cache madison <pkg>' 
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
@@ -334,7 +362,11 @@ RUN git clone http://url.of/repo && \
 # following commands from instructions at <LINK HERE>
 ```
 
-## Labels
+\normalsize
+
+_Listing&nbsp;2_: Example comments.
+
+## Add metadata as labels
 
 Docker captures useful information in the image metadata automatically, such as the version of Docker used for building the image.
 The [`LABEL` instruction](https://docs.docker.com/engine/reference/builder/#label) can add _custom metadata_ to images.
@@ -350,26 +382,34 @@ These labels match the [`org.label-schema`-specification](http://label-schema.or
 
 \footnotesize
 
-````
+```dockerfile
 LABEL org.opencontainers.image.created='2019-12-10' \
   org.opencontainers.image.authors='Nüst, Sochat, Marwick, Eglen, Head, and Hirst' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
-  org.opencontainers.image.documentation='https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf' \
+  org.opencontainers.image.documentation=
+'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf' \
   org.opencontainers.image.version='0.0.1'
 
-# build-time variable with a default, set with --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+# build-time variable with a default, set it in `docker build` as follows:
+#   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 ARG BUILD_DATE unspecified
 
 LABEL maintainer="daniel.nuest@uni-muenster.de" \
   org.label-schema.vendor='Ten Simple Corp.' \
-  org.label-schema.description='A great image is important (published under MIT license)' \
+  org.label-schema.description='Reproducible workflow image (MIT license)' \
   org.label-schema.build-date=$BUILD_DATE \
   org.label-schema.docker.schema-version="rc1"
+
+LABEL edu.science.data.group.project='Find out something (Grant #123456)' \
+  edu.science.data.group.name='Data Science Lab' \
+  author.orcid="0000-0002-1825-0097"
 ```
 
 \normalsize
 
-## Usage instructions
+_Listing&nbsp;3_: Example labels.
+
+## Include usage instructions
 
 It is often helpful to provide usage instructions, i.e., how to `docker build` and `docker run` the image, _within_ the `Dockerfile`, either at the top or bottom where the reader is likely to find it.
 Such documentation is especially relevant if volume mounts, specific names, or ports are important for using the container, see for example the final lines of Listing&nbsp;1.
@@ -388,8 +428,7 @@ When one instruction is completed, the result is cached, and the build moves to 
 If you change something in the Dockerfile, and rebuild the container, each instruction is inspected in turn.
 If it hasn't changed, the cached layer is used and the build progresses.
 If the line has changed, that build step is executed afresh and then every following instruction will have to be executed in case the changed line influences a later instruction.
-You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).¸
-
+You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).
 A recommended ordering based on these considerations is as follows.
 
 1. System libraries
@@ -443,15 +482,24 @@ In all of the above, the user is required to inspect the file or the build to se
 For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:clarity}).
 For example, the `RUN` instruction here:
 
+\footnotesize
+
 ```bash
 RUN pip install geopy==1.20.0 && \
     pip install uszipcode==0.2.2
 ```
+
+\normalsize
+
 serves as more clear documentation in a `Dockerfile` than a `requirements.txt` file that lists the same:
+
+\footnotesize
 
 ```bash
 RUN pip install -r requirements.txt
 ```
+
+\normalsize
 
 This modularization is a potential risk for understandability and consistency, which can be mitigated by carefully managing all these files in the same version-controlled project.
 You can also use package managers to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
@@ -496,7 +544,9 @@ Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/refe
 You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
 
-```
+\footnotesize
+
+```bash
 # mount directory
 docker run --volume /home/user/project:/project mycontainer
 
@@ -504,8 +554,11 @@ docker run --volume /home/user/project:/project mycontainer
 docker run --volume /home/user/project:/project:ro mycontainer
 
 # mount multple directories, one with write access relative to current path (Linux)
-docker run --volume /homse/user/Download/article-x-supplement/data:/data:ro --volume $(pwd)/outputs:/output-data:rw mycontainer
+docker run --volume /homse/user/article-x-supplement/data:/data:ro \
+  --volume $(pwd)/outputs:/output-data:rw mycontainer
 ```
+
+\normalsize
 
 How your container expects external resources to be mounted into the container should be included in the example commands (see \ruleref{rule:formatting}).
 In these commands you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
@@ -551,18 +604,21 @@ CMD ["/workspace/run-all.sh"]
 
 # Usage instructions:
 # $ docker build --tag workflow-runner:1.0 --file Dockerfile.runner .
-# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced --volume /tmp/results:/workspace/output_data workflow-runner:1.0
+# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced \
+#     --volume /tmp/results:/workspace/output_data workflow-runner:1.0
 ```
 
 \normalsize
 
-_Listing 2_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with filename `Dockerfile.runner`
+_Listing 4_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with filename `Dockerfile.runner`. \newline
 
 _Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across operating systems and both locally and remote via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
 Use the `EXPOSE` instruction to document the ports of interest for both humans and tools, because they need to be bound to the host to be accessible to the user using the `docker run` option `-p`/`--publish <host port>:<container port>`.
 The container should also print to the screen the used ports along with any login credentials needed.
 For example, as done in the last few lines of the output of running a Jupyter Notebook server locally (lines abbreviated).
+
+\footnotesize
 
 ```{bash datascience_notebook, eval=FALSE}
 docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
@@ -575,6 +631,8 @@ docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
 [I 15:44:31.323 NotebookApp] Use Control-C to stop this server and [..]
 ```
 
+\normalsize
+
 A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like Kitematic [@docker_kitematic_2019] or [ContainDS](https://containds.com/) for assistance in managing containers on their machine without using the Docker CLI.
 
 _Interactive usage of a command-line interfaces_ is quite straightforward to access from containers, if users are familiar with this style of user interface.
@@ -584,6 +642,8 @@ If your workflow can be executed via a command line client you may use that to v
 
 The followig example runs a simple R command counting the lines in this articles source file.
 The file path is passed as an environment variable.
+
+\footnotesize
 
 ```{bash env_param_pass, eval=FALSE}
 docker run \
@@ -600,6 +660,8 @@ print(paste('Number of lines: ', l))
 > print(paste('Number of lines: ', l))
 [1] "Number of lines:  568"
 ```
+
+\normalsize
 
 If there is only a regular desktop application, the hosts window manager can be connected to the container.
 This has notable security implications, which are reduced by using the "X11 forwarding" natively supported by Singularity [@singularity_frequently_2019], which can execute Docker containers, or by leveraging supporting tools such as `x11docker` [@viereck_x11docker_2019].
