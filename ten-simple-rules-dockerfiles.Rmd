@@ -65,7 +65,7 @@ Computing infrastructure has advanced to the point where not only can we share d
 code that processes these data.
 This sharing of code files is enabled by collaboration platforms such as [GitHub](https://github.com) or [GitLab](https://gitlab.com) and has become quite common.
 The sharing of the computing environment, on the other hand, is enabled by containerization, which allows for documenting and sharing entire workflows in a comprehensive way.
-This sharing of computational assets is paramount to increase reproducibility of computational research.
+This sharing of computational assets is paramount to increasing the reproducibility of computational research.
 While "papers" based on the traditional journal article format can share high level details of research, computational research is oftentimes way too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
 In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerization is needed.
 
