@@ -266,7 +266,7 @@ It is even possible that images or `Dockerfile`s may disappear, or that images a
 Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`, and it is suggested to save a copy of the `Dockerfile` in the case that a repository or other distribution goes away.
 
 Images have _tags_ associated with them with specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants such as `slim` attempting to reduce image size.
-Tags are defined at image built time and appear in image name after the `:` when you use an image, e.g., `python:3.7`.
+Tags are defined at image build time and appear in image name after the `:` when you use an image, e.g., `python:3.7`.
 By _convention_ a missing tag is assumed to be the word `latest`, which gives you the latest updates but also a moving target for your computing environment that can break your workflow.
 Note that a version tag means that the tagged software is frozen, but it does not mean the image will not change, as backwards compatible fixes (cf.&nbsp;semantic versioning, [@preston-werner_semantic_2013]), e.g., version `1.2.3` fixing a security problem in version `1.2.2` or updates to an underlying system library, would be published to the parent tag `1.2`.
 
@@ -467,7 +467,7 @@ This way, if a piece of software is removed from the container, it will be easie
 ## Extension packages and programming language modules
 
 In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
-Package managers generally provide reliable mirrors or endpoints to download software, many packages are tested before release, and most importantly the provide access to specific versions.
+Package managers generally provide reliable mirrors or endpoints to download software, many packages are tested before release, and most importantly they provide access to specific versions.
 Most package managers have a command line interface that can be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf.&nbsp;[https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html](https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html) cited by @rule_ten_2019).
 The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration.
 As an example, here are configuration files supported by commonly used languages in scientific programming:
@@ -505,12 +505,12 @@ This modularization is a potential risk for understandability and consistency, w
 You can also use package managers to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
 And finally, you can use many package managers to install software from source obtained from code management repositories, e.g., installing a specific tool identified by a GitHub version tag or commit hash.
 Be aware of the risk of depending on such repositories, especially if they are out of your control, although the installation command with a full URL should allow readers of your `Dockerfile` to dig deeper if problems arise.
-Such an installation from source gives you a lot of freedom, including the one to shoot yourself in the foot.
+Such an installation from source gives you a lot of freedom, including to shoot yourself in the foot!
 The version pinning capabilities of these file formats and package managers are described in their respective documentation.
 
 As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might adjust the user to enable particular usages.
-It is common to use images with the default user `root`, e.g., , `root` is required for installing system dependencies.
-We recommend to make sure the image works without specifying any users, and to document precisely if your image deviates from that.
+It is common to use images with the default user `root`, which is required for installing system dependencies.
+We recommend making sure that the image works without specifying any users, and to document precisely if your image deviates from that.
 One reason you will encounter base images running a non-root user (popular examples are the Jupyter and Rocker image stacks) is to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 
 # 7. Mount user scripts and data {-}
@@ -526,7 +526,7 @@ Unless specific features are needed, bind mounts are also preferable to [storage
 Standalone _script files_ are distinct from other software as they are treated as files and managed software, i.e. installed with a package manager and versioned.
 If you developed extensive software for a specific analysis, you should ideally publish it as a software package and follow \ruleref{rule:pinning} for installing it (cf. "A package first" in @gruening_recommendations_2019).
 Consider using the suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
-You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost (cf.&nbsp;\ruleref{rule:mount}).
+You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost.
 If you cannot publish a software project albeit it being in a language's package structure, you should make sure the files are always published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
 
 Storing _data files_ outside of the container allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
@@ -687,16 +687,16 @@ Importantly, you should publish _all_ files `COPY`ied into the container, e.g., 
 It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
 When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
 You can even run projects in parallel that do not share ports without interference.
-In case you feel like constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
+To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide required files, e.g., for documentation, CI, and licenses, and structure for getting started.
 If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
-Part of your project template should be a protocol for publishing the `Dockerfile` and even an export of the image in a suitable location, e.g., a container registry or data repository, taking into consideration of how your workflow can receive a DOI for citation.
+Part of your project template should be a protocol for publishing the `Dockerfile` and even exporting the image to a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 \rulelabel{10}{rule:usage}
 
-Using containers for research workflows does not only require technical understanding, but also an awareness of risks that can be managed efficiently by following a number of good _habits_, discussed in this section.
-While there is no firm rule, if you use a container daily, is good practice to rebuild that container every once or two weeks.
+Using containers for research workflows does not only require technical understanding, but also an awareness of risks that can be managed effectively by following a number of good _habits_, discussed in this section.
+While there is no firm rule, if you use a container daily, is good practice to rebuild that container every one or two weeks.
 At the time of publication of research results it is good practice to save a copy of the image in a public data repository so that readers of the publication can access the resources that produced the published results. 
 
 First, it is a good habit to use your container every time you work on a project and not just as a final step during publication.
@@ -705,7 +705,7 @@ You should prioritize this usage over others, e.g., non-interactive execution of
 
 Second, for reproducibility, we can treat containers as transient and disposable, and even intentionally rebuild an image at regular intervals.
 Ideally, containers that we built years ago should rebuild seamlessly, but this is not necessarily the case, especially with rapidly changing technology relevant to machine learning and data science. 
-A habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveal issues requiring manual interference, i.e., changes to code or configuration not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
+A habitual deletion of a container and cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveal issues requiring manual intervention, e.g., changes to code or configuration that are not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
 This habit can be supported by using continuous deployment or CI strategies.
 
 In the case of needing setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
@@ -720,7 +720,7 @@ Fourth, you can export the image to file and deposit it in a public data reposit
 You should include instructions for how to import and run the workflow based on the image archive and add your own image tags using semantic versioning (see \ruleref{rule:base}) for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but is is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
 Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker runtime environment.
-Sharing the actual image via a registry and a version controlled `Dockerfile` together allow you to freely experiment and continue development of your workflow and keeping the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
+Sharing the actual image via a registry and a version controlled `Dockerfile` together allows you to freely experiment and continue development of your workflow and keep the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
 
 Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
