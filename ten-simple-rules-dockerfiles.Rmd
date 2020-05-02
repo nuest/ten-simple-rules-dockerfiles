@@ -217,7 +217,7 @@ As an example, you might be doing some kind of interactive development.
 For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with all the software that you need.
 You can look for information about images in (a) the documentation of the used software, (b) the Docker image registry _Docker Hub_, [https://hub.docker.com/](https://hub.docker.com/), or (c) the source code projects of the used software, as many developers today rely on containers for development, testing, and teaching.
 
-Second, in the case that there isn't an existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
+Second, in the case that there is no suitable pre-existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
 These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
 "Well-maintained" references the tool's own stability and usability, but also that suitable base images are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
 See below box "Tools for container generation" for details.
@@ -258,7 +258,7 @@ For any tool that you use, be sure to look at documentation for usage and config
 \rulelabel{2}{rule:base}
 
 A good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your container.
-It's good practice to use base images that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
+It is good practice to use base images that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
 You can identify these images by the missing the user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
 However, these images only provide basic programming languages or very widely used software, so you will likely use images maintained by organizations or fellow researchers.
 While some organizations can be trusted to update containers with security fixes (see list below), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
@@ -304,7 +304,7 @@ Specifically, carefully indent commands and their arguments to make clear what b
 Use `\` at the end of a line to break a single command into multiple lines.
 This will ensure that no single line gets too long to comfortably read.
 Use long versions of parameters for readability (e.g., `--input` instead of `-i`).
-When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it doesn't exist but also persist the change across multiple `RUN` instructions.
+When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it does not exist but also persists the change across multiple `RUN` instructions.
 
 Second, clarity is nearly always more important than brevity.
 For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image size (cf.&nbsp;@gruening_recommendations_2019), you should keep the script in the container for a future user to inspect.
@@ -426,7 +426,7 @@ Therefore you should add instructions _in order_ of least likely to change to mo
 Docker will execute the instructions in the order as they appear in the `Dockerfile`.
 When one instruction is completed, the result is cached, and the build moves to the next one.
 If you change something in the Dockerfile, and rebuild the container, each instruction is inspected in turn.
-If it hasn't changed, the cached layer is used and the build progresses.
+If it has not changed, the cached layer is used and the build progresses.
 If the line has changed, that build step is executed afresh and then every following instruction will have to be executed in case the changed line influences a later instruction.
 You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).
 A recommended ordering based on these considerations is as follows.
@@ -462,7 +462,7 @@ Here are some examples of terminal commands that will list the currently install
 - CentOS: `yum list installed` or `rpm -qa`
 
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed (see Listing&nbsp;1).
-This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that's not needed anymore or include long-running installations.
+This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that is not needed anymore or include long-running installations.
 
 ## Extension packages and programming language modules
 
@@ -582,7 +582,7 @@ A possible weakness with using containers is the limitation on only providing on
 However tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;4.
 In any case you should document different variants very well, potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
-To support advanced custom configuration, it's helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables [@knoth_reproducibility_2017], or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
+To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables [@knoth_reproducibility_2017], or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
 \footnotesize
 
@@ -679,14 +679,14 @@ Automation strategies exist to build and test images for multiple platforms and 
 Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`.
 
-While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
+While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally a simple and clear approach to provide one `Dockerfile` per project.
 Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
 We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
 Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 
 It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
 When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
-You can even run projects in parallel that don't share ports without interference.
+You can even run projects in parallel that do not share ports without interference.
 In case you feel like constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide required files, e.g., for documentation, CI, and licenses, and structure for getting started.
 If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
