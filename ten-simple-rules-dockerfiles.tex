@@ -414,10 +414,16 @@ can be cached across image builds for minimizing build and download
 times. The images have a main executable exposed as an ``entrypoint''
 that is started when they are run as stateful containers, which are the
 running instances of Docker images. Containers can be modified, stopped,
-restarted and purged. \texttt{Dockerfile}s, like Makefiles {[}26{]}, are
-meant to be useful for both humans to read and for computers to execute.
-See Listing~1 for a full \texttt{Dockerfile}, which we will refer to
-throughout this article.
+restarted and purged. A visual analogy with a compiled programming
+language is given in Figure~1 for the workflow used to specify and build
+running Docker containers. \texttt{Dockerfile}s, like Makefiles
+{[}26{]}, are meant to be useful for both humans to read and for
+computers to execute. See Listing~1 for a full \texttt{Dockerfile},
+which we will refer to throughout this article.
+
+\begin{figure}
+\includegraphics[width=1\linewidth]{container-analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command (analogous to compiling the source code into a binary). Finally the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).}\label{fig:container-analogy}
+\end{figure}
 
 While Docker was the original technology to support the
 \texttt{Dockerfile} format, other container technologies with support
