@@ -70,9 +70,9 @@ While "papers" based on the traditional journal article format can share high le
 In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerization is needed.
 
 Containerization plays an important role in providing instructions for packaging the building blocks of computer-based research (i.e. code, data, documentation, and the computing environment).
-While a container cannot package all of these blocks, it represents a human- _and_ machine-readable recipe to capture the computing environment and interact with data.
+Containers are built from plain text files which represent a human- _and_ machine-readable recipe for creating the computing environment and interact with data.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
-Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
+This is an important and common practice in scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely that both the author and others are able to reproduce and extend an analysis workflow.
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
