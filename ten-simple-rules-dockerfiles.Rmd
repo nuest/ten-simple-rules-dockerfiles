@@ -73,7 +73,7 @@ Containerization plays an important role in providing instructions for packaging
 While a container cannot package all of these blocks, it represents a human- _and_ machine-readable recipe to capture the computing environment and interact with data.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
 Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
-The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
+The containers built from these recipes are portable encapsulated snapshots of a specific computing environment, which are both more lightweight and transparent than virtual machines.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
 While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
