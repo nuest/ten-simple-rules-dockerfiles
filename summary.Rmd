@@ -1,0 +1,13 @@
+Summary
+=======
+
+1. Consider tools to assist with Dockerfile generation
+2. Use versioned images
+3. Format intentionally and favor clarity
+4. Document within the Dockerfile
+5. Order instructions
+6. Define version numbers for reproducible builds
+7. Mount user scripts and data
+8. Enable interactive usage and one-click execution
+9. Use a Dockerfile per project and publish it with a version control system
+10. Use the container daily, rebuild the image weekly, clean up and preserve if need be
