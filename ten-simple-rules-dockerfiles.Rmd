@@ -119,7 +119,8 @@ Container images include the application, e.g., the programming language interpr
 A `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
 The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.
-Containers can be modified, stopped, restarted and purged. A visual analogy with a compiled programming language is given in Figure&nbsp;1 for the workflow used to specify and build running Docker containers. 
+Containers can be modified, stopped, restarted and purged.
+A visual analogy for building and running a container is provided in Figure&nbsp;1. Akin to compiling source code for a programming language, creating a container also starts with a plain text file (Dockerfile), which provides instructions for building an image. Similarly to using a compiled binary file to launch a program, the image is then run to create a container instance.
 `Dockerfile`s, like Makefiles [@wikipedia_contributors_make_2019], are meant to be useful for both humans to read and for computers to execute.
 See Listing&nbsp;1 for a full `Dockerfile`, which we will refer to throughout this article.
 
