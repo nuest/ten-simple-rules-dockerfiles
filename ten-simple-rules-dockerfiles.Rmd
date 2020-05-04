@@ -685,7 +685,7 @@ Furthermore, the commit messages in your version controlled repository preserve 
 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally a simple and clear approach to provide one `Dockerfile` per project.
 Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
-We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
+We recommend avoiding this at the cost of a longer `Dockerfile`, which can be mitigated with consistent form (see&nbsp;\ruleref{rule:formatting}).
 Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 
 It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.

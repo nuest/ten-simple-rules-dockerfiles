@@ -1451,8 +1451,8 @@ simple and clear approach to provide one \texttt{Dockerfile} per
 project. Alternatively, you could build an \emph{image stack} to serve
 different use cases with a common base image, but this reduces
 understandability and scatters information across multiple places. We
-recommend to avoid this at the price of a longer \texttt{Dockerfile} and
-mitigate with consistent form
+recommend avoiding this at the cost of a longer \texttt{Dockerfile},
+which can be mitigated with consistent form
 (see~\hyperref[{rule:formatting}]{Rule~\ztitleref{rule:formatting}}).
 Importantly, you should publish \emph{all} files \texttt{COPY}ied into
 the container, e.g., test data or files for software installation from
