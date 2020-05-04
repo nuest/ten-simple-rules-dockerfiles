@@ -541,7 +541,7 @@ You should include dummy or test data into the image to be able to ensure that a
 For all these cases you should provide clear instructions for users in the `README` how to obtain actual or dummy data.
 When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
 
-A mount can can also be used to access _output data_ from a container.
+A mount can also be used to access _output data_ from a container.
 This can be an extra mount, or the same `data` directory.
 Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, that require very detailed instructions for users.
 
