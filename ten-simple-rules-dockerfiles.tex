@@ -1146,10 +1146,10 @@ data}\label{mount-user-scripts-and-data}}
 \ztitlerefsetup{title=7} \zlabel{rule:mount} \label{rule:mount} \zrefused{rule:mount}
 
 The role of containers is to provide the computing environment, not to
-encapsulate datasets or custom scripts. It is better to insert data
-files and custom scripts files from the local machine into the container
-at run time, and using the container image primarily for the software
-and dependencies. This insertion is achieved by using
+encapsulate datasets or custom scripts. It is better to include data
+files and custom scripts from the local machine in the container at run
+time, and use the container image primarily for the software and
+dependencies. This insertion is achieved by using
 \href{https://docs.docker.com/storage/bind-mounts/}{\emph{bind mounts}}.
 Mounting these files is preferable to using the
 \texttt{ADD}/\texttt{COPY} instructions in the \texttt{Dockerfile},

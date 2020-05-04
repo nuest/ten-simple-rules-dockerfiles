@@ -521,7 +521,7 @@ One reason you will encounter base images running a non-root user (popular examp
 \rulelabel{7}{rule:mount}
 
 The role of containers is to provide the computing environment, not to encapsulate datasets or custom scripts.
-It is better to insert data files and custom scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
+It is better to include data files and custom scripts from the local machine in the container at run time, and use the container image primarily for the software and dependencies.
 This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible when the workspace is published.
 If you want to add local files to the container, prefer `COPY` because it is explicit and you do not need `ADD`'s extra features, which are (i) URL as a source, for which you may use it instead of a `RUN wget` or `RUN curl` to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)) as a source, which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of and cannot be properly version controlled.
