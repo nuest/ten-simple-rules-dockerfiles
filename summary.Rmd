@@ -9,5 +9,6 @@ Summary
 6. Specify software versions
 7. Mount user data
 8. Make it one-click runnable
-9. Use version control and one Dockerfile per project
+9. Use version control
+    a. Use one Dockerfile per project
 10. Regularly use and rebuild containers
