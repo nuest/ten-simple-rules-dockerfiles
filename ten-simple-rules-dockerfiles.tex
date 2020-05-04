@@ -1172,13 +1172,13 @@ are treated as files and managed software, i.e.~installed with a package
 manager and versioned. If you developed extensive software for a
 specific analysis, you should ideally publish it as a software package
 and follow \hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} for
-installing it (cf. ``A package first'' in {[}14{]}). Consider using the
+installing it (cf. ``A package first'' in {[}14{]}). Consider using a
 suitable package system with pinned versions even for small scripts if
 the functions are reusable across datasets or workflows by you or
 others. You should avoid installing software packages from source after
 \texttt{COPY}ing the code into the image, because the connection between
 the file outside of the image and the one copied in is easily lost. If
-you cannot publish a software project albeit it being in a language's
+you cannot publish a software project in the appropriate language's
 package structure, you should make sure the files are always published
 together with the \texttt{Dockerfile}
 (see~\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}).
