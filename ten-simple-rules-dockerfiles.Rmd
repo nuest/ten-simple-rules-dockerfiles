@@ -77,7 +77,7 @@ The containers built from these recipes are portable encapsulated snapshots of a
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
 While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
-Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging an individual reusable software in a container.
+Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging reusable software in a container.
 This article introduces these instructions for the popular `Dockerfile` format with a focus on containers encapsulating data science workflows.
 
 # Prerequisites & scope
