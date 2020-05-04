@@ -5,10 +5,10 @@ Summary
 2. Use versioned images
 3. Format for clarity
 4. Document within the Dockerfile
-5. Order the instructions
 6. Specify software versions
-7. Mount user data
-8. Make it one-click runnable
 9. Use version control
     a. Use one Dockerfile per project
+7. Mount user data
+5. Order the instructions
+8. Make it one-click runnable
 10. Regularly use and rebuild containers
