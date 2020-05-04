@@ -2,13 +2,40 @@ Summary
 =======
 
 1. Use available tools
+    a. Image registries (e.g. Docker Hub),
+    b. Dockerfile generators (e.g. repo2docker)
+    c. Project templates (e.g. cookie cutter) could go here and one Dockerfile per project?
+    d. Linters
 2. Use versioned images
+    a. Mention specific sha digests?
 3. Format for clarity
+    a. Use indentation, line breaks and unabbreviated arguments
+    b. Clarity > brevity
+    c. Group related commands
 4. Document within the Dockerfile
+    a. Add comments explaining the steps
+    b. Use labels for metadata
+    c. Include build and run commands
 6. Specify software versions
+    a. Pin system library versions
+    b. Explictly list package versions to install
+    c. Comment why each is needed
 9. Use version control
-    a. Use one Dockerfile per project
+    a. Include CI testing
+    b. Use one Dockerfile per project
+    c. Use project templates (e.g. cookie cutter)
 7. Mount user data
+    a. Use bind mount for accessibility
+    b. Keep large or sensitive datasets out with `.dockerignore`
+    c. Document expected mounts for external resources
 5. Order the instructions
+    a. Least --> most changable for caching and fast builds
+    b. However regularly use `--no-cache` to catch problems
 8. Make it one-click runnable
+    a. Set default behaviour with `CMD` and `ENTRYPOINT`
 10. Regularly use and rebuild containers
+    a. Use the container throughout your project to create trust
+    b. Rebuild every 1-2 weeks with `--no-cache` to catch problems
+    c. Provide a `Makefile` or script for convenience
+    d. Ask a colleague to try it
+    e. Push the image to a public repo at publication time
