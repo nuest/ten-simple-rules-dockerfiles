@@ -30,7 +30,7 @@ Summary
     c. Document expected mounts for external resources
 5. Order the instructions
     a. Least --> most changable for caching and fast builds
-    b. However regularly use `--no-cache` to catch problems
+    b. Regularly use `--no-cache` to catch problems
 8. Make it one-click runnable
     a. Set default behaviour with `CMD` and `ENTRYPOINT`
 10. Regularly use and rebuild containers
