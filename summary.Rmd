@@ -4,7 +4,7 @@ Summary
 1. Use available tools
     a. Image registries (e.g. Docker Hub),
     b. Dockerfile generators (e.g. repo2docker)
-    c. Project templates (e.g. cookie cutter) could go here and one Dockerfile per project?
+    c. Project templates (e.g. cookie cutter)
     d. Linters
 2. Use versioned images
     a. Mention specific sha digests?
@@ -22,8 +22,8 @@ Summary
     c. Comment why each is needed
 9. Use version control
     a. Use Continuous Integration and automated testing
-    b. Use one Dockerfile per project
-    c. Use project templates (e.g. cookie cutter)
+    b. ~~Use one Dockerfile per project~~
+    c. ~~Use project templates (e.g. cookie cutter)~~
 7. Mount user data
     a. Use bind mount for accessibility
     b. Keep large or sensitive datasets out with `.dockerignore`
