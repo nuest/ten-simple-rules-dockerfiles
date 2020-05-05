@@ -7,7 +7,6 @@ Summary
     c. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter))
     d. Linters
 2. Use versioned images
-    a. Mention specific sha digests?
 3. Format for clarity
     a. Use indentation, line breaks and unabbreviated arguments
     b. Clarity > brevity
