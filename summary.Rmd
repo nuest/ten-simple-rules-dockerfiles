@@ -21,7 +21,7 @@ Summary
     b. Explictly list package versions to install
     c. Comment why each is needed
 9. Use version control
-    a. Include CI testing
+    a. Include Continuous Integration testing
     b. Use one Dockerfile per project
     c. Use project templates (e.g. cookie cutter)
 7. Mount user data
