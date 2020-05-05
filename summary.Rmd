@@ -4,7 +4,7 @@ Summary
 1. Use available tools
     a. Image registries (e.g. Docker Hub),
     b. Dockerfile generators (e.g. repo2docker)
-    c. Project templates (e.g. cookie cutter)
+    c. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter))
     d. Linters
 2. Use versioned images
     a. Mention specific sha digests?
