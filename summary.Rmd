@@ -34,7 +34,7 @@ Summary
 8. Make it one-click runnable
     a. Set default behaviour with `CMD` and `ENTRYPOINT`
 10. Regularly use and rebuild containers
-    a. Use the container throughout your project to create trust
+    a. Use the container throughout each project for confidence in your workflow
     b. Rebuild every 1-2 weeks with `--no-cache` to catch problems
     c. Provide a `Makefile` or script for convenience
     d. Ask a colleague to try it
