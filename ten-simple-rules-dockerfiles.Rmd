@@ -382,31 +382,32 @@ While you can add arbitrarily complex information with labels, for data science 
 Relevant metadata that might be more utilized with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
 
 The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardise field names across container tools, as shown below.
-These labels match the [`org.label-schema`-specification](http://label-schema.org/rc1/), which has been deprecated but is still found a lot in `Dockerfile`s.
+Some keys hold specific content, e.g., `org.opencontainers.image.documentation` is a URL as character string pointing to documentation on the image and `org.opencontainers.image.licenses` is the [SPDX license identifier](https://spdx.org/licenses/).
+You may also commonly find labels in the deprecated [`org.label-schema`-specification](http://label-schema.org/rc1/) format e.g., `org.label-schema.description`.
+However, we encourage the use of the OCI schema in all new and unlabelled projects.
 
 \footnotesize
 
 ```dockerfile
-LABEL org.opencontainers.image.created='2019-12-10' \
-  org.opencontainers.image.authors='Nüst, Sochat, Marwick, Eglen, Head, and Hirst' \
+LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
+  org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, Marwick, Eglen, Head, and Hirst' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
   org.opencontainers.image.documentation=
 'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf' \
-  org.opencontainers.image.version='0.0.1'
+  org.opencontainers.image.version='1.0.0'
 
 # build-time variable with a default, set it in `docker build` as follows:
 #   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 ARG BUILD_DATE unspecified
 
-LABEL maintainer="daniel.nuest@uni-muenster.de" \
-  org.label-schema.vendor='Ten Simple Corp.' \
-  org.label-schema.description='Reproducible workflow image (MIT license)' \
-  org.label-schema.build-date=$BUILD_DATE \
-  org.label-schema.docker.schema-version="rc1"
-
+LABEL org.opencontainers.image.vendor='Ten Simple Institute, Uni of Rules' \
+  org.opencontainers.image.description='Reproducible workflow image' \
+  org.opencontainers.image.created=$BUILD_DATE \
+  org.opencontainers.image.licenses='Apache-2.0'
+  
 LABEL edu.science.data.group.project='Find out something (Grant #123456)' \
   edu.science.data.group.name='Data Science Lab' \
-  author.orcid="0000-0002-1825-0097"
+  author.orcid='0000-0002-1825-0097'
 ```
 
 \normalsize
