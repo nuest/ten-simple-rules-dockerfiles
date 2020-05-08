@@ -65,15 +65,15 @@ Computing infrastructure has advanced to the point where not only can we share d
 code that processes these data.
 This sharing of code files is enabled by collaboration platforms such as [GitHub](https://github.com) or [GitLab](https://gitlab.com) and has become quite common.
 The sharing of the computing environment, on the other hand, is enabled by containerization, which allows for documenting and sharing entire workflows in a comprehensive way.
-This sharing of computational assets is paramount to increasing the reproducibility of computational research.
-While "papers" based on the traditional journal article format can share high level details of research, computational research is oftentimes way too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
+This sharing of computational assets is paramount to increase reproducibility of computational research.
+While "papers" based on the traditional journal article format can share high level details of research, computational research is often far too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
 In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerization is needed.
 
 Containerization plays an important role in providing instructions for packaging the building blocks of computer-based research (i.e. code, data, documentation, and the computing environment).
 Containers are built from plain text files that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
-Specification of the computing environment is an important and common practice in scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely that both the author and others are able to reproduce and extend an analysis workflow.
-The containers built from these recipes are portable encapsulated snapshots of a specific computing environment.
+Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
+The containers built from these recipes are portable encapsulated snapshots of a specific computing environment, which are both more lightweight and transparent than virtual machines.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
 While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
