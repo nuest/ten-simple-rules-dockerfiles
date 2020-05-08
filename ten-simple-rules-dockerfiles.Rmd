@@ -120,10 +120,12 @@ A `Dockerfile` consists of a sequence of instructions to copy files and install 
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
 The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.
 Containers can be modified, stopped, restarted and purged.
-A visual analogy for building and running a container is provided in Figure&nbsp;1. Akin to compiling source code for a programming language, creating a container also starts with a plain text file (Dockerfile), which provides instructions for building an image. Similarly to using a compiled binary file to launch a program, the image is then run to create a container instance.
+A visual analogy for building and running a container is provided in Figure&nbsp;1.
+Akin to compiling source code for a programming language, creating a container also starts with a plain text file (Dockerfile), which provides instructions for building an image.
+Similarly to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;1 for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command (analogous to compiling the source code into a binary). Finally the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%'}
+```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command (analogous to compiling the source code into an executable binary). Finally the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%'}
 knitr::include_graphics("container-analogy.png")
 ```
 
@@ -320,11 +322,11 @@ If you really need to reduce the size, you may look into using multiple containe
 
 Depending on the programming language used, your project may already contain files to manage dependencies and you may use a package manager to control this aspect of the computing environment.
 This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mount}).
-A single long `Dockerfile` with sections and helpful comments can be complete and thus more understandable than a collection of separate files.
+A single long `Dockerfile` with sections and helpful comments can be more understandable than a collection of separate files.
 
 Generally, aim to design the `RUN` instructions so that each performs one scoped action, e.g., download, compile, and install _one tool_.
 Each instruction will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
-Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied (see \ruleref{rule:formatting}).
+Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied.
 
 While you will find `Dockerfile`s using [_build-time variables_](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg) to dynamically change parameters at build time, such a customization option reduces clarity for data science workflows.
 
@@ -440,12 +442,12 @@ A recommended ordering based on these considerations is as follows.
 2. Language-specific libraries or modules
   1. from repositories (i.e., binaries)
   2. from source (e.g., GitHub)
-4. Installation of own software and scripts (if not mounted)
-3. Copying data and configuration (if not mounted)
+3. Installation of own software and scripts (if not mounted)
+4. Copying data and configuration (if not mounted)
 5. Labels
 6. Default commands and entrypoints
 
-# 6. Define version numbers for reproducible builds {-}
+# 6. Specify software versions {-}
 \rulelabel{6}{rule:pinning}
 
 The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
