@@ -533,8 +533,8 @@ Unless specific features are needed, bind mounts are also preferable to [storage
 Standalone _script files_ are distinct from other software as they are treated as files and managed software, i.e. installed with a package manager and versioned.
 If you developed extensive software for a specific analysis, you should ideally publish it as a software package and follow \ruleref{rule:pinning} for installing it (cf. "A package first" in @gruening_recommendations_2019).
 Consider using a suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
-You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost.
-If you cannot publish a software project in the appropriate language's package structure, you should make sure the files are always published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
+If you cannot publish a software project in the appropriate language's package structure, you should make sure the source code files you `COPY` into the image are published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
+If the code and `Dockerfile` are in the same repository, the origin and results of the `COPY` instruction and subsequent installation code are understandable in the future.
 
 Storing _data files_ outside of the container allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
 Do not include such data in an image.
