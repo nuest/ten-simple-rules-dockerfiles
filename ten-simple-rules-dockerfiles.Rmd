@@ -96,8 +96,7 @@ A `docker-compose.yml` configuration file allows for defining volumes, environme
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the technology behind them actually works, researchers should leverage containerization following good practices.
 The practices that are to be discussed in this article are strongly related to software engineering in general and research software engineering (RSEng) in particular, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
-However, a Research Software Engineer's (RSE) skill level is not the target audience for this work, but we hope to provide a useful resource for more advanced container users as well.
-We encourage you to reach out to your local or national RSE community if your questions on sofware development in research go beyond the rules of this work.
+We encourage you to reach out to your local or national RSE community if your questions on software development in research go beyond the rules of this work.
 
 While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
 Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017) and our observations indicate it is the most widely used container technology in academic data science.
@@ -115,7 +114,7 @@ Containers are distinct from virtual machines (VM) or hypervisors as they do not
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019]. 
-`Dockerfile`s are machine- *and* human-readable recipes for building images, comparable to `Makefile`s [@wikipedia_contributors_make_2019].
+A `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
 Container images include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 A `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
@@ -256,9 +255,9 @@ A precaution that needs to be taken is that the default command above will creat
 Because repo2docker is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
 
 Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
-`containerit` automates the generation of standalone `Dockerfile`s for workflows in R.
-It can provide a starting point for users unfamiliar with writing `Dockerfile`s, or together with other R packages provide a full image creation and execution process without having to leave an R session.
-`dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create readable `Dockerfile`s compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
+`containerit` automates the generation of a standalone `Dockerfile` for workflows in R.
+It can provide a starting point for users unfamiliar with writing a `Dockerfile`, or together with other R packages provide a full image creation and execution process without having to leave an R session.
+`dockta` supports multiple programming languages and configurations files, just as `repo2docker`, but attempts to create a readable `Dockerfile` compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
 For any tool that you use, be sure to look at documentation for usage and configuration options, and options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
 
 ------
@@ -271,8 +270,8 @@ It is good practice to use base images that are maintained by the Docker library
 You can identify these images by the missing the user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
 However, these images only provide basic programming languages or very widely used software, so you will likely use images maintained by organizations or fellow researchers.
 While some organizations can be trusted to update containers with security fixes (see list below), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
-It is even possible that images or `Dockerfile`s may disappear, or that images are published with malicious intent, though we have not heard of any such case in academia.
-Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`, e.g., by using automated builds on Docker Hub.
+It is even possible that an image or a `Dockerfile` may disappear, or that an image is published with malicious intent, though we have not heard of any such case in academia.
+Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`.
 We suggest to save a copy of the `Dockerfile` within your project (see \ruleref{rule:mount}) in the case that a repository goes away.
 
 Images have _tags_ associated with them with specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants such as `slim` attempting to reduce image size.
@@ -283,7 +282,7 @@ Note that a version tag means that the tagged software is frozen, but it does no
 For data science workflows, you should always rely on version-specific image tags both for base images that you use, and for images that you build yourself and then run (see usage instructions in Listing&nbsp;1 for an example of the `--tag` parameter of `docker build`).
 With keeping different versions (tags) available, it is good practice to publish an image in an image registry.
 We refer you to the documentation on automated builds for details, see [Docker Hub Builds](https://docs.docker.com/docker-hub/builds/) or [GitLab's Container Registry](https://docs.gitlab.com/ee/user/packages/container_registry/index.html#build-and-push-images) as well as continuous integration (CI) services such as [GitHub actions](https://github.com/actions/starter-workflows/tree/master/ci), or [CircleCI](https://circleci.com/orbs/registry/orb/circleci/docker#commands-build) that can help you get started.
-Avoid to `docker push` a locally built image, because that counteracts the considerations outlined above.
+Do not `docker push` a locally built image, because that counteracts the considerations outlined above.
 If a pre-built image is provided in a public image registry, do not forget to direct the user to it in your documentation, e.g. in the `README` file or in an article.
 
 The following list a selection of communities that produce widely used regularly updated images, including ready-to-use images with preinstalled software stacks.
@@ -309,11 +308,11 @@ FROM docker.io/rocker/r-ver:3.5.2
 \rulelabel{3}{rule:clarity}
 
 First, it is good practice to think of the `Dockerfile` as a human _and_ machine readable file.
-This means that you should use indentation, new lines, and comments to make your `Dockerfile`s well documented and readable.
+This means that you should use indentation, new lines, and comments to make your `Dockerfile` well documented and readable.
 Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
 Use `\` at the end of a line to break a single command into multiple lines.
 This will ensure that no single line gets too long to comfortably read.
-You may choose to put connecting syntactic elements at the beginning of lines to avoid faulty placement or lingering `&&` as shown in Listing&nbsp;2.
+<!--You may choose to put connecting syntactic elements at the beginning of lines to avoid faulty placement or lingering `&&` as shown in Listing&nbsp;2.-->
 Use long versions of parameters for readability (e.g., `--input` instead of `-i`).
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it does not exist but also persists the change across multiple `RUN` instructions.
 
@@ -330,7 +329,8 @@ Depending on the programming language used, your project may already contain fil
 This is a very good practice and helpful, though you should consider the externalization of content to outside of the `Dockerfile` (see \ruleref{rule:mount}).
 A single long `Dockerfile` with sections and helpful comments can be more understandable than a collection of separate files.
 
-Generally, aim to design the `RUN` instructions so that each performs one scoped well-documented action, e.g., download, compile, and install _one tool_.
+Generally, aim to design the `RUN` instructions so that each performs one scoped action, e.g., download, compile, and install _one tool_.
+This makes the lines of your `Dockerfile` a well-documented recipe for the user as well as a machine.
 Each instruction will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
 Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied.
 
@@ -387,7 +387,7 @@ Labels serve as structured metadata that can be leveraged by services, e.g., htt
 For example, software versions of containerised applications (cf.&nbsp;@gruening_recommendations_2019), licenses, and maintainer contact information are commonly seen and very useful if a `Dockerfile` is discovered out of context.
 Licensing information should especially cover the license of your own code, and may point to a `LICENSE` file within the image (cf.&nbsp;@gruening_recommendations_2019).
 While you can add arbitrarily complex information with labels, for data science scenarios the user-facing documentation is much more important.
-Relevant metadata that might be more utilized with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
+Relevant metadata that might be more utilised with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
 
 The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardise field names across container tools, as shown below.
 Some keys hold specific content, e.g., `org.opencontainers.image.documentation` is a URL as character string pointing to documentation on the image and `org.opencontainers.image.licenses` is the [SPDX license identifier](https://spdx.org/licenses/).
@@ -428,7 +428,7 @@ _Listing&nbsp;3_: Example labels.
 
 It is often helpful to provide usage instructions, i.e., how to `docker build` and `docker run` the image, _within_ the `Dockerfile`, either at the top or bottom where the reader is likely to find it.
 Such documentation is especially relevant if volume mounts, specific names, or ports are important for using the container, see for example the final lines of Listing&nbsp;1.
-These instructions are not limited to `docker <command>`, but include usage of bespoke scripts, `Makefile`s, or `docker-compose` (see \ruleref{rule:interactive} and \ruleref{rule:usage}).
+These instructions are not limited to `docker <command>`, but include usage of bespoke scripts, a `Makefile`, or `docker-compose` (see \ruleref{rule:interactive} and \ruleref{rule:usage}).
 Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
 It helps others, because it quickly gets them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
@@ -487,7 +487,7 @@ This way, if a piece of software is removed from the container, it will be easie
 In the case of needing to install packages or dependencies for a specific language, package managers are a good option.
 Package managers generally provide reliable mirrors or endpoints to download software, many packages are tested before release, and most importantly they provide access to specific versions.
 Most package managers have a command line interface that can be used from `RUN` commands in your `Dockerfile`, along with various flavors of "freeze" commands that can output a text file listing all software packages and versions (cf.&nbsp;[https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html](https://markwoodbridge.com/2017/03/05/jupyter-reproducible-science.html) cited by @rule_ten_2019).
-The biggest risk with using package managers with respect to `Dockerfile`s is outsourcing configuration.
+The biggest risk with using package managers with respect to a `Dockerfile` is outsourcing configuration.
 As an example, here are configuration files supported by commonly used languages in scientific programming:
 
 - Python: `requirements.txt` (pip tool, @the_python_software_foundation_requirements_2019), `environment.yml` (Conda, @continuum_analytics_managing_2017)
