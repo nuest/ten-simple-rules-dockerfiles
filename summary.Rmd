@@ -26,7 +26,7 @@ Summary
     b. ~~Use one Dockerfile per project~~ [revise]
     c. ~~Use project templates (e.g. cookie cutter)~~ [remove]
 7. Mount user data
-    a. Use bind mount for accessibility
+    a. Use bind mounts for accessibility
     b. Keep large or sensitive datasets out with `.dockerignore`
     c. Document expected mounts for external resources
 5. Order the instructions
