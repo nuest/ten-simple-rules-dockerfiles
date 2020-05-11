@@ -39,22 +39,18 @@ author:
     affiliation: "School of Psychological Science, University of Bristol, GB"
     orcid: 0000-0002-1734-6070
 abstract: |
-  Containers are greatly improving computational science by packaging software and data dependencies.
-  In a scholarly context, transparency and support of reproducibility are the largest drivers for using these containers.
-  It follows that choices that are made with respect to building containers can make or break a workflow's reproducibility.
-  The build for the container image is often created based on the instructions in the `Dockerfile` format.
-  The rules presented here help researchers to write understandable `Dockerfile`s for typical data science workflows.
-  By following the rules in this article researchers can create containers suitable for sharing with fellow scientists, for inclusion in scholarly communication such as education or scientific papers, and for an effective and sustainable personal workflow.
+  Computational science has been greatly improved by containers, which can package software and data dependencies.
+  In a scholarly context, the main drivers for using these containers are transparency and support of reproducibility; in turn, a workflow's reproducibility can be greatly affected by the choices that are made with respect to building containers.
+  Because the build for the container image is often created based on the instructions in the `Dockerfile` format, here we present rules to help researchers write understandable `Dockerfile`s for typical data science workflows.
+  By following the rules in this article, researchers can create containers suitable for sharing with fellow scientists, for including in scholarly communication such as education or scientific papers, and for effective and sustainable personal workflows.
 author_summary: |
   Computers and algorithms are ubiquitous in research.
-  Therefore the definition of the computing environment, i.e., the body of all software used directly or indirectly by a researcher, is important, because it allows other researchers to recreate the environment to understand, inspect, and reproduce an analysis.
-  A helpful abstraction for capturing the computing environment are called _containers_.
-  A container is created from a set of instructions in a recipe.
-  For the most common containerisation software, Docker, this recipe is called Dockerfile.
-  We think that for scientific research, one should follow specific practices to write a Dockerfile.
-  This practice is sometimes different from what generic software developers would do and focuses on transparency and understandability over performance considerations.
-  The rules are intended to help researchers, especially newcomers to containerisation, to leverage containers for open and effective scholarly communication and collaboration, while avoiding pitfalls especially irksome in a research lifecycle.
-  The recommendations cover a deliberate approach to starting a first Dockerfile, formatting and style, documentation, and habits for using containers.
+  Therefore, defining the computing environment, i.e., the body of all software used directly or indirectly by a researcher, is important, because it allows other researchers to recreate the environment to understand, inspect, and reproduce an analysis.
+  A helpful abstraction for capturing the computing environment is something called a _container_, whereby a container is created from a set of instructions in a recipe.
+  For the most common containerisation software, Docker, this recipe is called a Dockerfile.
+  We think that in a scientific context, researchers should follow specific practices for writing a Dockerfile, and these practices might be somewhat different from the practices of generic software developers, in that researchers should focus on transparency and understandability over performance considerations.
+  The rules presented here are intended to help researchers, especially newcomers to containerisation, leverage containers for open and effective scholarly communication and collaboration while avoiding the pitfalls that are especially irksome in a research lifecycle.
+  The recommendations cover a deliberate approach to starting one's first Dockerfile, formatting and style, documentation, and habits for using containers.
 bibliography: bibliography.bib
 output:
   rticles::plos_article
@@ -75,24 +71,21 @@ Submission notes:
 
 # Introduction {#introduction .unnumbered}
 
-Computing infrastructure has advanced to the point where not only can we share data underlying research articles, we can share the
-code that processes these data.
+Computing infrastructure has advanced to the point where not only can we share data underlying research articles, but we can also share the code that processes these data.
 This sharing of code files is enabled by collaboration platforms such as [GitHub](https://github.com) or [GitLab](https://gitlab.com) and has become quite common.
 The sharing of the computing environment, on the other hand, is enabled by containerisation, which allows for documenting and sharing entire workflows in a comprehensive way.
-This sharing of computational assets is paramount to increase reproducibility of computational research.
-While "papers" based on the traditional journal article format can share high level details of research, computational research is often far too complicated to be disseminated alongside in this format [@marwick_how_2015]. 
-In that the actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerisation is needed.
+Importantly, this sharing of computational assets is paramount for increasing the reproducibility of computational research.
+While "papers" based on the traditional journal article format can share extensive details about the research, computational research is often far too complicated to be effectively disseminated in this format [@marwick_how_2015]. 
+In this field, because a researcher's (CB comment: instead of researcher's, maybe study's or paper's or something similar?) actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerisation is needed.
 
-Containerisation plays an important role in providing instructions for packaging the building blocks of computer-based research (i.e. code, data, documentation, and the computing environment).
-Containers are built from plain text files that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
-By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
-Such practice is one important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017], with the result that it is much more likely both the author and others are able to reproduce and extend an analysis workflow.
+Containerisation helps provide instructions for packaging the building blocks of computer-based research (i.e., code, data, documentation, and the computing environment).
+Specifically, containers are built from plain text files that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
+By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability, which is an important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017]; an overall goal of these practices is to ensure that both the author and others are able to reproduce and extend an analysis workflow.
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment, which are both more lightweight and transparent than virtual machines.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
-While there are several tutorials for using containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
-Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging reusable software in a container.
-This article introduces these instructions for the popular `Dockerfile` format with a focus on containers encapsulating data science workflows.
+While several tutorials exist on how to use containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
+Based on the article by Guening et&nbsp;al. [@gruening_recommendations_2019], which gives very helpful recommendations for packaging reusable software in a container, here we introduce these instructions for the popular `Dockerfile` format, and we focus on containers that encapsulate data science workflows. (CB comment: I wasn't sure how to interpret the link between the Guening article and the intstructions you give here, so I tried to revise to make this link clearer. If the revisions are not exactly what you mean, revise further here.)
 
 # Prerequisites & scope
 
