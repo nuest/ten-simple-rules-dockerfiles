@@ -250,7 +250,8 @@ Ben Marwick\textsuperscript{\getAff{Department of Anthropology, University of Wa
 Stephen J. Eglen\textsuperscript{\getAff{Department of Applied Mathematics and Theoretical Physics, University of
 Cambridge, Cambridge, Cambridgeshire, GB}},
 Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}},
-Tony Hirst\textsuperscript{\getAff{Department of Computing and Communications, The Open University, GB}}\\
+Tony Hirst\textsuperscript{\getAff{Department of Computing and Communications, The Open University, GB}},
+Benjamin Evans\textsuperscript{\getAff{School of Psychological Science, University of Bristol, GB}}\\
 \bigskip
 \bigskip
 * Corresponding author: daniel.nuest@uni-muenster.de\\
@@ -274,6 +275,25 @@ workflow.
 % Please keep the Author Summary between 150 and 200 words
 % Use first person. PLOS ONE authors please skip this step.
 % Author Summary not valid for PLOS ONE submissions.
+\section*{Author summary}
+Computers and algorithms are ubiquitous in research. Therefore the
+definition of the computing environment, i.e., the body of all software
+used directly or indirectly by a researcher, is important, because it
+allows other researchers to recreate the environment to understand,
+inspect, and reproduce an analysis. A helpful abstraction for capturing
+the computing environment are called \emph{containers}. A container is
+created from a set of instructions in a recipe. For the most common
+containerisation software, Docker, this recipe is called Dockerfile. We
+think that for scientific research, one should follow specific practices
+to write a Dockerfile. This practice is sometimes different from what
+generic software developers would do and focuses on transparency and
+understandability over performance considerations. The rules are
+intended to help researchers, especially newcomers to containerisation,
+to leverage containers for open and effective scholarly communication
+and collaboration, while avoiding pitfalls especially irksome in a
+research lifecycle. The recommendations cover a deliberate approach to
+starting a first Dockerfile, formatting and style, documentation, and
+habits for using containers.
 
 \linenumbers
 
@@ -956,34 +976,33 @@ variables. These variables persist inside the container and can be
 useful for example for (i) setting software versions or paths and
 reusing them across multiple instructions to avoid mistakes, (ii)
 specifying metadata intended to be discovered by installed libraries or
-software, or (ii) adding binaries to the path (\texttt{PATH}) or library
-path (\texttt{LD\_LIBRARY\_PATH}). You should be careful to distinguish
-these environment variables from those that might vary and be required
-at runtime. For runtime environment variables, either to set a new
-variable or override one set in the container, you can use the
+software, or (iii) adding binaries to the path (\texttt{PATH}) or
+library path (\texttt{LD\_LIBRARY\_PATH}). You should be careful to
+distinguish these environment variables from those that might vary and
+be required at runtime. For runtime environment variables, either to set
+a new variable or override one set in the container, you can use the
 \texttt{-\/-env} parameter of \texttt{docker\ run}.
 
 \scriptsize
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{# Define number of cores used by PowerfulAlgorithm to something that is widely available}
+\KeywordTok{ENV}\NormalTok{ POWER_ALG_CORES 2}
+
 \CommentTok{# Install UsefulSoft tool in specific version from source}
-\KeywordTok{ENV}\NormalTok{ USEFULSOFT_VERSION 1.0.0}
-\KeywordTok{ENV}\NormalTok{ INSTALL_TEMP=/tmp/useful \textbackslash{}}
-\NormalTok{  INSTALL_TARGET=/usr/bin}
-  
+\KeywordTok{ENV}\NormalTok{ USEFULSOFT_VERSION=1.0.0 \textbackslash{}}
+\NormalTok{  USEFULSOFT_INSTALLDIR=/workspace/bin}
+
 \KeywordTok{RUN}\NormalTok{ wget http://download-server.com/usefule_software/$USEFULSOFT_VERSION/$USEFULSOFT_VERSION.zip && \textbackslash{}}
 \NormalTok{  unzip $USEFULSOFT_VERSION.zip && \textbackslash{}}
 \NormalTok{  cd $USEFULSOFT_VERSION && \textbackslash{}}
-\NormalTok{  bash install.sh --tempdir $INSTALL_TEMP --target $INSTALL_TARGET && \textbackslash{}}
+\NormalTok{  bash install.sh --target $USEFULSOFT_INSTALLDIR && \textbackslash{}}
 \NormalTok{  cd .. && \textbackslash{}}
-\NormalTok{  rm -r $INSTALL_TEMP $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip}
+\NormalTok{  rm -r $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip}
 
 \CommentTok{# Puth UsefulSoft tool on the path for subsequent instructions}
-\KeywordTok{ENV}\NormalTok{ PATH $PATH:$INSTALL_TARGET}
-
-\CommentTok{# Define number of cores used by PowerfulAlgorithm to something that is widely available}
-\KeywordTok{ENV}\NormalTok{ POWER_ALG_CORES 2}
+\KeywordTok{ENV}\NormalTok{ PATH $PATH:$USEFULSOFT_INSTALLDIR}
 
 \CommentTok{### Usage instructions }\AlertTok{###}
 \CommentTok{# [...]}
@@ -1677,9 +1696,8 @@ where these may be standard practices required for publication
 
 To demonstrate the ten rules, we maintain a collection of annotated
 example \texttt{Dockerfile}s in a GitHub repository, some of which we
-took from public repositories and updated to adhere better to the rules
-(see \texttt{Dockerfile.original}):
-\url{https://github.com/nuest/ten-simple-rules-dockerfiles/}
+took from public repositories and updated to adhere better to the rules:
+\url{https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples}
 
 \hypertarget{conclusion}{%
 \section*{Conclusion}\label{conclusion}}
@@ -1716,21 +1734,23 @@ DN is supported by the project Opening Reproducible Research II
 (\href{https://o2r.info/}{https://o2r.info/};
 \href{https://www.uni-muenster.de/forschungaz/project/12343}{https://www.uni-muenster.de/forschungaz/project/12343})
 funded by the German Research Foundation (DFG) under project number PE
-1632/17-1. DN and SJE are supported by a Mozilla mini science grant. We
-thank Dav Clark who provided feedback on the preprint {[}66{]} of this
-paper.
+1632/17-1. DN and SJE are supported by a Mozilla mini science grant. The
+funders had no role in study design, data collection and analysis,
+decision to publish, or preparation of the manuscript. We thank Dav
+Clark who provided feedback on the preprint {[}66{]} of this paper.
 
 \hypertarget{contributions}{%
-\section*{Contributions}\label{contributions}}
-\addcontentsline{toc}{section}{Contributions}
+\section*{Author contributions}\label{contributions}}
+\addcontentsline{toc}{section}{Author contributions}
 
-DN conceived the idea, outlined the first rules, and contributed to all
-rules. VS wrote the first draft and contributed to all rules. BM revised
-the text and contributed to all rules. SJE contributed to the overall
-structure and selected rules. THe contributed to the rule structure and
-particularly Rule~1. THi gave extensive feedback on early drafts and
-contributed to the discussion. This articles was written collaboratively
-on GitHub, where all
+DN conceived the idea and contributed to conceptualisation, methodology,
+and writing - original draft. VS contributed to conceptualisation,
+methodology, and writing - original draft. BM contributed to writing --
+review \& editing. SJE contributed to conceptualisation and writing --
+review \& editing. THe contributed to conceptualisation. THi contributed
+to writing -- review \& editing. BE contributed to visulisation and
+writing -- review \& editing. This articles was written collaboratively
+on GitHub, where
 \href{https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors}{contributions
 in form of text or discussions comments} are documented:
 \url{https://github.com/nuest/ten-simple-rules-dockerfiles/}.

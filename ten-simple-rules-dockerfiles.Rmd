@@ -33,6 +33,11 @@ author:
     email: tony.hirst@open.ac.uk
     affiliation: "Department of Computing and Communications, The Open University, GB"
     orcid: 0000-0001-6921-702X
+  - name: Benjamin Evans
+    # https://github.com/bdevans
+    email: benjamin.evans@bristol.ac.uk
+    affiliation: "School of Psychological Science, University of Bristol, GB"
+    orcid: 0000-0002-1734-6070
 abstract: |
   Containers are greatly improving computational science by packaging software and data dependencies.
   In a scholarly context, transparency and support of reproducibility are the largest drivers for using these containers.
@@ -828,6 +833,7 @@ BM contributed to writing – review & editing.
 SJE contributed to conceptualisation and writing – review & editing.
 THe contributed to conceptualisation.
 THi contributed to writing – review & editing.
+BE contributed to visulisation and writing – review & editing.
 This articles was written collaboratively on GitHub, where [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
