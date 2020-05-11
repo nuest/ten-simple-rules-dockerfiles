@@ -4,11 +4,11 @@ Summary
 1. Use available tools
     a. Use ready-made images (e.g. from Docker Hub)
     b. Dockerfile generators (e.g. repo2docker)
-    c. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter))
+    c. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter)) [new]
     d. Linters
 2. Use versioned images
     a. Use version-tagged base images
-    b. Publish your own images with version tags
+    b. Publish your own images with version tags [revise]
 3. Format for clarity
     a. Use indentation, line breaks and unabbreviated arguments
     b. Clarity > brevity
@@ -23,15 +23,15 @@ Summary
     c. Comment why each is needed
 9. Use version control
     a. Use Continuous Integration and automated testing
-    b. ~~Use one Dockerfile per project~~
-    c. ~~Use project templates (e.g. cookie cutter)~~
+    b. ~~Use one Dockerfile per project~~ [revise]
+    c. ~~Use project templates (e.g. cookie cutter)~~ [remove]
 7. Mount user data
     a. Use bind mount for accessibility
     b. Keep large or sensitive datasets out with `.dockerignore`
     c. Document expected mounts for external resources
 5. Order the instructions
     a. Least --> most changable for caching and fast builds
-    b. Regularly use `--no-cache` to catch problems
+    b. Regularly use `--no-cache` to catch problems [duplicate: 10b]
 8. Make it one-click runnable
     a. Set default behaviour with `CMD` and `ENTRYPOINT`
 10. Regularly use and rebuild containers
