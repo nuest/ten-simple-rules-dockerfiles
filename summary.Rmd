@@ -7,6 +7,8 @@ Summary
     c. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter))
     d. Linters
 2. Use versioned images
+    a. Use version-tagged base images
+    b. Publish your own images with version tags
 3. Format for clarity
     a. Use indentation, line breaks and unabbreviated arguments
     b. Clarity > brevity
