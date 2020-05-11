@@ -440,30 +440,29 @@ _Listing&nbsp;3_: Commonly used labels.
 ## Define versions, parameters, and paths once
 
 The [`ENV` instruction](https://docs.docker.com/engine/reference/builder/#env) in a `Dockerfile` allows for defining environment variables.
-These variables persist inside the container and can be useful for example for (i) setting software versions or paths and reusing them across multiple instructions to avoid mistakes, (ii) specifying metadata intended to be discovered by installed libraries or software, or (ii) adding binaries to the path (`PATH`) or library path (`LD_LIBRARY_PATH`).
+These variables persist inside the container and can be useful for example for (i) setting software versions or paths and reusing them across multiple instructions to avoid mistakes, (ii) specifying metadata intended to be discovered by installed libraries or software, or (iii) adding binaries to the path (`PATH`) or library path (`LD_LIBRARY_PATH`).
 You should be careful to distinguish these environment variables from those that might vary and be required at runtime.
 For runtime environment variables, either to set a new variable or override one set in the container, you can use the `--env` parameter of `docker run`.
 
 \scriptsize
 
 ```dockerfile
+# Define number of cores used by PowerfulAlgorithm to something that is widely available
+ENV POWER_ALG_CORES 2
+
 # Install UsefulSoft tool in specific version from source
-ENV USEFULSOFT_VERSION 1.0.0
-ENV INSTALL_TEMP=/tmp/useful \
-  INSTALL_TARGET=/usr/bin
-  
+ENV USEFULSOFT_VERSION=1.0.0 \
+  USEFULSOFT_INSTALLDIR=/workspace/bin
+
 RUN wget http://download-server.com/usefule_software/$USEFULSOFT_VERSION/$USEFULSOFT_VERSION.zip && \
   unzip $USEFULSOFT_VERSION.zip && \
   cd $USEFULSOFT_VERSION && \
-  bash install.sh --tempdir $INSTALL_TEMP --target $INSTALL_TARGET && \
+  bash install.sh --target $USEFULSOFT_INSTALLDIR && \
   cd .. && \
-  rm -r $INSTALL_TEMP $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip
+  rm -r $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip
 
 # Puth UsefulSoft tool on the path for subsequent instructions
-ENV PATH $PATH:$INSTALL_TARGET
-
-# Define number of cores used by PowerfulAlgorithm to something that is widely available
-ENV POWER_ALG_CORES 2
+ENV PATH $PATH:$USEFULSOFT_INSTALLDIR
 
 ### Usage instructions ###
 # [...]
