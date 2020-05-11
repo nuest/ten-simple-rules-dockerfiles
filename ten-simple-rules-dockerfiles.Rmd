@@ -89,36 +89,35 @@ Based on the article by Guening et&nbsp;al. [@gruening_recommendations_2019], wh
 
 # Prerequisites & scope
 
-To start with, we assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a fixed set of commands, for example `make prepare_data` followed by `Rscript analysis.R`, or only `python3 my-workflow.py`.
-Since containers that you eventually share with others can only run open source software, tools like Mathematica and Matlab are out of scope for this example.
-A workflow that does not support scripted execution is also out of scope for reproducible research, as it does not fit well with containerisation.
-Furthermore, workflows interacting with many petabytes of data and executed in high performance computing (HPC) infrastructures are out of scope.
-Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right.
-For this article, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server.
-The reader might scope the data requirement to less than a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
+To start with, we assume you have a scripted scientific workflow, i.e., you can, at least at a certain point in time, execute the full process with a fixed set of commands, for example `make prepare_data` followed by `Rscript analysis.R`, or only `python3 my-workflow.py`.
+Since containers that you eventually share with others can only run open source software, tools like Mathematica and MATLAB are outside the scope of this example; other workflows outside the scope of reproducible research are those that do not support scripted execution, as they do not fit well with containerisation.
+Furthermore, also outside the scope of these rules are workflows that interact with many petabytes of data and are executed in high performance computing (HPC) infrastructures.
+Using such HPC, job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right.
+For this article, we focus on workflows that typically run on single machine, e.g., a researcher's laptop computer or a virtual server.
+Readers might scope the data requirement to less than a terabyte and the compute requirement to a machine with 16 cores running over the weekend.
 
-While out of scope for this article, we point the reader to `docker-compose` [@docker-compose_2019] in the case of needing container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
-A `docker-compose.yml` configuration file allows for defining volumes, environment variables, and exposed ports and helps to stick to  _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
+Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
+A `docker-compose.yml` configuration file allows for defining volumes, environment variables, and exposed ports and helps users stick to  _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
 
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
-Even if they are not sure how the technology behind them actually works, researchers should leverage containerisation following good practices.
+Even if they are not sure how the underlying technology actually works, researchers should leverage containerisation following good practices.
 The practices that are to be discussed in this article are strongly related to software engineering in general and research software engineering (RSEng) in particular, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
-We encourage you to reach out to your local or national RSE community if your questions on software development in research go beyond the rules of this work.
+We encourage you to reach out to your local or national RSE (CB comment: Should this abbreviation be RSEng?) community if you have questions on software development in research that go beyond the rules of this work.
 
-While there are many different container technologies, this article focuses on Docker [@wikipedia_contributors_docker_2019].
-Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017) and our observations indicate it is the most widely used container technology in academic data science.
-The goal of this article is to guide you to write a `Dockerfile`, which is a file format for creating container images.
-The rules help you to ensure the `Dockerfile` allows for interactive development as well as the higher goals of reproducibility and preservation of knowledge.
+While many different container technologies exist, this article focuses on Docker [@wikipedia_contributors_docker_2019].
+Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017), and our observations indicate it is the most widely used container technology in academic data science.
+The goal of this article is to guide you as you write a `Dockerfile`, which is a file format for creating container images.
+The rules will help you ensure that the `Dockerfile` allows for interactive development as well as for reaching the higher goals of reproducibility and preservation of knowledge.
 Such practices are generally not part of generic containerisation tutorials and are rarely found in `Dockerfile`s published as part of software projects, which are often used as templates by novices.
-The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles, are not obvious, especially for researchers who do not have extensive software development experience or formal training.
-A commitment to this article's rules can ensure that workflows are reproducible and reusable, that computing environments are understandable by others, and researchers can collaborate effectively.
-Their application should not be triggered by the publication of a finished project, but be weaved into day-to-day habits (cf.&nbsp;thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
+The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles are not obvious, especially for researchers who do not have extensive software development experience or formal training.
+Yet, by committing to this article's rules, one can ensure that their workflows are reproducible and reusable, that computing environments are understandable by others, and that researchers have the opportunity to collaborate effectively.
+Applying these rules should not be triggered by the publication of a finished project but should instead be weaved into day-to-day habits (cf.&nbsp;thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 
 # Docker & Dockerfiles
 
-Docker [@wikipedia_contributors_docker_2019] is a container technology that is widely adopted and supported on many platforms, and has become highly useful for research.
-Containers are distinct from virtual machines (VM) or hypervisors as they do not emulate hardware or operating system kernels, and thus do not require the same system resources.
-Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but they intentionally hide most of the complexity from the researcher.
+Docker [@wikipedia_contributors_docker_2019] is a container technology that has been widely adopted and is supported on many platforms, and it has become highly useful for research.
+Containers are distinct from virtual machines (VM) or hypervisors, as they do not emulate hardware or operating system kernels and, thus, do not require the same system resources.
+Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019]. 
 A `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
