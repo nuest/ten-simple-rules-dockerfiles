@@ -800,7 +800,7 @@ You can do this shortly before submitting your reproducible workflow for peer-re
 
 # Example Dockerfiles
 
-To demonstrate the ten rules, we maintain a collection of annotated example `Dockerfile`s in a GitHub repository, some of which we took from public repositories and updated to adhere better to the rules (see `Dockerfile.original`): [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/)
+To demonstrate the ten rules, we maintain a collection of annotated example `Dockerfile`s in a GitHub repository, some of which we took from public repositories and updated to adhere better to the rules: [https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples](https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples)
 
 # Conclusion {#conclusion .unnumbered}
 
@@ -817,16 +817,17 @@ Most importantly, share and exchange your `Dockerfile` freely and collaborate in
 
 DN is supported by the project Opening Reproducible Research II (\href{https://o2r.info/}{https://o2r.info/}; \href{https://www.uni-muenster.de/forschungaz/project/12343}{https://www.uni-muenster.de/forschungaz/project/12343}) funded by the German Research Foundation (DFG) under project number PE 1632/17-1.
 DN and SJE are supported by a Mozilla mini science grant.
+The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.
 We thank Dav Clark who provided feedback on the preprint [@nust_ten_2020] of this paper.
 
-# Contributions {#contributions .unnumbered}
+# Author contributions {#contributions .unnumbered}
 
-DN conceived the idea, outlined the first rules, and contributed to all rules.
-VS wrote the first draft and contributed to all rules.
-BM revised the text and contributed to all rules.
-SJE contributed to the overall structure and selected rules.
-THe contributed to the rule structure and particularly Rule&nbsp;1.
-THi gave extensive feedback on early drafts and contributed to the discussion.
-This articles was written collaboratively on GitHub, where all [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
+DN conceived the idea and contributed to conceptualisation, methodology, and writing - original draft.
+VS contributed to conceptualisation, methodology, and writing - original draft.
+BM contributed to writing – review & editing.
+SJE contributed to conceptualisation and writing – review & editing.
+THe contributed to conceptualisation.
+THi contributed to writing – review & editing.
+This articles was written collaboratively on GitHub, where [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
