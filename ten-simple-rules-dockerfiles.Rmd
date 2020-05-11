@@ -145,6 +145,7 @@ In fact, the `Dockerfile` itself can be a powerful documentation to show from wh
 ```dockerfile
 FROM rocker/verse:3.6.2
 
+### INSTALL BASE SOFTWARE #####################################################
 # install Java, needed for package rJava
 RUN apt-get update && \
   apt-get install -y default-jdk && \
@@ -166,7 +167,8 @@ RUN install2.r --error \
     RNetCDF
 
 WORKDIR /tmp
-    
+
+### INSTALL WORKFLOW TOOLS ####################################################
 # Install latest version of crucial tool with bugfix from source
 RUN apt-get update && \
   apt-get install -y \
@@ -182,22 +184,24 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+### ADD MY OWN SCRIPTS ########################################################
 # Add workflow scripts
 WORKDIR /work
 COPY myscript.sh myscript.sh
 COPY plots.R plots.R
 
-# Uncomment the following lines to execute preprocessing and processing tasks during build
+# Uncomment the following lines to execute preprocessing tasks during build
 #RUN snakemake --use-conda <other params>
 #RUN nextflow workflow.nf --in 'dataset/*.fa'
 #RUN java -jar cromwell-XY.jar run myWorkflow.wdl
-#RUN Rscript plots.R
+#RUN Rscript prepare-plots.R
 
-# CMD from base image used for development, uncomment the following lines to have a 
-# "run workflow only" container
+### WORKFLOW CONTAINER FEATURE ################################################
+# CMD from base image used for development, uncomment the following lines to 
+# have a "run workflow only" container
 # CMD["./myscript.sh"]
 
-### Usage instructions ###
+### Usage instructions ########################################################
 # Build the images with
 # > docker build --tag great_workflow:1.0.0 .
 # Run the image:
@@ -269,8 +273,8 @@ For any tool that you use, be sure to look at documentation for usage and config
 # 2. Use versioned images {-}
 \rulelabel{2}{rule:base}
 
-A good understanding of how base images and image tags work is crucial, as the image and tag that you choose has important implications for your container.
-It is good practice to use base images that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
+A good understanding of how _base images_ and _image tags_ work is crucial, as the image and tag that you choose has important implications for your container.
+It is good practice to use **base images** that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
 You can identify these images by the missing the user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
 However, these images only provide basic programming languages or very widely used software, so you will likely use images maintained by organisations or fellow researchers.
 While some organisations can be trusted to update containers with security fixes (see list below), for most individual accounts that provide ready to use images, it is likely that these will not be updated regularly.
@@ -278,7 +282,7 @@ It is even possible that an image or a `Dockerfile` may disappear, or that an im
 Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`.
 We suggest to save a copy of the `Dockerfile` within your project (see \ruleref{rule:mount}) in the case that a repository goes away.
 
-Images have _tags_ associated with them with specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants such as `slim` attempting to reduce image size.
+Images have **tags** associated with them with specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants such as `slim` attempting to reduce image size.
 Tags are defined at image build time and appear in image name after the `:` when you use an image, e.g., `python:3.7`.
 By _convention_ a missing tag is assumed to be the word `latest`, which gives you the latest updates but also a moving target for your computing environment that can break your workflow.
 Note that a version tag means that the tagged software is frozen, but it does not mean the image will not change, as backwards compatible fixes (cf.&nbsp;semantic versioning, [@preston-werner_semantic_2013]), e.g., version `1.2.3` fixing a security problem in version `1.2.2` or updates to an underlying system library, would be published to the parent tag `1.2`.
@@ -289,8 +293,8 @@ We refer you to the documentation on automated builds for details, see [Docker H
 Do not `docker push` a locally built image, because that counteracts the considerations outlined above.
 If a pre-built image is provided in a public image registry, do not forget to direct the user to it in your documentation, e.g. in the `README` file or in an article.
 
-The following list a selection of communities that produce widely used regularly updated images, including ready-to-use images with preinstalled software stacks.
-Do take advantage of images with complex software environments, e.g., machine learning tool stacks, or a specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library.
+The following list a selection of communities that produce widely used regularly updated images, including ready-to-use images with preinstalled collections of software configured to work out of the box.
+Do take advantage of images especially for complex software environments, e.g., machine learning tool stacks, or a specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library.
 
 - [Rocker](https://www.rocker-project.org/) for R and RStudio images [@boettiger_introduction_2017]
 - [Bioconductor Docker images](https://bioconductor.org/help/docker/) for bioinformatics with R
@@ -486,6 +490,7 @@ You should regularly re-build the image using the `--no-cache` option to learn a
 Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
 You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
 A recommended ordering based on these considerations is as follows.
+You can use comments to visually separate these sections in your file (cf. Listing&nbsp;1).
 
 1. System libraries
 2. Language-specific libraries or modules
@@ -568,7 +573,7 @@ The version pinning capabilities of these file formats and package managers are 
 As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might adjust the user to enable particular usages.
 It is common to use images with the default user `root`, which is required for installing system dependencies.
 We recommend making sure that the image works without specifying any users, and to document precisely if your image deviates from that.
-One reason you will encounter base images running a non-root user (popular examples are the Jupyter and Rocker image stacks) is to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
+One reason you will encounter base images running a non-root user (popular examples are the Jupyter and Rocker images) is to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 
 # 7. Mount user scripts and data {-}
 \rulelabel{7}{rule:mount}
@@ -730,24 +735,27 @@ This variety of approaches render seemingly more convenient uncontainerised envi
 
 Because a `Dockerfile` is a plain text-based format, it works well with version control systems.
 Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
+Most importantly, you should publish _all_ files `COPY`ied into the image, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+
 Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building and executing your image in an independent environment.
 Continuous integration increases stability and trust, and gives the ability to publish images automatically.
 Automation strategies exist to build and test images for multiple platforms and software versions, even with CI.
 Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
 Furthermore, the commit messages in your version controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container image and the git repository.
 
-While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally a simple and clear approach to provide one `Dockerfile` per project.
-Alternatively, you could build, or even better contribute to existing, _image stacks_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
-We recommend avoiding this at the cost of a longer `Dockerfile`, which can be mitigated with consistent form (see&nbsp;\ruleref{rule:formatting}).
-Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally feasible to provide one `Dockerfile` per project.
+Alternatively, you could write multiple `Dockerfile`s starting `FROM` one another, i.e., write your own base images.
+However, because multiple files scatter information across multiple places, we recommend avoiding this at the cost of a longer `Dockerfile`, which can be mitigated with formatting (see&nbsp;\ruleref{rule:formatting}).
 
-It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
+It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to one another.
 When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
 You can even run projects in parallel that do not share ports without interference.
 To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019] or community templates (e.g., [@marwick_rrtools_2019]) can provide required structure and files, e.g., for documentation, CI, and licenses, for getting started.
 If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
 Part of your project template should be a protocol for publishing the `Dockerfile` and even exporting the image to a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
+A template is preferable to your own set of base images because of the maintenance efforts the base images require.
+Instead, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs instead of building your own independent solution.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 \rulelabel{10}{rule:usage}
