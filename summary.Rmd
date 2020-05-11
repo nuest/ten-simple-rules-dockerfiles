@@ -11,7 +11,7 @@ Summary
     b. Publish your own images with version tags [revise]
 3. Format for clarity
     a. Use indentation, line breaks and unabbreviated arguments
-    b. Clarity > brevity
+    b. Clarity is better than brevity
     c. Group related commands
 4. Document within the Dockerfile
     a. Add comments explaining the steps
