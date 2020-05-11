@@ -531,6 +531,8 @@ obtain them again.
 
 \emph{Listing~1}: \texttt{Dockerfile} full example.
 
+\newpage
+
 \hypertarget{consider-tools-to-assist-with-dockerfile-generation}{%
 \section*{1. Consider tools to assist with Dockerfile
 generation}\label{consider-tools-to-assist-with-dockerfile-generation}}
@@ -835,9 +837,9 @@ should be documented in the \texttt{Dockerfile}. All instructions can be
 grouped starting with a short comment, which also makes it easier to
 spot changes if your \texttt{Dockerfile} is managed in some version
 control system (see
-\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). Here is a
-selection of typical kinds of comments that are useful to include in a
-\texttt{Dockerfile}:
+\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). Listing~2
+shows a selection of typical kinds of comments that are useful to
+include in a \texttt{Dockerfile}.
 
 \scriptsize
 
@@ -866,7 +868,7 @@ selection of typical kinds of comments that are useful to include in a
 
 \normalsize
 
-\label{lst:comments} \emph{Listing~2}: Example comments.
+\emph{Listing~2}: Example comments.
 
 \hypertarget{add-metadata-as-labels}{%
 \subsection{Add metadata as labels}\label{add-metadata-as-labels}}
@@ -877,7 +879,8 @@ such as the version of Docker used for building the image. The
 instruction} can add \emph{custom metadata} to images. You can view all
 labels with
 \href{https://docs.docker.com/engine/reference/commandline/inspect/}{\texttt{docker\ inspect}}
-command. Labels serve as structured metadata that can be leveraged by
+command. Listing~3 shows the most relevant ones for data science
+workflows. Labels serve as structured metadata that can be leveraged by
 services, e.g., https://microbadger.com/labels. For example, software
 versions of containerised applications (cf.~{[}14{]}), licenses, and
 maintainer contact information are commonly seen and very useful if a
@@ -891,7 +894,13 @@ identifiers such as \href{https://orcid.org/}{ORCID identifiers}, DOIs
 of the research compendium
 (cf.~\url{https://research-compendium.science}), e.g.,
 \href{https://help.zenodo.org/}{reserved on Zenodo}, or a funding
-agency's grant number.
+agency's grant number. You can use the
+\href{https://docs.docker.com/engine/reference/builder/\#arg}{\texttt{ARG}
+instruction} to pass variables at build time, for example to pass values
+into labels, such as the current date or version control revision.
+However, a script or \texttt{Makefile} might be required to not forget
+setting the argument (see
+\hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}).
 
 The OCI Image Format Specification provides some common label keys (see
 the ``Annotations'' section in {[}39{]}) to help standardise field names
@@ -916,17 +925,10 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 \StringTok{'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf'}\NormalTok{ \textbackslash{}}
 \NormalTok{  org.opencontainers.image.version=}\StringTok{'1.0.0'}
 
-\CommentTok{# This ARG instruction adds a build-time variable with the default value 'unspecified'}
-\CommentTok{# Set it during `docker build` as follows to insert the current date and time into the }
-\CommentTok{# label 'org.opencontainers.image.created':}
-\CommentTok{#   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")}
-\KeywordTok{ARG}\NormalTok{ BUILD_DATE unspecified}
-
 \KeywordTok{LABEL}\NormalTok{ org.opencontainers.image.vendor=}\StringTok{'Ten Simple Institute, Uni of Rules'}\NormalTok{ \textbackslash{}}
 \NormalTok{  org.opencontainers.image.description=}\StringTok{'Reproducible workflow image'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.created=$BUILD_DATE \textbackslash{}}
 \NormalTok{  org.opencontainers.image.licenses=}\StringTok{'Apache-2.0'}
-  
+
 \KeywordTok{LABEL}\NormalTok{ edu.science.data.group.project=}\StringTok{'Find out something (Grant #123456)'}\NormalTok{ \textbackslash{}}
 \NormalTok{  edu.science.data.group.name=}\StringTok{'Data Science Lab'}\NormalTok{ \textbackslash{}}
 \NormalTok{  author.orcid=}\StringTok{'0000-0002-1825-0097'}
@@ -935,7 +937,58 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 
 \normalsize
 
-\emph{Listing~3}: Example labels.
+\emph{Listing~3}: Commonly used labels.
+
+\hypertarget{define-versions-parameters-and-paths-once}{%
+\subsection{Define versions, parameters, and paths
+once}\label{define-versions-parameters-and-paths-once}}
+
+The
+\href{https://docs.docker.com/engine/reference/builder/\#env}{\texttt{ENV}
+instruction} in a \texttt{Dockerfile} allows for defining environment
+variables. These variables persist inside the container and can be
+useful for example for (i) setting software versions or paths and
+reusing them across multiple instructions to avoid mistakes, (ii)
+specifying metadata intended to be discovered by installed libraries or
+software, or (ii) adding binaries to the path (\texttt{PATH}) or library
+path (\texttt{LD\_LIBRARY\_PATH}). You should be careful to distinguish
+these environment variables from those that might vary and be required
+at runtime. For runtime environment variables, either to set a new
+variable or override one set in the container, you can use the
+\texttt{-\/-env} parameter of \texttt{docker\ run}.
+
+\scriptsize
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Install UsefulSoft tool in specific version from source}
+\KeywordTok{ENV}\NormalTok{ USEFULSOFT_VERSION 1.0.0}
+\KeywordTok{ENV}\NormalTok{ INSTALL_TEMP=/tmp/useful \textbackslash{}}
+\NormalTok{  INSTALL_TARGET=/usr/bin}
+  
+\KeywordTok{RUN}\NormalTok{ wget http://download-server.com/usefule_software/$USEFULSOFT_VERSION/$USEFULSOFT_VERSION.zip && \textbackslash{}}
+\NormalTok{  unzip $USEFULSOFT_VERSION.zip && \textbackslash{}}
+\NormalTok{  cd $USEFULSOFT_VERSION && \textbackslash{}}
+\NormalTok{  bash install.sh --tempdir $INSTALL_TEMP --target $INSTALL_TARGET && \textbackslash{}}
+\NormalTok{  cd .. && \textbackslash{}}
+\NormalTok{  rm -r $INSTALL_TEMP $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip}
+
+\CommentTok{# Puth UsefulSoft tool on the path for subsequent instructions}
+\KeywordTok{ENV}\NormalTok{ PATH $PATH:$INSTALL_TARGET}
+
+\CommentTok{# Define number of cores used by PowerfulAlgorithm to something that is widely available}
+\KeywordTok{ENV}\NormalTok{ POWER_ALG_CORES 2}
+
+\CommentTok{### Usage instructions }\AlertTok{###}
+\CommentTok{# [...]}
+\CommentTok{# Run the image (defining the number of cores used):}
+\CommentTok{# > docker run --it --env POWER_ALG_CORES 32 my_workflow}
+\end{Highlighting}
+\end{Shaded}
+
+\normalsize
+
+\emph{Listing~4}: Environment variables.
 
 \hypertarget{include-usage-instructions}{%
 \subsection{Include usage
@@ -1311,7 +1364,7 @@ multiple entrypoints, environments, help messages, labels, and even
 install sequences. With plain Docker, you can override the defaults as
 part of the \texttt{docker\ run} command or in an extra
 \texttt{Dockerfile} using the primary image as a base, as shown in
-Listing~4. In any case you should document different variants very well,
+Listing~5. In any case you should document different variants very well,
 potentially capture build and run commands in a \texttt{Makefile}
 {[}26{]}. If you use a \texttt{Makefile}, then keep it in the same
 repository (see \hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}})
@@ -1319,8 +1372,9 @@ and include instructions for its usage (see
 \hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). To support
 advanced custom configuration, it is helpful to expose settings via a
 configuration file, which can be bind mounted from the host {[}47{]},
-via environment variables {[}49{]}, or via wrappers using Docker, such
-as Kliko {[}50{]}.
+via environment variables (see
+\hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} and {[}49{]}),
+or via wrappers using Docker, such as Kliko {[}50{]}.
 
 \scriptsize
 
@@ -1352,7 +1406,7 @@ as Kliko {[}50{]}.
 
 \normalsize
 
-\emph{Listing 4}: Workflow \texttt{Dockerfile} and derived ``runner
+\emph{Listing~5}: Workflow \texttt{Dockerfile} and derived ``runner
 image'' \texttt{Dockerfile} with file name \texttt{Dockerfile.runner}.
 \newline
 

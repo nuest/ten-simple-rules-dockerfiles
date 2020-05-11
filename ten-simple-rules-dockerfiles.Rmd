@@ -353,7 +353,7 @@ If you copy instructions from another `Dockerfile`, acknowledge the source in a 
 It can even be helpful to include comments about commands that did not work so you do not repeat past mistakes.
 If you find that you need to remember an undocumented step, that is an indication that it should be documented in the `Dockerfile`.
 All instructions can be grouped starting with a short comment, which also makes it easier to spot changes if your `Dockerfile` is managed in some version control system (see \ruleref{rule:publish}).
-Here is a selection of typical kinds of comments that are useful to include in a `Dockerfile`:
+Listing&nbsp;2 shows a selection of typical kinds of comments that are useful to include in a `Dockerfile`.
 
 \scriptsize
 
@@ -379,7 +379,7 @@ RUN git clone http://url.of/repo && \
 ```
 
 \normalsize
-\label{lst:comments}
+
 _Listing&nbsp;2_: Example comments.
 
 ## Add metadata as labels
@@ -387,11 +387,14 @@ _Listing&nbsp;2_: Example comments.
 Docker captures useful information in the image metadata automatically, such as the version of Docker used for building the image.
 The [`LABEL` instruction](https://docs.docker.com/engine/reference/builder/#label) can add _custom metadata_ to images.
 You can view all labels with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
+Listing&nbsp;3 shows the most relevant ones for data science workflows.
 Labels serve as structured metadata that can be leveraged by services, e.g., https://microbadger.com/labels.
 For example, software versions of containerised applications (cf.&nbsp;@gruening_recommendations_2019), licenses, and maintainer contact information are commonly seen and very useful if a `Dockerfile` is discovered out of context.
 Licensing information should especially cover the license of your own code, and may point to a `LICENSE` file within the image (cf.&nbsp;@gruening_recommendations_2019).
 While you can add arbitrarily complex information with labels, for data science scenarios the user-facing documentation is much more important.
 Relevant metadata that might be more utilised with future tools includes global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
+You can use the [`ARG` instruction](https://docs.docker.com/engine/reference/builder/#arg) to pass variables at build time, for example to pass values into labels, such as the current date or version control revision.
+However, a script or `Makefile` might be required to not forget setting the argument (see \ruleref{rule:usage}).
 
 The OCI Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardise field names across container tools, as shown below.
 Some keys hold specific content, e.g., `org.opencontainers.image.documentation` is a URL as character string pointing to documentation on the image and `org.opencontainers.image.licenses` is the [SPDX license identifier](https://spdx.org/licenses/).
@@ -408,17 +411,10 @@ LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
 'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf' \
   org.opencontainers.image.version='1.0.0'
 
-# This ARG instruction adds a build-time variable with the default value 'unspecified'
-# Set it during `docker build` as follows to insert the current date and time into the 
-# label 'org.opencontainers.image.created':
-#   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-ARG BUILD_DATE unspecified
-
 LABEL org.opencontainers.image.vendor='Ten Simple Institute, Uni of Rules' \
   org.opencontainers.image.description='Reproducible workflow image' \
-  org.opencontainers.image.created=$BUILD_DATE \
   org.opencontainers.image.licenses='Apache-2.0'
-  
+
 LABEL edu.science.data.group.project='Find out something (Grant #123456)' \
   edu.science.data.group.name='Data Science Lab' \
   author.orcid='0000-0002-1825-0097'
@@ -426,7 +422,45 @@ LABEL edu.science.data.group.project='Find out something (Grant #123456)' \
 
 \normalsize
 
-_Listing&nbsp;3_: Example labels.
+_Listing&nbsp;3_: Commonly used labels.
+
+## Define versions, parameters, and paths once
+
+The [`ENV` instruction](https://docs.docker.com/engine/reference/builder/#env) in a `Dockerfile` allows for defining environment variables.
+These variables persist inside the container and can be useful for example for (i) setting software versions or paths and reusing them across multiple instructions to avoid mistakes, (ii) specifying metadata intended to be discovered by installed libraries or software, or (ii) adding binaries to the path (`PATH`) or library path (`LD_LIBRARY_PATH`).
+You should be careful to distinguish these environment variables from those that might vary and be required at runtime.
+For runtime environment variables, either to set a new variable or override one set in the container, you can use the `--env` parameter of `docker run`.
+
+\scriptsize
+
+```dockerfile
+# Install UsefulSoft tool in specific version from source
+ENV USEFULSOFT_VERSION 1.0.0
+ENV INSTALL_TEMP=/tmp/useful \
+  INSTALL_TARGET=/usr/bin
+  
+RUN wget http://download-server.com/usefule_software/$USEFULSOFT_VERSION/$USEFULSOFT_VERSION.zip && \
+  unzip $USEFULSOFT_VERSION.zip && \
+  cd $USEFULSOFT_VERSION && \
+  bash install.sh --tempdir $INSTALL_TEMP --target $INSTALL_TARGET && \
+  cd .. && \
+  rm -r $INSTALL_TEMP $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip
+
+# Puth UsefulSoft tool on the path for subsequent instructions
+ENV PATH $PATH:$INSTALL_TARGET
+
+# Define number of cores used by PowerfulAlgorithm to something that is widely available
+ENV POWER_ALG_CORES 2
+
+### Usage instructions ###
+# [...]
+# Run the image (defining the number of cores used):
+# > docker run --it --env POWER_ALG_CORES 32 my_workflow
+```
+
+\normalsize
+
+_Listing&nbsp;4_: Environment variables.
 
 ## Include usage instructions
 
@@ -603,10 +637,10 @@ The container entrypoint should _not_ execute the workflow, as the user is likel
 As the maintainer of the workflow, you should write clear instructions for how to properly interact with the container, both for yourself and others.
 A possible weakness with using containers is the limitation on only providing one default command and entrypoint.
 However tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
-With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;4.
+With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;5.
 In any case you should document different variants very well, potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
 If you use a `Makefile`, then keep it in the same repository (see \ruleref{rule:mount}) and include instructions for its usage (see \ruleref{rule:document}).
-To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables [@knoth_reproducibility_2017], or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
+To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see \ruleref{rule:pinning} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
 \scriptsize
 
@@ -618,7 +652,6 @@ FROM jupyter/datascience-notebook:python-3.7.6
 # $ docker build --tag workflow:1.0 .
 # $ docker run workflow:1.0
 ```
-
 ```Dockerfile
 # interactive image
 FROM workflow:1.0
@@ -634,7 +667,7 @@ CMD ["/workspace/run-all.sh"]
 
 \normalsize
 
-_Listing 4_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with file name `Dockerfile.runner`. \newline
+_Listing&nbsp;5_: Workflow `Dockerfile` and derived "runner image" `Dockerfile` with file name `Dockerfile.runner`. \newline
 
 _Interactive graphical interfaces_, such as [RStudio](https://rstudio.com/products/rstudio/), [Jupyter](https://jupyter.org/), or [Visual Studio Code](https://code.visualstudio.com/), can run in a container to be used across operating systems and both locally and remote via a regular web browser.
 The HTML-based user interface is exposed over HTTP.
