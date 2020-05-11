@@ -125,7 +125,7 @@ Akin to compiling source code for a programming language, creating a container a
 Similarly to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;1 for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command (analogous to compiling the source code into an executable binary). Finally the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%'}
+```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command (analogous to compiling the source code into an executable binary). Finally the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
 knitr::include_graphics("container-analogy.png")
 ```
 
@@ -138,19 +138,21 @@ While some may argue for reasons to not publish reproducibly, e.g., lack of time
 If a researcher is able to find and create containers or write a `Dockerfile` to address their most common use cases, then arguably it will not be extra work after this initial set up (cf.&nbsp;README of @marwick_madjebebe_2015).
 In fact, the `Dockerfile` itself can be a powerful documentation to show from where data and code was derived, i.e. downloaded or installed, and consequently where a third party might obtain them again.
 
-\footnotesize
+\clearpage
+
+\scriptsize
 
 ```dockerfile
 FROM rocker/verse:3.6.2
 
 # install Java, needed for package rJava
-RUN apt-get update \
-  && apt-get install -y default-jdk \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+  apt-get install -y default-jdk && \
+  rm -rf /var/lib/apt/lists/*
 
 # install system dependencies for R packages
-RUN apt-get update \
-  && apt-get install
+RUN apt-get update && \
+  apt-get install
     # needed for RNetCDF:
     netcdf udunits-2 \
     # needed for ...:
@@ -166,16 +168,16 @@ RUN install2.r --error \
 WORKDIR /tmp
     
 # Install latest version of crucial tool with bugfix from source
-RUN apt-get update \
-  && apt-get install -y \
-    build-essential \
-  && wget https://download.url/crucialware/version-1.2.3.zip \
-  && unzip *.zip -d crucialware \
-  && cd crucialware \
-  && ./configure && make && make install \
-  && rm -rf /tmp/crucialware version-*.zip \
-  && rm -rf /var/lib/apt/lists/*
-  
+RUN apt-get update && \
+  apt-get install -y \
+    build-essential && \
+  wget https://download.url/crucialware/version-1.2.3.zip && \
+  unzip *.zip -d crucialware && \
+  cd crucialware && \
+  ./configure && make && make install && \
+  rm -rf /tmp/crucialware version-*.zip && \
+  rm -rf /var/lib/apt/lists/*
+
 # Install Python tools
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
@@ -210,6 +212,8 @@ COPY plots.R plots.R
 \normalsize
 
 _Listing&nbsp;1_: `Dockerfile` full example.
+
+\newpage
 
 # 1. Consider tools to assist with Dockerfile generation {-}
 \rulelabel{1}{rule:tools}
@@ -301,6 +305,7 @@ For example, here is how we would use a base image `verse`, which provides the p
 ```dockerfile
 FROM docker.io/rocker/r-ver:3.5.2
 ```
+
 \normalsize
 
 # 3. Format intentionally and favour clarity
@@ -312,7 +317,6 @@ This means that you should use indentation, new lines, and comments to make your
 Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
 Use `\` at the end of a line to break a single command into multiple lines.
 This will ensure that no single line gets too long to comfortably read.
-<!--You may choose to put connecting syntactic elements at the beginning of lines to avoid faulty placement or lingering `&&` as shown in Listing&nbsp;2.-->
 Use long versions of parameters for readability (e.g., `--input` instead of `-i`).
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it does not exist but also persists the change across multiple `RUN` instructions.
 
@@ -351,7 +355,7 @@ If you find that you need to remember an undocumented step, that is an indicatio
 All instructions can be grouped starting with a short comment, which also makes it easier to spot changes if your `Dockerfile` is managed in some version control system (see \ruleref{rule:publish}).
 Here is a selection of typical kinds of comments that are useful to include in a `Dockerfile`:
 
-\footnotesize
+\scriptsize
 
 ```dockerfile
 # apt-get install specific version, use 'apt-cache madison <pkg>' 
@@ -359,23 +363,23 @@ Here is a selection of typical kinds of comments that are useful to include in a
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
 # RUN command spreading several lines
-RUN R -e 'getOption("repos")' \
-  && install2.r \
+RUN R -e 'getOption("repos")' && \
+  install2.r \
     fortunes \
     here
 
 # this library must be installed from source to get version newer
 # than in sources
-RUN git clone http://url.of/repo \
-  && cd repo \
-  && make build \
-  && make install
+RUN git clone http://url.of/repo && \
+  cd repo && \
+  make build && \
+  make install
 
-# following commands from instructions at <LINK HERE>
+# following commands from instructions at https://gitlab.com/helpful/repo
 ```
 
 \normalsize
-
+\label{lst:comments}
 _Listing&nbsp;2_: Example comments.
 
 ## Add metadata as labels
@@ -394,7 +398,7 @@ Some keys hold specific content, e.g., `org.opencontainers.image.documentation` 
 You may also commonly find labels in the deprecated [`org.label-schema`-specification](http://label-schema.org/rc1/) format e.g., `org.label-schema.description`.
 However, we encourage the use of the OCI schema in all new and unlabelled projects.
 
-\footnotesize
+\scriptsize
 
 ```dockerfile
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
@@ -604,7 +608,7 @@ In any case you should document different variants very well, potentially captur
 If you use a `Makefile`, then keep it in the same repository (see \ruleref{rule:mount}) and include instructions for its usage (see \ruleref{rule:document}).
 To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables [@knoth_reproducibility_2017], or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
-\footnotesize
+\scriptsize
 
 ```Dockerfile
 # base image (interactive)
