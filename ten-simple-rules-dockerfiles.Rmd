@@ -368,6 +368,8 @@ Listing&nbsp;2 shows a selection of typical kinds of comments that are useful to
 \scriptsize
 
 ```dockerfile
+...
+
 # apt-get install specific version, use 'apt-cache madison <pkg>' 
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
@@ -390,7 +392,7 @@ RUN git clone http://url.of/repo && \
 
 \normalsize
 
-_Listing&nbsp;2_: Example comments.
+_Listing&nbsp;2_: Partial `Dockerfile` with examples for helpful comments.
 
 ## Add metadata as labels
 
@@ -414,6 +416,8 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 \scriptsize
 
 ```dockerfile
+...
+
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
   org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, Marwick, Eglen, Head, and Hirst' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
@@ -432,7 +436,7 @@ LABEL edu.science.data.group.project='Find out something (Grant #123456)' \
 
 \normalsize
 
-_Listing&nbsp;3_: Commonly used labels.
+_Listing&nbsp;3_: Partial `Dockerfile` with commonly used labels.
 
 ## Define versions, parameters, and paths once
 
@@ -445,6 +449,8 @@ For runtime environment variables, either to set a new variable or override one 
 \scriptsize
 
 ```dockerfile
+...
+
 # Define number of cores used by PowerfulAlgorithm to something that is widely available
 ENV POWER_ALG_CORES 2
 
@@ -452,12 +458,12 @@ ENV POWER_ALG_CORES 2
 ENV USEFULSOFT_VERSION=1.0.0 \
   USEFULSOFT_INSTALLDIR=/workspace/bin
 
-RUN wget http://download-server.com/usefule_software/$USEFULSOFT_VERSION/$USEFULSOFT_VERSION.zip && \
-  unzip $USEFULSOFT_VERSION.zip && \
-  cd $USEFULSOFT_VERSION && \
+RUN wget http://download-server.com/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \
+  unzip useful-$USEFULSOFT_VERSION.zip -d useful-src && \
+  cd useful-src && \
   bash install.sh --target $USEFULSOFT_INSTALLDIR && \
   cd .. && \
-  rm -r $USEFULSOFT_VERSION $USEFULSOFT_VERSION.zip
+  rm -r useful-src useful-$USEFULSOFT_VERSION.zip
 
 # Puth UsefulSoft tool on the path for subsequent instructions
 ENV PATH $PATH:$USEFULSOFT_INSTALLDIR
@@ -470,7 +476,7 @@ ENV PATH $PATH:$USEFULSOFT_INSTALLDIR
 
 \normalsize
 
-_Listing&nbsp;4_: Environment variables.
+_Listing&nbsp;4_: Partial `Dockerfile` showing usage of environment variables with the `ENV` instruction.
 
 ## Include usage instructions
 
@@ -820,8 +826,8 @@ We thank Dav Clark who provided feedback on the preprint [@nust_ten_2020] of thi
 
 # Author contributions {#contributions .unnumbered}
 
-DN conceived the idea and contributed to conceptualisation, methodology, and writing - original draft.
-VS contributed to conceptualisation, methodology, and writing - original draft.
+DN conceived the idea and contributed to conceptualisation, methodology, and writing - original draft, review & editing.
+VS contributed to conceptualisation, methodology, and writing - original draft, review & editing.
 BM contributed to writing – review & editing.
 SJE contributed to conceptualisation and writing – review & editing.
 THe contributed to conceptualisation.
