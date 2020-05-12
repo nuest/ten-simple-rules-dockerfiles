@@ -528,7 +528,7 @@ System library versions can largely come from the base image tag that you choose
 However, you can also install specific versions of system packages with the respective package manager.
 For example, you might want to demonstrate a bug, prevent a bug in an updated version, or pin a working version if you suspect an update could lead to a problem.
 Generally, system libraries are more stable than software modules supporting analysis scripts, but in some cases they can be highly relevant to your workflow.
-_Installing from source_ is a useful way to install very specific versions, however it comes at the cost of needing to build libraries.
+_Installing from source_ is a useful way to install very specific versions, but it comes at the cost of longer build time and more complex instructions.
 Here are some examples of terminal commands that will list the currently installed versions of software on your system:
 
 - Debian/Ubuntu: `dpkg --list`
