@@ -76,7 +76,7 @@ This sharing of code files is enabled by collaboration platforms such as [GitHub
 The sharing of the computing environment, on the other hand, is enabled by containerisation, which allows for documenting and sharing entire workflows in a comprehensive way.
 Importantly, this sharing of computational assets is paramount for increasing the reproducibility of computational research.
 While "papers" based on the traditional journal article format can share extensive details about the research, computational research is often far too complicated to be effectively disseminated in this format [@marwick_how_2015]. 
-In this field, because a researcher's (CRB comment: instead of "researcher's", maybe "study's" or "paper's" or something similar?) actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010], containerisation is needed.
+In this field and whenever software is used to analyse or visualise data, containerisation is needed because a papers's actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010].
 
 Containerisation helps provide instructions for packaging the building blocks of computer-based research (i.e., code, data, documentation, and the computing environment).
 Specifically, containers are built from plain text files that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
@@ -84,8 +84,8 @@ By providing this recipe, authors of scientific articles greatly improve their w
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment, which are both more lightweight and transparent than virtual machines.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
-While several tutorials exist on how to use containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017], there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
-Based on the article by Guening et&nbsp;al. [@gruening_recommendations_2019], which gives very helpful recommendations for packaging reusable software in a container, here we introduce these instructions for the popular `Dockerfile` format, and we focus on containers that encapsulate data science workflows. (CRB comment: I wasn't sure how to interpret the link between the Guening article and the intstructions you give here, so I tried to revise to make this link clearer. If the revisions are not exactly what you mean, revise further here.)
+While several tutorials exist on how to use containers for reproducible research [@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017] and Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging reusable software in a container, there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
+Here we introduce these instructions for the popular `Dockerfile` format in the context of data science workflows.
 
 # Prerequisites & scope
 
@@ -101,8 +101,8 @@ A `docker-compose.yml` configuration file allows for defining volumes, environme
 
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the underlying technology actually works, researchers should leverage containerisation following good practices.
-The practices that are to be discussed in this article are strongly related to software engineering in general and research software engineering (RSEng) in particular, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
-We encourage you to reach out to your local or national RSE (CRB comment: Should this abbreviation be "RSEng"?) community if you have questions on software development in research that go beyond the rules of this work.
+The practices that are to be discussed in this article are strongly related to software engineering in general and research software engineering in particular, which is concerned with quality, training, and recognition of software in science [@cohen_four_2020].
+We encourage you to reach out to your local or national community of research software engineers (see [list of organisations](https://en.wikipedia.org/wiki/Research_software_engineering)) if you have questions on software development in research that go beyond the rules of this work.
 
 While many different container technologies exist, this article focuses on Docker [@wikipedia_contributors_docker_2019].
 Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017), and our observations indicate it is the most widely used container technology in academic data science.
@@ -476,7 +476,7 @@ It is often helpful to provide usage instructions, i.e., how to `docker build` a
 Such documentation is especially relevant if volume mounts, specific names, or ports are important for using the container; see, for example, the final lines of Listing&nbsp;1.
 These instructions are not limited to `docker <command>` but include the usage of bespoke scripts, a `Makefile`, or `docker-compose` (see \ruleref{rule:interactive} and \ruleref{rule:usage}).
 Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
-Thus, usage instructions (CRB comment: I wasn't sure what "It helps others" meant in the original text, so I tried to revise. OK changes here? Check and revise further as needed) help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
+Thus, usage instructions help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
 # 5. Order instructions
@@ -571,7 +571,7 @@ Be aware of the risk of depending on such repositories, especially if they are o
 Such an installation from a source gives you much freedom, including the freedom to shoot yourself in the foot!
 The version pinning capabilities of these file formats and package managers are described in their respective documentation.
 
-As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might adjust the user to enable particular usages. (CRB comment: I don't really know what "adjust the user" means here. Can you clarify?)
+As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might change the user for particular instructions, which can impact by which user account some commands can be run within the container.
 It is common to use images with the default user `root`, which is required for installing system dependencies.
 We recommend making sure that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
 One reason you will encounter base images running a non-root user (popular examples are the Jupyter and Rocker images) is to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
@@ -595,8 +595,8 @@ If the code and `Dockerfile` are in the same repository, the origin and results 
 Storing _data files_ outside of the container allows for handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
 Do not include such data in an image.
 To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file, which excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
-Ignoring data files also speeds up the build in cases where there are very large files or many small files; for many small files, one can thus ignore, for example, the `.git` folder of the Git version control system.
-When ignoring data (CRB comment: Right idea here? Revise further as needed), you should include dummy or test data into the image to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual (see also "functional testing logic" in @gruening_recommendations_2019).
+Ignoring data files also speeds up the build in cases where there are very large files or many small files; for example, large data files or the `.git` folder of the [Git version control system](https://git-scm.com/), which contains many small files across numerous folders, are usually not needed during image build.
+In any case, you should include dummy or test data into the image to ensure that a container is functional without the actual dataset, e.g., for automated tests, instructions in the user manual, or peer review (see also "functional testing logic" in @gruening_recommendations_2019).
 For all these cases, you should provide clear instructions for users in the `README` on how to obtain actual or dummy data.
 When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
 
@@ -700,7 +700,7 @@ A person who is unfamiliar with Docker but wants to use your image may rely on g
 _Interactive usage of a command-line interface_ is quite straightforward to access from containers, if users are familiar with this style of user interface.
 Running the container will provide a shell where a tool can be used and where help or error messages can assist the user.
 For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
-If your workflow can be executed via a command line client, you may use that to validate correct functionality of an image in automated builds, e.g., by using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, such as with an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019]. (CRB comment: I revised the text after "e.g." to indicate that there are three examples here - the toy example, the checking successful responses from HTTP endopoints example, and the controller example - check these revisions and revise further as needed.)
+If your workflow can be executed via a command line client, you may use that to validate correct functionality of an image in automated builds, e.g., by using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, such as with an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
 
 The following example runs a simple R command counting the lines in this article's source file.
 The file path is passed as an environment variable.
@@ -728,7 +728,8 @@ print(paste('Number of lines: ', l))
 If there is only a regular desktop application, the host's window manager can be connected to the container.
 Although this raises notable security issues, they can be addressed by using the "X11 forwarding" natively supported by Singularity [@singularity_frequently_2019], which can execute Docker containers, or by leveraging supporting tools such as `x11docker` [@viereck_x11docker_2019].
 Other alternatives include bridge containers [@yaremenko_docker-x11-bridge_2019] and exposing a regular desktop via the browser (e.g., for Jupyter Hub [@yuvipanda_jupyter-desktop-server_2019]).
-This variety of approaches renders seemingly more convenient uncontainerised environments, i.e., just using one's local machine is unnecessary in favour of reproducibility and portability.(CRB comment: OK revision to the phrase after "i.e."? Revise further as needed.)
+This variety of approaches renders seemingly more convenient uncontainerised environments unnecessary.
+Just using one's local machine is only slightly more comfortable but much less reproducible and portable.
 
 # 9. Use one Dockerfile per project and publish it with a version control system {-}
 \rulelabel{9}{rule:publish}
