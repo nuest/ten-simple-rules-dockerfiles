@@ -447,7 +447,8 @@ _Listing&nbsp;3_: Commonly used labels.
 The [`ENV` instruction](https://docs.docker.com/engine/reference/builder/#env) in a `Dockerfile` allows for defining environment variables.
 These variables persist inside the container and can be useful for example for (i) setting software versions or paths and reusing them across multiple instructions to avoid mistakes, (ii) specifying metadata intended to be discovered by installed libraries or software, or (iii) adding binaries to the path (`PATH`) or library path (`LD_LIBRARY_PATH`).
 You should be careful to distinguish these environment variables from those that might vary and be required at runtime.
-For runtime environment variables, either to set a new variable or override one set in the container, you can use the `--env` parameter of `docker run`.
+Listing&nbsp;4 shows some examples.
+For runtime environment variables, either to set a new variable or override one set in the container, you can use the `--env` parameter of `docker run` (see Listings&nbsp;4 and&nbsp;6).
 
 \scriptsize
 
@@ -735,6 +736,8 @@ print(paste('Number of lines: ', l))
 > print(paste('Number of lines: ', l))
 [1] "Number of lines:  568"
 ```
+
+_Listing&nbsp;6_: Passing a parameter via environment variable.
 
 \normalsize
 
