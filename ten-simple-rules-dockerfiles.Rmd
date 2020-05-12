@@ -326,7 +326,7 @@ FROM docker.io/rocker/r-ver:3.5.2
 
 \normalsize
 
-# 3. Format intentionally and favour clarity
+# 3. Format for clarity
 \rulelabel{3}{rule:formatting}
 \rulelabel{3}{rule:clarity}
 
@@ -366,7 +366,7 @@ While you will find `Dockerfile`s using [_build-time variables_](https://docs.do
 As you are writing the `Dockerfile`, be mindful of how other people (including future you!) will read it and why.
 Are your choices and commands being executed clearly, or is further comment warranted?
 To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or version control commit messages to give context for your specific decisions.
-For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job at explaining the reasoning and steps of the contained instructions.
+For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job of explaining the reasoning behind the contained instructions.
 If you copy instructions from another `Dockerfile`, acknowledge the source in a comment.
 It can even be helpful to include comments about commands that did not work so you do not repeat past mistakes.
 If you find that you need to remember an undocumented step, that is an indication that it should be documented in the `Dockerfile`.
