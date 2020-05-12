@@ -11,11 +11,11 @@ author:
   - name: Vanessa Sochat
     # https://github.com/vsoch
     email: vsochat@stanford.edu
-    affiliation: "Stanford Research Computing Center, Stanford University, Stanford, CA, US"
+    affiliation: "Stanford Research Computing Center, Stanford University, Stanford, CA, USA"
     orcid: 0000-0002-4387-3819
   - name: Ben Marwick
     # https://github.com/benmarwick
-    affiliation: 'Department of Anthropology, University of Washington, Seattle, USA'
+    affiliation: 'Department of Anthropology, University of Washington, Seattle, WA, USA'
     orcid: 0000-0001-7879-4531
     email: bmarwick@uw.edu
   - name: Stephen J. Eglen
@@ -36,7 +36,7 @@ author:
   - name: Benjamin Evans
     # https://github.com/bdevans
     email: benjamin.evans@bristol.ac.uk
-    affiliation: "School of Psychological Science, University of Bristol, GB"
+    affiliation: "School of Psychological Science, University of Bristol, Bristol, GB"
     orcid: 0000-0002-1734-6070
 abstract: |
   Computational science has been greatly improved by containers, which can package software and data dependencies.
@@ -131,7 +131,7 @@ Akin to compiling source code for a programming language, creating a container a
 Similar to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;1 for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command (analogous to compiling the source code into an executable binary). Finally the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
+```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
 knitr::include_graphics("container-analogy.png")
 ```
 
