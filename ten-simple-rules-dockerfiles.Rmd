@@ -89,12 +89,14 @@ Here we introduce these instructions for the popular `Dockerfile` format in the 
 
 # Prerequisites & scope
 
-To start with, we assume you have a scripted scientific workflow, i.e., you can, at least at a certain point in time, execute the full process with a fixed set of commands, for example `make prepare_data` followed by `Rscript analysis.R`, or only `python3 my-workflow.py`.
-Since containers that you eventually share with others can only run open source software, tools like Mathematica and MATLAB are outside the scope of this example; other workflows outside the scope of reproducible research are those that do not support scripted execution, as they do not fit well with containerisation.
-Furthermore, also outside the scope of these rules are workflows that interact with many petabytes of data and are executed in high performance computing (HPC) infrastructures.
-Using such HPC, job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right.
-For this article, we focus on workflows that typically run on single machine, e.g., a researcher's laptop computer or a virtual server.
-Readers might scope the data requirement to less than a terabyte and the compute requirement to a machine with 16 cores running over the weekend.
+To start with, we assume you have a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a fixed set of commands, for example `make prepare_data` followed by `Rscript analysis.R`, or only `python3 my-workflow.py`.
+Since containers that you eventually share with others can only run open source software, tools like Mathematica and Matlab are out of scope for this example.
+A workflow that does not support scripted execution is also out of scope for reproducible research, as it does not fit well with containerization.
+Furthermore, workflows interacting with many petabytes of data and executed in high-performance computing (HPC) infrastructures are out of scope.
+Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right. 
+For the HPC use case, we encourage the reader to look at Singularity [@kurtzer_singularity_2017].
+For this article, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server.
+The reader might scope the data requirement to less than a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
 Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
 A `docker-compose.yml` configuration file allows for defining volumes, environment variables, and exposed ports and helps users stick to _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
