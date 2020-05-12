@@ -230,7 +230,7 @@ _Listing&nbsp;1_: `Dockerfile` full example.
 Rule 1 could informally be described as "Don't bother to write a Dockerfile!".
 Writing a `Dockerfile` from scratch can be difficult, and even experts sometimes take shortcuts.
 Thus, a good strategy is to first look at tools that can help generate a `Dockerfile` for you.
-Such tools have likely thought about and implemented good practices, and they may even have incporporated newer practices when reapplied at a later point in time.
+Such tools have likely thought about and implemented good practices, and they may even have incorporated newer practices when reapplied at a later point in time.
 Therefore, the most important rule is to apply a multi-step process for your specific use case.
 
 First, you want to determine whether there is an existing container that you can use; if so, you want to be able to use it and add the instructions for doing so to your workflow documentation.
