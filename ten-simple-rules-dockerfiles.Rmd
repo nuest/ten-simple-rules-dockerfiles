@@ -317,7 +317,7 @@ FROM docker.io/rocker/r-ver:3.5.2
 
 \normalsize
 
-# 3. Format intentionally and favour clarity
+# 3. Format for clarity
 \rulelabel{3}{rule:formatting}
 \rulelabel{3}{rule:clarity}
 
@@ -356,7 +356,7 @@ Although you will find `Dockerfile`s that use [_build-time variables_](https://d
 As you are writing the `Dockerfile`, be mindful of how other people (including future you!) will read it and why.
 Are your choices and commands being executed clearly, or are further comments warranted?
 To assist others in making sense of your `Dockerfile`, you can add comments that include links to online forums, code repository issues, or version control commit messages to give context for your specific decisions.
-For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job of explaining the reasoning and steps of the contained instructions.
+For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstats/blob/master/Dockerfile) does a good job of explaining the reasoning behind the contained instructions.
 If you copy instructions from another `Dockerfile`, acknowledge the source in a comment.
 Also, it can be helpful to include comments about commands that did not work so you do not repeat past mistakes.
 Further, if you find that you need to remember an undocumented step, that is an indication this step should be documented in the `Dockerfile`.
@@ -394,9 +394,8 @@ _Listing&nbsp;2_: Example comments.
 
 Docker automatically captures useful information in the image metadata, such as the version of Docker used for building the image.
 The [`LABEL` instruction](https://docs.docker.com/engine/reference/builder/#label) can add _custom metadata_ to images.
-You can view all labels with the [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
-Listing&nbsp;3 shows the most relevant labels for data science workflows.
-
+You can view all labels and other image metadata with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
+Listing&nbsp;3 shows the most relevant ones for data science workflows.
 Labels serve as structured metadata that can be leveraged by services, e.g., https://microbadger.com/labels.
 For example, software versions of containerised applications (cf.&nbsp;@gruening_recommendations_2019), licenses, and maintainer contact information are commonly seen, and they are very useful if a `Dockerfile` is discovered out of context.
 Regarding licensing information, this should include the license of your own code and could point to a `LICENSE` file within the image (cf.&nbsp;@gruening_recommendations_2019).
@@ -438,7 +437,8 @@ _Listing&nbsp;3_: Commonly used labels.
 The [`ENV` instruction](https://docs.docker.com/engine/reference/builder/#env) in a `Dockerfile` allows for defining environment variables.
 These variables persist inside the container and can be useful, for example, for (a) setting software versions or paths and reusing them across multiple instructions to avoid mistakes, (b) specifying metadata intended to be discovered by installed libraries or software, or (c) adding binaries to the path (`PATH`) or library path (`LD_LIBRARY_PATH`).
 You should be careful to distinguish these environment variables from those that might vary and be required at runtime.
-For runtime environment variables, either to set a new variable or override one set in the container, you can use the `--env` parameter of `docker run`.
+Listing&nbsp;4 shows some examples.
+For runtime environment variables, either to set a new variable or override one set in the container, you can use the `--env` parameter of `docker run` (see Listings&nbsp;4 and&nbsp;6).
 
 \scriptsize
 
@@ -517,7 +517,7 @@ System library versions can largely come from the base image tag that you choose
 However, you can also install specific versions of system packages with the respective package manager.
 For example, you might want to demonstrate a bug, prevent a bug in an updated version, or pin a working version if you suspect an update could lead to a problem.
 Generally, system libraries are more stable than software modules supporting analysis scripts, but in some cases they can be highly relevant to your workflow.
-_Installing from source_ is a useful way to install very specific versions, but it comes at the cost of needing to build libraries.
+_Installing from source_ is a useful way to install very specific versions, but it comes at the cost of longer build time and more complex instructions.
 Here are some examples of terminal commands that will list the currently installed versions of software on your system:
 
 - Debian/Ubuntu: `dpkg --list`
@@ -722,6 +722,8 @@ print(paste('Number of lines: ', l))
 > print(paste('Number of lines: ', l))
 [1] "Number of lines:  568"
 ```
+
+_Listing&nbsp;6_: Passing a parameter via environment variable.
 
 \normalsize
 
