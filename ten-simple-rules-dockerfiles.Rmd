@@ -404,7 +404,7 @@ _Listing&nbsp;2_: Example comments.
 
 Docker captures useful information in the image metadata automatically, such as the version of Docker used for building the image.
 The [`LABEL` instruction](https://docs.docker.com/engine/reference/builder/#label) can add _custom metadata_ to images.
-You can view all labels with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
+You can view all labels and other image metadata with [`docker inspect`](https://docs.docker.com/engine/reference/commandline/inspect/) command.
 Listing&nbsp;3 shows the most relevant ones for data science workflows.
 Labels serve as structured metadata that can be leveraged by services, e.g., https://microbadger.com/labels.
 For example, software versions of containerised applications (cf.&nbsp;@gruening_recommendations_2019), licenses, and maintainer contact information are commonly seen and very useful if a `Dockerfile` is discovered out of context.
