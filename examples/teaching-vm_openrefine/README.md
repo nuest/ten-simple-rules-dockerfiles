@@ -21,3 +21,4 @@ License information is currently missing (see [related issue](https://github.com
 - Skipped installation of `apt-show-versions`, since undocumented and usage unclear; `dpkg -l` still available in the container
 - Using default USER, though potentially the `oustudent` users with id `100` is really needed for the image to be deployed in the target infrastructure, see also [`settings.sh`](https://github.com/innovationOUtside/tm351vm/blob/master/build/base/settings.sh) in the repo
 - Use `WORKDIR` instead of `mkdir -p` for working directory
+- Don't download to `/root` (may cause problems if ported to Singularity)

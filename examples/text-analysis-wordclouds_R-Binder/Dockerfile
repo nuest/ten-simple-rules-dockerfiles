@@ -19,8 +19,7 @@ RUN apt-get update \
 COPY install.R ${HOME}
 RUN R --quiet -f install.R
 
-## Copies all repo files into the Docker Container
-USER root
+## Copies all repo files into the Docker Container into the home directory configured in the base image
 COPY . ${HOME}
 RUN chown -R ${NB_USER} ${HOME}
 

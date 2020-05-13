@@ -22,9 +22,9 @@ ENV OPENREFINE_VERSION="3.2"
 # other versions: 2.8, 3.0-beta
 ENV OPENREFINEGZ="openrefine-linux-${OPENREFINE_VERSION}.tar.gz" \
     OPENREFINESRC="https://github.com/OpenRefine/OpenRefine/releases/download/${OPENREFINE_VERSION}/openrefine-linux-${OPENREFINE_VERSION}.tar.gz"
-RUN wget -q --no-check-certificate  -P /root $OPENREFINESRC && \
-  tar -xzf /root/$OPENREFINEGZ -C /opt && \
-  rm /root/$OPENREFINEGZ
+RUN wget -q --no-check-certificate  -P /tmp $OPENREFINESRC && \
+  tar -xzf /tmp/$OPENREFINEGZ -C /opt && \
+  rm /tmp/$OPENREFINEGZ
 
 # Create working directly and expose it as a volume
 WORKDIR /openrefine_projects
