@@ -961,10 +961,11 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 \NormalTok{...}
 
 \KeywordTok{LABEL}\NormalTok{ maintainer=}\StringTok{'D. Nüst <daniel.nuest@uni-muenster.de>'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.authors=}\StringTok{'Nüst (daniel.nuest@uni-muenster.de), Sochat, Marwick, Eglen, Head, and Hirst'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.opencontainers.image.authors=}\StringTok{'Nüst (daniel.nuest@uni-muenster.de), Sochat, \textbackslash{}}
+\StringTok{    Marwick, Eglen, Head, and Hirst'}\NormalTok{ \textbackslash{}}
 \NormalTok{  org.opencontainers.image.url=}\StringTok{'https://github.com/nuest/ten-simple-rules'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.documentation=}
-\StringTok{'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf'}\NormalTok{ \textbackslash{}}
+\NormalTok{  org.opencontainers.image.documentation=}\StringTok{'https://nuest.github.io/ten-simple-rules-\textbackslash{}}
+\StringTok{    dockerfiles/ten-simple-rules-dockerfiles.pdf'}\NormalTok{ \textbackslash{}}
 \NormalTok{  org.opencontainers.image.version=}\StringTok{'1.0.0'}
 
 \KeywordTok{LABEL}\NormalTok{ org.opencontainers.image.vendor=}\StringTok{'Ten Simple Institute, Uni of Rules'}\NormalTok{ \textbackslash{}}
@@ -1013,7 +1014,7 @@ container, you can use the \texttt{-\/-env} parameter of
 \KeywordTok{ENV}\NormalTok{ USEFULSOFT_VERSION=1.0.0 \textbackslash{}}
 \NormalTok{  USEFULSOFT_INSTALLDIR=/workspace/bin}
 
-\KeywordTok{RUN}\NormalTok{ wget http://download-server.com/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \textbackslash{}}
+\KeywordTok{RUN}\NormalTok{ wget http://usesoft.url/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \textbackslash{}}
 \NormalTok{  unzip useful-$USEFULSOFT_VERSION.zip -d useful-src && \textbackslash{}}
 \NormalTok{  cd useful-src && \textbackslash{}}
 \NormalTok{  bash install.sh --target $USEFULSOFT_INSTALLDIR && \textbackslash{}}

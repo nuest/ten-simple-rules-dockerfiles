@@ -419,10 +419,11 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 ...
 
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
-  org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, Marwick, Eglen, Head, and Hirst' \
+  org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, \
+    Marwick, Eglen, Head, and Hirst' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
-  org.opencontainers.image.documentation=
-'https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf' \
+  org.opencontainers.image.documentation='https://nuest.github.io/ten-simple-rules-\
+    dockerfiles/ten-simple-rules-dockerfiles.pdf' \
   org.opencontainers.image.version='1.0.0'
 
 LABEL org.opencontainers.image.vendor='Ten Simple Institute, Uni of Rules' \
@@ -458,7 +459,7 @@ ENV POWER_ALG_CORES 2
 ENV USEFULSOFT_VERSION=1.0.0 \
   USEFULSOFT_INSTALLDIR=/workspace/bin
 
-RUN wget http://download-server.com/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \
+RUN wget http://usesoft.url/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \
   unzip useful-$USEFULSOFT_VERSION.zip -d useful-src && \
   cd useful-src && \
   bash install.sh --target $USEFULSOFT_INSTALLDIR && \
