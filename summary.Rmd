@@ -14,9 +14,9 @@ Summary
     b. Clarity is better than brevity
     c. Group related commands
 4. Document within the Dockerfile
-    a. Add comments explaining the steps
+    a. Add comments explaining the instructions
     b. Use labels for metadata
-    c. Include build and run commands
+    c. Include usage instructions
 6. Specify software versions
     a. Pin system library versions
     b. Explictly list package versions to install
