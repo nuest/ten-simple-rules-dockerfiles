@@ -539,21 +539,21 @@ A mount can can also be used to access _output data_ from a container.
 This can be an extra mount, or the same `data` directory.
 Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, that require very detailed instructions for users.
 
-You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
+You can use the `-v`/`--volume` or preferably `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
 
 \footnotesize
 
 ```bash
 # mount directory
-docker run --volume /home/user/project:/project mycontainer
+docker run --mount type=bind,source=/home/user/project,target=/project mycontainer
 
 # mount directory as read-only
-docker run --volume /home/user/project:/project:ro mycontainer
+docker run --mount type=bind,src=/home/user/project,dst=/project,readonly mycontainer
 
 # mount multple directories, one with write access relative to current path (Linux)
-docker run --volume /homse/user/article-x-supplement/data:/data:ro \
-  --volume $(pwd)/outputs:/output-data:rw mycontainer
+docker run --mount type=bind,src=/homse/user/article-x-supplement/data,dst=/data,readonly \
+  --mount type=bind,src=$(pwd)/outputs,dst=/output-data mycontainer
 ```
 
 \normalsize
