@@ -663,7 +663,7 @@ This variety of approaches render seemingly more convenient uncontainerised envi
 # 9. Use a Dockerfile per project and publish it with a version control system {-}
 \rulelabel{9}{rule:publish}
 
-Because a `Dockerfile` is a plain text-based format, it works well with version control systems.
+As plain text files, `Dockerfile`s are well suited for use with version control systems.
 Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
 Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building and executing your image in an independent environment.
 Continuous integration increases stability and trust, and gives the ability to publish images automatically.
