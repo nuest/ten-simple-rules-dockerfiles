@@ -511,24 +511,18 @@ It is common to use images with the default user `root`, which is required for i
 However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks), in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 We recommend ensuring that the image works without specifying any users, and to document precisely if your image deviates from that.
 
-# 7. Mount user scripts and data {-}
+# 7. Mount datasets at run time {-}
 \rulelabel{7}{rule:mount}
 
-The role of containers is to provide the computing environment, not to encapsulate datasets or custom scripts.
-It is better to insert data files and custom scripts files from the local machine into the container at run time, and using the container image primarily for the software and dependencies.
+The role of containers is to provide the computing environment, not to encapsulate (potentially very large) datasets.
+It is better to insert data files from the local machine into the container at run time, and use the image primarily for the software and dependencies.
 This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible when the workspace is published.
 If you want to add local files to the container, prefer `COPY` because it is explicit and you do not need `ADD`'s extra features, which are (i) URL as a source, for which you may use it instead of a `RUN wget` or `RUN curl` to download files, and (ii) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)) as a source, which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of and cannot be properly version controlled.
 Unless specific features are needed, bind mounts are also preferable to [storage volumes](https://docs.docker.com/storage/volumes/).
 
-Standalone _script files_ are distinct from other software as they are treated as files and managed software, i.e. installed with a package manager and versioned.
-If you developed extensive software for a specific analysis, you should ideally publish it as a software package and follow \ruleref{rule:pinning} for installing it (cf. "A package first" in @gruening_recommendations_2019).
-Consider using the suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
-You should avoid installing software packages from source after `COPY`ing the code into the image, because the connection between the file outside of the image and the one copied in is easily lost (cf.&nbsp;\ruleref{rule:mount}).
-If you cannot publish a software project albeit it being in a language's package structure, you should make sure the files are always published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
-
-Storing _data files_ outside of the container allows handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
-Do not include such data in an image.
+Storing _data files_ outside of the container allows handling of very large or sensitive datasets, e.g., proprietary data or private information.
+Do not include such data in an image!
 To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file that excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
 Ignoring data files also speeds up the build in case of very large files or many small files.
 You should include dummy or test data in the image to be able to ensure that a container is functional without a larger custom dataset, e.g., for automated tests or instructions in the user manual (see also "functional testing logic" in @gruening_recommendations_2019).
