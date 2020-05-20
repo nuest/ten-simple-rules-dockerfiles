@@ -478,9 +478,7 @@ As an example, here are configuration files supported by commonly used languages
 - Julia: `Project.toml` and `Manifest.toml` [@julia_tomls_2019]
 
 In some cases (e.g., Conda) the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
-In all of the above, the user is required to inspect the file or the build to see what is installed.
-For this reason, in the case of having few packages, it is suggested to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:clarity}).
-For example, the `RUN` instruction here:
+For this reason, it is necessary to pin the dependency versions. In the case of having few packages, it may be simplest to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:clarity}):
 
 \footnotesize
 
@@ -491,27 +489,27 @@ RUN pip install geopy==1.20.0 && \
 
 \normalsize
 
-serves as more clear documentation in a `Dockerfile` than a `requirements.txt` file that lists the same:
+Alternatively, versions may be specified in a separate dependency file (e.g., `requirements.txt` or `environment.yml`) and `COPY`ied to the image for installation:
 
 \footnotesize
 
 ```bash
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 ```
 
 \normalsize
 
-This modularization is a potential risk for understandability and consistency, which can be mitigated by carefully managing all these files in the same version-controlled project.
+This modularization may reduce readability, but provides more flexibility in facillitating different ways of building a reproducible environment, provided the dependency file is under version control in the same repository (see \ruleref{rule:publish}).
 You can also use package managers to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
-And finally, you can use many package managers to install software from source obtained from code management repositories, e.g., installing a specific tool identified by a GitHub version tag or commit hash.
-Be aware of the risk of depending on such repositories, especially if they are out of your control, although the installation command with a full URL should allow readers of your `Dockerfile` to dig deeper if problems arise.
-Such an installation from source gives you a lot of freedom, including the one to shoot yourself in the foot.
+Finally, you can use many package managers to install software from source obtained from external code management repositories, e.g., installing a tool from a specific GitHub branch or version tag.
+Be aware of the risk of such installations later failing when depending upon such repositories, especially if they are out of your control. However, these concerns can be mitigated by running the installation command with the full URL (including the specific version tag or commit hash) which is helpful in troubleshooting if problems arise.
 The version pinning capabilities of these file formats and package managers are described in their respective documentation.
 
 As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might adjust the user to enable particular usages.
-It is common to use images with the default user `root`, e.g., , `root` is required for installing system dependencies.
-We recommend to make sure the image works without specifying any users, and to document precisely if your image deviates from that.
-One reason you will encounter base images running a non-root user (popular examples are the Jupyter and Rocker image stacks) is to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
+It is common to use images with the default user `root`, which is required for installing system dependencies.
+However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks), in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
+We recommend ensuring that the image works without specifying any users, and to document precisely if your image deviates from that.
 
 # 7. Mount user scripts and data {-}
 \rulelabel{7}{rule:mount}
