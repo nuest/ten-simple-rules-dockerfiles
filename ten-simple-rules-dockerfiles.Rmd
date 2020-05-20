@@ -5,7 +5,7 @@ author:
   - name: Daniel Nüst
     # https://github.com/nuest
     email: daniel.nuest@uni-muenster.de
-    affiliation: 'Institute for Geoinformatics, University of Muenster, Muenster, Germany'
+    affiliation: "Institute for Geoinformatics, University of Muenster, Muenster, Germany"
     corresponding: daniel.nuest@uni-muenster.de
     orcid: 0000-0002-0024-5046
   - name: Vanessa Sochat
@@ -54,7 +54,6 @@ author_summary: |
 bibliography: bibliography.bib
 output:
   rticles::plos_article
-  #  latex_engine: xelatex
 header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   - \usepackage[user,titleref]{zref}
@@ -118,7 +117,7 @@ Applying these rules should not be triggered by the publication of a finished pr
 # Docker & Dockerfiles
 
 Docker [@wikipedia_contributors_docker_2019] is a container technology that has been widely adopted and is supported on many platforms, and it has become highly useful for research.
-Containers are distinct from virtual machines (VM) or hypervisors, as they do not emulate hardware or operating system kernels and, thus, do not require the same system resources.
+Containers are distinct from virtual machines or hypervisors, as they do not emulate hardware or operating system kernels and, thus, do not require the same system resources.
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019], whereby a `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
@@ -812,7 +811,7 @@ To demonstrate the ten rules, we maintain a collection of annotated example `Doc
 In this article we have provided guidance for using `Dockerfile`s to create containers for use and communication in smaller-scale data science research.
 Reproducibility in research is an endeavor of incremental improvement and best efforts, not about achieving the perfect solution; such a solution may be not achievable for many researchers with limited resources, and its definition may change over time.
 Even if imperfect, the effort to create and document scientific workflows provides incredibly useful and valuable transparency for a project.
-We encourage researchers to follow these steps taken by their peers to use `Dockerfile`s to practice reproducible research, and we encourage them to promote change in the way scholars communicate towards an open and friendly "preproducibility" [@stark_before_2018].
+We encourage researchers to follow these steps taken by their peers to use `Dockerfile`s to practice reproducible research, and we encourage them to change the way they communicate towards "preproducibility" [@stark_before_2018], which values openness, transparency and honesty to find fascinating problems and advance science.
 So, we ask researchers, with their best efforts and with their current knowledge, to strive to write readable `Dockerfile`s for functional containers that are realistic about what might break and what is unlikely to break.
 In a similar vein, we accept that researchers will freely break these rules if another approach makes more sense _for their use case_.
 Also, we ask that researchers not overwhelm themselves by trying to follow all the rules right away, but that they set up an iterative process to increase their computing environment's manageability over time.
