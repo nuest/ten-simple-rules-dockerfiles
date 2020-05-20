@@ -682,7 +682,7 @@ You can even run projects in parallel that don't share ports without interferenc
 In case you feel like constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019], project starter kits [REF], or community templates (e.g., [@marwick_rrtools_2019]) can provide required files, e.g., for documentation, CI, and licenses, and structure for getting started.
 If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
-Part of your project template should be a protocol for publishing the `Dockerfile` and even an export of the image in a suitable location, e.g., a container registry or data repository, taking into consideration of how your workflow can receive a DOI for citation.
+Part of your project template should be a protocol for publishing the `Dockerfile` and even an export of the image in a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
 
 # 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
 \rulelabel{10}{rule:usage}
