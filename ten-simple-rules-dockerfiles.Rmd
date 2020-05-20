@@ -674,7 +674,8 @@ Furthermore, the commit messages in your version controlled repository preserve 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it's generally a simple and clear approach to provide one `Dockerfile` per project.
 Alternatively, you could build an _image stack_ to serve different use cases with a common base image, but this reduces understandability and scatters information across multiple places.
 We recommend to avoid this at the price of a longer `Dockerfile` and mitigate with consistent form (see&nbsp;\ruleref{rule:formatting}).
-Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
 
 It is likely going to be the case that over time you will develop workflows that are similar in nature to one another.
 When developing or working on projects with containers you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
