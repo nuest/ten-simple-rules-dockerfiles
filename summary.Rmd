@@ -41,4 +41,4 @@ Summary
     b. Rebuild every 1-2 weeks with `--no-cache` to catch problems
     c. Provide a `Makefile` or script for convenience
     d. Ask a colleague to try it
-    e. Push the image to a public registry at publication time
+    e. Publicly archive the image used for the publication
