@@ -5,7 +5,7 @@ author:
   - name: Daniel Nüst
     # https://github.com/nuest
     email: daniel.nuest@uni-muenster.de
-    affiliation: 'Institute for Geoinformatics, University of Muenster, Muenster, Germany'
+    affiliation: "Institute for Geoinformatics, University of Muenster, Muenster, Germany"
     corresponding: daniel.nuest@uni-muenster.de
     orcid: 0000-0002-0024-5046
   - name: Vanessa Sochat
@@ -54,7 +54,6 @@ author_summary: |
 bibliography: bibliography.bib
 output:
   rticles::plos_article
-  #  latex_engine: xelatex
 header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   - \usepackage[user,titleref]{zref}
