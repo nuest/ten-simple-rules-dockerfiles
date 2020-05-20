@@ -25,6 +25,7 @@ Summary
     a. Use Continuous Integration and automated testing
     b. ~~Use one Dockerfile per project~~ [revise]
     c. ~~Use project templates (e.g. cookie cutter)~~ [remove]
+    b. Include scripts (and requirements.txt) in the same repository
 7. Mount user data
     a. Use bind mounts for accessibility
     b. Keep large or sensitive datasets out with `.dockerignore`
