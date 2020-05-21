@@ -587,7 +587,7 @@ We recommend ensuring that the image works without specifying any users, and, if
 \rulelabel{7}{rule:mount}
 
 The role of containers is to provide the computing environment, not to encapsulate (potentially very large) datasets.
-It is better to insert data files from the local machine into the container at runtime, and use the image primarily for the software and dependencies.
+It is better to insert large data files from the local machine into the container at runtime, and use the image primarily for the software and dependencies.
 This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible when the workspace is published.
 If you want to add local files to the container, we prefer `COPY` because it is explicit and you do not need `ADD`'s extra features, which are (a) URL as a source, which can be used instead of a `RUN wget` or `RUN curl` to download files and (b) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)) as a source, which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of and cannot be properly version controlled.
