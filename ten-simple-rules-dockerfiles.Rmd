@@ -597,7 +597,7 @@ Storing _data files_ outside of the container allows handling of very large or s
 Do not include such data in an image!
 To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file, which excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
 Ignoring data files also speeds up the build in cases where there are very large files or many small files.
-You should include dummy or test data in the image to ensure that a container is functional without the actual dataset, e.g., for automated tests, instructions in the user manual, or peer review (see also "functional testing logic" in @gruening_recommendations_2019).
+As an exception, you should include dummy or small test datasets in the image to ensure that a container is functional without the actual dataset, e.g., for automated tests, instructions in the user manual, or peer review (see also "functional testing logic" in @gruening_recommendations_2019).
 For all these cases, you should provide clear instructions for users in the `README` file on how to obtain the actual or dummy data.
 When publishing your workspace, e.g., on Zenodo, having datasets outside of the container makes them more accessible to others, for example for reuse or analysis.
 
