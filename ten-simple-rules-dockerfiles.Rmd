@@ -598,8 +598,8 @@ Do not include such data in an image!
 To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file, which excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
 Ignoring data files also speeds up the build in cases where there are very large files or many small files.
 As an exception, you should include dummy or small test datasets in the image to ensure that a container is functional without the actual dataset, e.g., for automated tests, instructions in the user manual, or peer review (see also "functional testing logic" in @gruening_recommendations_2019).
-For all these cases, you should provide clear instructions for users in the `README` file on how to obtain the actual or dummy data.
-When publishing your workspace, e.g., on Zenodo, having datasets outside of the container makes them more accessible to others, for example for reuse or analysis.
+For all these cases, you should provide clear instructions in the `README` file on how to use the actual (or dummy) data, and how to obtain and mount it if it is kept outside of the image.
+When publishing your workspace, e.g., on Zenodo, having datasets outside of the container also makes them more accessible to others, for example for reuse or analysis.
 
 A mount can also be used to access _output data_ from a container; this can be an extra mount or the same `data` directory.
 Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, which requires very detailed instructions for users.
