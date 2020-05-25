@@ -548,9 +548,9 @@ As an example, here are configuration files supported by commonly used languages
 - JavaScript: `package.json` of `npm` [@npm_creating_2019]
 - Julia: `Project.toml` and `Manifest.toml` [@julia_tomls_2019]
 
-In some cases (e.g., Conda), the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
-Because all of the above files require the user to inspect the file or the build to see what is installed, we suggest that when you only have a few packages, write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:clarity}).
-For example, the `RUN` instruction here:
+In some cases (e.g., Conda) the package manager is also able to make decisions about what versions to install, which is likely to lead to a non-reproducible build.
+For this reason, it is necessary to pin the dependency versions.
+In the case of having few packages, it may be simplest to write the install steps and versions directly into the `Dockerfile` (also for clarity, see \ruleref{rule:clarity}):
 
 \footnotesize
 
@@ -562,70 +562,65 @@ RUN pip install \
 
 \normalsize
 
-serves as more clear documentation in a `Dockerfile` than a `requirements.txt` file that lists the same:
+Alternatively, versions may be specified in a separate dependency file (e.g., `requirements.txt` or `environment.yml`) and `COPY`ied to the image for installation:
 
 \footnotesize
 
 ```bash
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 ```
 
 \normalsize
 
-This modularisation may pose a risk for understandability and consistency, but it can be mitigated by carefully managing all these files in the same version-controlled project.
+This modularization may reduce readability, but provides more flexibility in facilitating different ways of building a reproducible environment, provided the dependency file is under version control in the same repository (see \ruleref{rule:publish}).
 You can also use package managers to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
-And, finally, you can use many package managers to install software obtained from code management repositories, e.g., installing a specific tool identified by a GitHub version tag or commit hash.
-Be aware of the risk of depending on such repositories, especially if they are out of your control, but the installation command with a full URL should allow readers of your `Dockerfile` to dig deeper if problems arise.
-Such an installation from a source gives you much freedom, including the freedom to shoot yourself in the foot!
+Finally, you can use many package managers to install software from source obtained from external code management repositories, e.g., installing a tool from a specific version tag or commit hash.
+Be aware of the risk that such installations may later fail, especially when the external repositories are out of your control. However, these concerns can be mitigated by running the installation command with the full URL (including the specific version tag or commit hash) which is helpful in troubleshooting if problems arise.
 The version pinning capabilities of these file formats and package managers are described in their respective documentation.
 
-As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might change the user for particular instructions, which can impact by which user account some commands can be run within the container.
+As a final note on software installation, you should be aware of the [`USER` instruction](https://docs.docker.com/engine/reference/builder/#user) in a `Dockerfile` and how your base image might change the user for particular instructions, restricting which commands can be run within the container.
 It is common to use images with the default user `root`, which is required for installing system dependencies.
-We recommend making sure that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
-One reason you will encounter base images running a non-root user (popular examples are the Jupyter and Rocker images) is to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
+However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks), in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
+We recommend ensuring that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
 
-# 7. Mount user scripts and data {-}
+# 7. Mount datasets at run time {-}
 \rulelabel{7}{rule:mount}
 
-The role of containers is to provide the computing environment, not to encapsulate datasets or custom scripts.
-It is better to include data files and custom scripts from the local machine in the container at runtime, and use the container image primarily for the software and dependencies.
+The role of containers is to provide the computing environment, not to encapsulate (potentially very large) datasets.
+It is better to insert large data files from the local machine into the container at runtime, and use the image primarily for the software and dependencies.
 This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible when the workspace is published.
-If you want to add local files to the container, we prefer `COPY` because it is explicit and you do not need `ADD`'s extra features, which are (a) URL as a source, which can be used instead of a `RUN wget` or `RUN curl` to download files and (b) a local [tar file](https://en.wikipedia.org/wiki/Tar_(computing)) as a source, which you should avoid because such an archive file will be harder for future readers of your `Dockerfile` to make sense of and cannot be properly version controlled.
+If you want to add local files to the container, (and do not need [`ADD`'s extra features](https://docs.docker.com/engine/reference/builder/#add)) we recommend `COPY` because it is simpler and explicit.
 Unless specific features are needed, bind mounts are also preferable to [storage volumes](https://docs.docker.com/storage/volumes/).
 
-Standalone _script files_ are distinct from other software, as they are treated as files and managed software, i.e., installed with a package manager and versioned.
-If you developed extensive software for a specific analysis, you should ideally publish it as a software package and follow \ruleref{rule:pinning} for installing it (cf. "A package first" in @gruening_recommendations_2019).
-Consider using a suitable package system with pinned versions even for small scripts if the functions are reusable across datasets or workflows by you or others.
-If you cannot publish a software project in the appropriate language's package structure, you should make sure the source code files you `COPY` into the image are published together with the `Dockerfile` (see&nbsp;\ruleref{rule:publish}).
-If the code and `Dockerfile` are in the same repository, the origin and results of the `COPY` instruction and subsequent installation code will be understandable in the future.
-
-Storing _data files_ outside of the container allows for handling of very large datasets and datasets with data worthy of protection, e.g., proprietary data or private information.
-Do not include such data in an image.
+Storing _data files_ outside of the container allows handling of very large or sensitive datasets, e.g., proprietary data or private information.
+Do not include such data in an image!
 To avoid publishing sensitive data by accident, you can add the data directory to the [`.dockerignore`](https://docs.docker.com/engine/reference/commandline/build/#use-a-dockerignore-file) file, which excludes files and directories from the [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description), i.e., the set of files considered by `docker build`.
-Ignoring data files also speeds up the build in cases where there are very large files or many small files; for example, large data files or the `.git` folder of the [Git version control system](https://git-scm.com/), which contains many small files across numerous folders, are usually not needed during image build.
-In any case, you should include dummy or test data into the image to ensure that a container is functional without the actual dataset, e.g., for automated tests, instructions in the user manual, or peer review (see also "functional testing logic" in @gruening_recommendations_2019).
-For all these cases, you should provide clear instructions for users in the `README` on how to obtain actual or dummy data.
-When publishing your workspace, e.g., on Zenodo, having data and script contents as regular files outside of the container makes them more accessible to others, for example for reuse or analysis.
+Ignoring data files also speeds up the build in cases where there are very large files or many small files.
+As an exception, you should include dummy or small test datasets in the image to ensure that a container is functional without the actual dataset, e.g., for automated tests, instructions in the user manual, or peer review (see also "functional testing logic" in @gruening_recommendations_2019).
+For all these cases, you should provide clear instructions in the `README` file on how to use the actual (or dummy) data, and how to obtain and mount it if it is kept outside of the image.
+When publishing your workspace, e.g., on Zenodo, having datasets outside of the container also makes them more accessible to others, for example for reuse or analysis.
 
 A mount can also be used to access _output data_ from a container; this can be an extra mount or the same `data` directory.
 Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, which requires very detailed instructions for users.
 
-You can use the `-v`/`--volume` or `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
+You can use the `-v`/`--volume` or preferably `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
+(Note, `$HOME` is an environment variable in UNIX systems representing the path to the current user's home directory, e.g., `/home/moby`, and `$(pwd)` returns the current path.)
 
 \footnotesize
 
 ```bash
 # mount directory
-docker run --volume /home/user/project:/project mycontainer
+docker run --mount type=bind,source=$HOME/project,target=/project mycontainer
 
 # mount directory as read-only
-docker run --volume /home/user/project:/project:ro mycontainer
+docker run --mount type=bind,src=$HOME/project,dst=/workspace,readonly mycontainer
 
 # mount multple directories, one with write access relative to current path (Linux)
-docker run --volume /homse/user/article-x-supplement/data:/data:ro \
-  --volume $(pwd)/outputs:/output-data:rw mycontainer
+docker run --mount type=bind,src=$(pwd)/article-x-supplement/data,dst=/input-data,readonly \
+  --mount type=bind,src=$(pwd)/outputs,dst=/output-data mycontainer
 ```
 
 \normalsize
@@ -744,7 +739,7 @@ Just using one's local machine is only slightly more comfortable but much less r
 # 9. Use one Dockerfile per project and publish it with a version control system {-}
 \rulelabel{9}{rule:publish}
 
-Because a `Dockerfile` is a plain text-based format, it works well with version control systems.
+As plain text files, `Dockerfile`s are well suited for use with version control systems.
 Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
 Most importantly, you should publish _all_ files `COPY`ied into the image, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 
@@ -757,6 +752,9 @@ Furthermore, the commit messages in your version-controlled repository preserve 
 While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally feasible to provide one `Dockerfile` per project.
 Alternatively, you could write multiple `Dockerfile`s starting `FROM` one another, i.e., write your own base images.
 However, because multiple files scatter information across multiple places, we recommend avoiding this at the cost of a longer `Dockerfile`, which can be mitigated with formatting (see&nbsp;\ruleref{rule:formatting}).
+
+Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
 
 It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to each other.
 When developing or working on projects with containers, you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
