@@ -607,6 +607,7 @@ Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/refe
 
 You can use the `-v`/`--volume` or preferably `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
+(Note, `$HOME` is an environment variable in UNIX systems representing the path to the current user's home directory, e.g., `/home/moby`.)
 
 \footnotesize
 
