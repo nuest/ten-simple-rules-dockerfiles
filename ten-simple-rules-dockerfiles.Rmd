@@ -607,7 +607,7 @@ Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/refe
 
 You can use the `-v`/`--volume` or preferably `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
-(Note, `$HOME` is an environment variable in UNIX systems representing the path to the current user's home directory, e.g., `/home/moby`.)
+(Note, `$HOME` is an environment variable in UNIX systems representing the path to the current user's home directory, e.g., `/home/moby`, and `$(pwd)` returns the current path.)
 
 \footnotesize
 
@@ -616,10 +616,10 @@ If the target path exists within the image, the bind mount will replace it for t
 docker run --mount type=bind,source=$HOME/project,target=/project mycontainer
 
 # mount directory as read-only
-docker run --mount type=bind,src=$HOME/project,dst=/project,readonly mycontainer
+docker run --mount type=bind,src=$HOME/project,dst=/workspace,readonly mycontainer
 
 # mount multple directories, one with write access relative to current path (Linux)
-docker run --mount type=bind,src=$HOME/article-x-supplement/data,dst=/data,readonly \
+docker run --mount type=bind,src=$(pwd)/article-x-supplement/data,dst=/input-data,readonly \
   --mount type=bind,src=$(pwd)/outputs,dst=/output-data mycontainer
 ```
 
