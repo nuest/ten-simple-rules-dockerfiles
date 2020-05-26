@@ -637,13 +637,13 @@ But they are also useful for a "headless" execution of full workflows.
 For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, and this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which included cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml#L18).
 A workflow that does not support headless execution may even be seen as irreproducible.
 
-These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions.
-An image's main purpose is reflected by the default process and configuration, though the `CMD` and `ENTRYPOINT` can also be changed at runtime.
-It is considered good practice to have a combination of default command and entrypoint that meets reasonable user expectations.
+These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `ENTRYPOINT` and `CMD` instructions.
+An image's main purpose is reflected by the default process and configuration, though the `ENTRYPOINT` and `CMD` can also be changed at runtime.
+It is considered good practice to have a combination of default entrypoint and command that meets reasonable user expectations.
 For example, a container known to be a workflow should execute the entrypoint to the workflow and perhaps use `--help` as the command to print out usage.
 The container entrypoint should _not_ execute the workflow, as the user is likely to run the container for basic inspection, and starting an analysis as a surprise that might write files is undesired.
 As the maintainer of the workflow, you should write clear instructions for how to properly interact with the container, both for yourself and others.
-A possible weakness with using containers is that they can only provide one default command and entrypoint.
+A possible weakness with using containers is that they can only provide one default entrypoint and command.
 However, tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;5.
 In any case, you should document different variants very well and potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
