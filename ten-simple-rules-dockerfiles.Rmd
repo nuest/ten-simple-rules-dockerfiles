@@ -509,7 +509,7 @@ A recommended ordering based on these considerations is as follows, and you can 
 3. Installation of your own software and scripts (if not mounted)
 4. Copying data and configuration (if not mounted)
 5. Labels
-6. Entrypoints and default commands
+6. Entrypoint and default command
 
 # 6. Specify software versions {-}
 \rulelabel{6}{rule:pinning}
