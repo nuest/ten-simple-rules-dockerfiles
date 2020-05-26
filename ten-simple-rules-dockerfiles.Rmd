@@ -98,7 +98,7 @@ For this article, we focus on workflows that typically run on single machine, e.
 The reader might scope the data requirement to less than a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
 Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
-A `docker-compose.yml` configuration file allows for defining volumes, environment variables, and exposed ports and helps users stick to _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
+A `docker-compose.yml` configuration file allows for defining mounts, environment variables, and exposed ports and helps users stick to _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
 
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the underlying technology actually works, researchers should leverage containerisation following good practices.
@@ -481,7 +481,7 @@ _Listing&nbsp;4_: Partial `Dockerfile` showing usage of environment variables wi
 ## Include usage instructions
 
 It is often helpful to provide usage instructions, i.e., how to `docker build` and `docker run` the image, _within_ the `Dockerfile`, either at the top or bottom where the reader is likely to find them.
-Such documentation is especially relevant if volume mounts, specific names, or ports are important for using the container; see, for example, the final lines of Listing&nbsp;1.
+Such documentation is especially relevant if bind mounts, specific names, or ports are important for using the container; see, for example, the final lines of Listing&nbsp;1.
 These instructions are not limited to `docker <command>` but include the usage of bespoke scripts, a `Makefile`, or `docker-compose` (see \ruleref{rule:interactive} and \ruleref{rule:usage}).
 Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
 Thus, usage instructions help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
@@ -509,7 +509,7 @@ A recommended ordering based on these considerations is as follows, and you can 
 3. Installation of your own software and scripts (if not mounted)
 4. Copying data and configuration (if not mounted)
 5. Labels
-6. Default commands and entrypoints
+6. Entrypoint and default command
 
 # 6. Specify software versions {-}
 \rulelabel{6}{rule:pinning}
@@ -592,7 +592,9 @@ It is better to insert large data files from the local machine into the containe
 This insertion is achieved by using [_bind mounts_](https://docs.docker.com/storage/bind-mounts/).
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible when the workspace is published.
 If you want to add local files to the container, (and do not need [`ADD`'s extra features](https://docs.docker.com/engine/reference/builder/#add)) we recommend `COPY` because it is simpler and explicit.
-Unless specific features are needed, bind mounts are also preferable to [storage volumes](https://docs.docker.com/storage/volumes/).
+Volumes are useful for persisting changes across runs of a container and offer faster file I/O compared to other mounting methods (particularly useful with databases for example). 
+However they are less suitable for reproducibility, since these changes exist within the image (making them less in line with treating containers as ephemeral see&nbsp;\ruleref{rule:usage}) and are not so easy to access or place under version control. 
+Unless specific features are needed, bind mounts are therefore preferable to [storage volumes](https://docs.docker.com/storage/volumes/) since the contents are directly accessible from both the container and the host and the files can be more easily included in the same repository. 
 
 Storing _data files_ outside of the container allows handling of very large or sensitive datasets, e.g., proprietary data or private information.
 Do not include such data in an image!
@@ -637,13 +639,13 @@ But they are also useful for a "headless" execution of full workflows.
 For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, and this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which included cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml#L18).
 A workflow that does not support headless execution may even be seen as irreproducible.
 
-These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `CMD` and `ENTRYPOINT` instructions.
-An image's main purpose is reflected by the default process and configuration, though the `CMD` and `ENTRYPOINT` can also be changed at runtime.
-It is considered good practice to have a combination of default command and entrypoint that meets reasonable user expectations.
+These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `ENTRYPOINT` and `CMD` instructions.
+An image's main purpose is reflected by the default process and configuration, though the `ENTRYPOINT` and `CMD` can also be changed at runtime.
+It is considered good practice to have a combination of default entrypoint and command that meets reasonable user expectations.
 For example, a container known to be a workflow should execute the entrypoint to the workflow and perhaps use `--help` as the command to print out usage.
 The container entrypoint should _not_ execute the workflow, as the user is likely to run the container for basic inspection, and starting an analysis as a surprise that might write files is undesired.
 As the maintainer of the workflow, you should write clear instructions for how to properly interact with the container, both for yourself and others.
-A possible weakness with using containers is that they can only provide one default command and entrypoint.
+A possible weakness with using containers is that they can only provide one default entrypoint and command.
 However, tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;5.
 In any case, you should document different variants very well and potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
