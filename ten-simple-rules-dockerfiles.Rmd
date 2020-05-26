@@ -593,7 +593,7 @@ This insertion is achieved by using [_bind mounts_](https://docs.docker.com/stor
 Mounting these files is preferable to using the `ADD`/`COPY` instructions in the `Dockerfile`, because files persist when the container instance or image is removed from your system, and the files are more accessible when the workspace is published.
 If you want to add local files to the container, (and do not need [`ADD`'s extra features](https://docs.docker.com/engine/reference/builder/#add)) we recommend `COPY` because it is simpler and explicit.
 Volumes are useful for persisting changes across runs of a container and offer faster file I/O compared to other mounting methods (particularly useful with databases for example). 
-However they are less suitable for reproducibility, since these changes exist within the image (making them less in line with treating containers as ephemeral see&nbsp;\ruleref{rule:usage}) and are not so easy to access or place under version-control. 
+However they are less suitable for reproducibility, since these changes exist within the image (making them less in line with treating containers as ephemeral see&nbsp;\ruleref{rule:usage}) and are not so easy to access or place under version control. 
 Unless specific features are needed, bind mounts are therefore preferable to [storage volumes](https://docs.docker.com/storage/volumes/) since the contents are directly accessible from both the container and the host and the files can be more easily included in the same repository. 
 
 Storing _data files_ outside of the container allows handling of very large or sensitive datasets, e.g., proprietary data or private information.
