@@ -573,10 +573,6 @@ Automation strategies exist to build and test images for multiple platforms and 
 Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
 Furthermore, the commit messages in your version-controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container image and the git repository.
 
-While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally feasible to provide one `Dockerfile` per project.
-Alternatively, you could write multiple `Dockerfile`s starting `FROM` one another, i.e., write your own base images.
-However, because multiple files scatter information across multiple places, we recommend avoiding this at the cost of a longer `Dockerfile`, which can be mitigated with formatting (see&nbsp;\ruleref{rule:formatting}).
-
 Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
 
