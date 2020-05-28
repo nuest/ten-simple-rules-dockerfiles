@@ -225,7 +225,7 @@ _Listing&nbsp;1_: `Dockerfile` full example.
 
 \newpage
 
-# 1. Consider tools to assist with Dockerfile generation {-}
+# 1. Use available tools {-}
 \rulelabel{1}{rule:tools}
 
 Rule 1 could informally be described as "Don't bother to write a Dockerfile!".
@@ -487,7 +487,7 @@ Following a common coding aphorism, we might say _"A Dockerfile written three mo
 Thus, usage instructions help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
-# 5. Order instructions
+# 5. Order the instructions
 \rulelabel{5}{rule:order}
 
 You will regularly build an image during development of your workflow.
@@ -631,7 +631,7 @@ How your container expects external resources to be mounted into the container s
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
-# 8. Enable interactive usage and one-click execution {-}
+# 8. Make it one-click runnable {-}
 \rulelabel{8}{rule:interactive}
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
@@ -738,7 +738,7 @@ Other alternatives include bridge containers [@yaremenko_docker-x11-bridge_2019]
 This variety of approaches renders seemingly more convenient uncontainerised environments unnecessary.
 Just using one's local machine is only slightly more comfortable but much less reproducible and portable.
 
-# 9. Use one Dockerfile per project and publish it with a version control system {-}
+# 9. Use version control {-}
 \rulelabel{9}{rule:publish}
 
 As plain text files, `Dockerfile`s are well suited for use with version control systems.
@@ -769,7 +769,7 @@ Part of your project template should be a protocol for publishing the `Dockerfil
 A template is preferable to your own set of base images because of the maintenance efforts the base images require.
 Therefore, instead of building your own independent solution, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs.
 
-# 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
+# 10. Regularly use and rebuild containers {-}
 \rulelabel{10}{rule:usage}
 
 Using containers for research workflows requires not only technical understanding but also an awareness of risks that can be managed effectively by following a number of good _habits_, discussed in this section.
