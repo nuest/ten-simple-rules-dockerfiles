@@ -4,8 +4,8 @@ Summary
 1. Use available tools
     a. Use ready-made images (e.g. from Docker Hub)
     b. Dockerfile generators (e.g. repo2docker)
-    c. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter)) [new]
-    d. Linters
+    c. Linters
+    d. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter)) [new]
 2. Use versioned images
     a. Use version-tagged base images
     b. Publish your own images with version tags [revise]
