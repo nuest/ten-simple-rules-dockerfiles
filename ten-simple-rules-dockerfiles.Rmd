@@ -251,7 +251,7 @@ _In this case, follow the remaining rules._
 
 ## Tools for container generation
 
-Repo2docker [@jupyter_binder_2018] is a tool maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a source code or data repository, e.g., GitHub, GitLab, or Zenodo, into a container.
+`repo2docker` [@jupyter_binder_2018] is a tool maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a source code or data repository, e.g., GitHub, GitLab, or Zenodo, into a container.
 The tool relies on common configuration files for defining software dependencies and versions, and it supports a few more special files; see the [supported configuration files](https://repo2docker.readthedocs.io/en/latest/config_files.html).
 As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python workflow with dependencies on the [Python Package Index](https://pypi.org/) (PyPI), using the following command:
   
@@ -264,9 +264,9 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 \normalsize
 
 The resulting container image installs the dependencies listed in the requirements file, and it provides an entrypoint to run a notebook server to interact with any existing workflows in the repository.
-Since repo2docker is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready", you and others can also obtain an online workspace with a single click.
-However, one precaution to consider is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share; instead, any researcher interested in interacting with the code inside should run repo2docker themselves and create their own container.
-Because repo2docker is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
+Since `repo2docker` is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready", you and others can also obtain an online workspace with a single click.
+However, one precaution to consider is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share; instead, any researcher interested in interacting with the code inside should run `repo2docker` themselves and create their own container.
+Because `repo2docker` is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
 
 Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
 `containerit` automates the generation of a standalone `Dockerfile` for workflows in R.
