@@ -17,11 +17,11 @@ Summary
     a. Add comments explaining the instructions
     b. Use labels for metadata
     c. Include usage instructions
-6. Specify software versions
+5. Specify software versions
     a. Pin system library versions
     b. Explictly list package versions to install
     c. Comment why each is needed
-9. Use version control
+6. Use version control
     a. Use Continuous Integration and automated testing
     b. ~~Use one Dockerfile per project~~ [revise]
     c. ~~Use project templates (e.g. cookie cutter)~~ [remove]
@@ -33,7 +33,7 @@ Summary
 8. Make it one-click runnable
     a. Set default behaviour with `CMD` and `ENTRYPOINT`
     b. Document how to use it interactively
-5. Order the instructions
+9. Order the instructions
     a. Least --> most changable for caching and fast builds
     b. Regularly use `--no-cache` to catch problems [duplicate: 10b]
 10. Regularly use and rebuild containers
