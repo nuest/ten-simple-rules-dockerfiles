@@ -23,7 +23,6 @@ Summary
     c. Comment why each is needed
 6. Use version control
     a. Use Continuous Integration and automated testing
-    c. ~~Use project templates (e.g. cookie cutter)~~ [remove]
     b. Include scripts (and requirements.txt) in the same repository
 7. Mount datasets at run time
     a. Use bind mounts for accessibility

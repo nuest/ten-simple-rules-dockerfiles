@@ -272,6 +272,20 @@ Additional tools to assist with writing `Dockerfile`s include `containerit` [@nu
 `containerit` automates the generation of a standalone `Dockerfile` for workflows in R.
 It can provide a starting point for users unfamiliar with writing a `Dockerfile`, or it can, together with other R packages, provide a full image creation and execution process without having to leave an R session.
 `dockta` supports multiple programming languages and configurations files, just as `repo2docker` does, but it attempts to create a readable `Dockerfile` compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
+
+## Tools for templating
+
+It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to each other.
+When developing or working on projects with containers, you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
+You can even run projects in parallel that do not share ports without interference.
+To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019] or community templates (e.g., [@marwick_rrtools_2019]) can provide the required structure and files, (e.g., for documentation, CI, and licenses), for getting started.
+If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
+
+Part of your project template should be a protocol for publishing the `Dockerfile` and even exporting the image to a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
+A template is preferable to your own set of base images because of the maintenance efforts the base images require.
+Therefore, instead of building your own independent solution, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs.
+
 For any tool that you use, be sure to look at documentation for usage and configuration options, and look for options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
 
 ------
@@ -575,17 +589,6 @@ Furthermore, the commit messages in your version-controlled repository preserve 
 
 Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
-
-It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to each other.
-When developing or working on projects with containers, you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
-You can even run projects in parallel that do not share ports without interference.
-To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
-As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019] or community templates (e.g., [@marwick_rrtools_2019]) can provide the required structure and files, e.g., for documentation, CI, and licenses, for getting started.
-If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
-
-Part of your project template should be a protocol for publishing the `Dockerfile` and even exporting the image to a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
-A template is preferable to your own set of base images because of the maintenance efforts the base images require.
-Therefore, instead of building your own independent solution, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs.
 
 # 7. Mount datasets at run time {-}
 \rulelabel{7}{rule:mount}
