@@ -763,7 +763,7 @@ A recommended ordering based on these considerations is as follows, and you can 
   1. from repositories (i.e., binaries)
   2. from source (e.g., GitHub)
 3. Installation of your own software and scripts (if not mounted)
-4. Copying data and configuration (if not mounted)
+4. Copying data and configuration files (if not mounted)
 5. Labels
 6. Entrypoint and default command
 
