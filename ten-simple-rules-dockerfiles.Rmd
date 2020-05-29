@@ -747,7 +747,7 @@ Just using one's local machine is only slightly more comfortable but much less r
 \rulelabel{5}{rule:order}
 
 You will regularly build an image during development of your workflow.
-You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or a copying a file that gets cached.
+You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or copying a file that gets cached.
 Therefore, you should keep instructions _in order_ of least likely to change to most likely to change.
 Docker will execute the instructions in the order that they appear in the `Dockerfile`; when one instruction is completed, the result is cached, and the build moves to the next one.
 If you change something in the Dockerfile and rebuild the container, each instruction is inspected in turn.
