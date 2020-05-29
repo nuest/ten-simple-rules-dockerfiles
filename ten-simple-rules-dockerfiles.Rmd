@@ -225,7 +225,7 @@ _Listing&nbsp;1_: `Dockerfile` full example.
 
 \newpage
 
-# 1. Consider tools to assist with Dockerfile generation {-}
+# 1. Use available tools {-}
 \rulelabel{1}{rule:tools}
 
 Rule 1 could informally be described as "Don't bother to write a Dockerfile!".
@@ -251,7 +251,7 @@ _In this case, follow the remaining rules._
 
 ## Tools for container generation
 
-Repo2docker [@jupyter_binder_2018] is a tool maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a source code or data repository, e.g., GitHub, GitLab, or Zenodo, into a container.
+`repo2docker` [@jupyter_binder_2018] is a tool maintained by [Project Jupyter](https://jupyter.org/) that can help to transform a source code or data repository, e.g., GitHub, GitLab, or Zenodo, into a container.
 The tool relies on common configuration files for defining software dependencies and versions, and it supports a few more special files; see the [supported configuration files](https://repo2docker.readthedocs.io/en/latest/config_files.html).
 As an example, we might install `jupyter-repo2docker` and then run it against a repository with a `requirements.txt` file, an indication of being a Python workflow with dependencies on the [Python Package Index](https://pypi.org/) (PyPI), using the following command:
   
@@ -264,14 +264,27 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 \normalsize
 
 The resulting container image installs the dependencies listed in the requirements file, and it provides an entrypoint to run a notebook server to interact with any existing workflows in the repository.
-Since repo2docker is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready", you and others can also obtain an online workspace with a single click.
-However, one precaution to consider is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share; instead, any researcher interested in interacting with the code inside should run repo2docker themselves and create their own container.
-Because repo2docker is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
+Since `repo2docker` is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready", you and others can also obtain an online workspace with a single click.
+However, one precaution to consider is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share; instead, any researcher interested in interacting with the code inside should run `repo2docker` themselves and create their own container.
+Because `repo2docker` is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
 
 Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
 `containerit` automates the generation of a standalone `Dockerfile` for workflows in R.
 It can provide a starting point for users unfamiliar with writing a `Dockerfile`, or it can, together with other R packages, provide a full image creation and execution process without having to leave an R session.
 `dockta` supports multiple programming languages and configurations files, just as `repo2docker` does, but it attempts to create a readable `Dockerfile` compatible with plain Docker and to improve user experience by cleverly adjusting instructions to reduce build time.
+While perhaps more useful for fine-tuning, linters can also be helpful when writing Dockerfiles, by catching errors or non-recommended formulations (see \ruleref{rule:usage}). 
+
+## Tools for templating
+
+It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to each other.
+To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
+As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019] or community templates (e.g., [@marwick_rrtools_2019]) can provide the required structure and files, (e.g., for documentation, CI, and licenses), for getting started.
+If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
+
+Part of your project template should be a protocol for publishing the `Dockerfile` and even exporting the image to a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
+A template is preferable to your own set of base images because of the maintenance efforts the base images require.
+Therefore, instead of building your own independent solution, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs.
+
 For any tool that you use, be sure to look at documentation for usage and configuration options, and look for options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
 
 ------
@@ -487,31 +500,7 @@ Following a common coding aphorism, we might say _"A Dockerfile written three mo
 Thus, usage instructions help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
-# 5. Order instructions
-\rulelabel{5}{rule:order}
-
-You will regularly build an image during development of your workflow.
-You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or a copying a file that gets cached.
-Therefore, you should keep instructions _in order_ of least likely to change to most likely to change.
-Docker will execute the instructions in the order that they appear in the `Dockerfile`; when one instruction is completed, the result is cached, and the build moves to the next one.
-If you change something in the Dockerfile and rebuild the container, each instruction is inspected in turn.
-If it has not changed, the cached layer is used and the build progresses.
-Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
-You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).
-Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
-You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
-A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;1):
-
-1. System libraries
-2. Language-specific libraries or modules
-  1. from repositories (i.e., binaries)
-  2. from source (e.g., GitHub)
-3. Installation of your own software and scripts (if not mounted)
-4. Copying data and configuration (if not mounted)
-5. Labels
-6. Entrypoint and default command
-
-# 6. Specify software versions {-}
+# 5. Specify software versions {-}
 \rulelabel{6}{rule:pinning}
 
 The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
@@ -584,6 +573,22 @@ It is common to use images with the default user `root`, which is required for i
 However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks), in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 We recommend ensuring that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
 
+# 6. Use version control {-}
+\rulelabel{9}{rule:publish}
+
+As plain text files, `Dockerfile`s are well suited for use with version control systems.
+Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
+Most importantly, you should publish _all_ files `COPY`ied into the image, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+
+Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building and executing your image in an independent environment.
+Continuous integration increases stability and trust, and it allows for images to be published automatically.
+Automation strategies exist to build and test images for multiple platforms and software versions, even with CI.
+Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
+Furthermore, the commit messages in your version-controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container image and the git repository.
+
+Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
+
 # 7. Mount datasets at run time {-}
 \rulelabel{7}{rule:mount}
 
@@ -631,7 +636,7 @@ How your container expects external resources to be mounted into the container s
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
-# 8. Enable interactive usage and one-click execution {-}
+# 8. Make it one-click runnable {-}
 \rulelabel{8}{rule:interactive}
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
@@ -738,38 +743,31 @@ Other alternatives include bridge containers [@yaremenko_docker-x11-bridge_2019]
 This variety of approaches renders seemingly more convenient uncontainerised environments unnecessary.
 Just using one's local machine is only slightly more comfortable but much less reproducible and portable.
 
-# 9. Use one Dockerfile per project and publish it with a version control system {-}
-\rulelabel{9}{rule:publish}
+# 9. Order the instructions
+\rulelabel{5}{rule:order}
 
-As plain text files, `Dockerfile`s are well suited for use with version control systems.
-Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
-Most importantly, you should publish _all_ files `COPY`ied into the image, e.g., test data or files for software installation from source (see&nbsp;\ruleref{rule:mount}), in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+You will regularly build an image during development of your workflow.
+You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or copying a file that gets cached.
+Therefore, you should keep instructions _in order_ of least likely to change to most likely to change.
+Docker will execute the instructions in the order that they appear in the `Dockerfile`; when one instruction is completed, the result is cached, and the build moves to the next one.
+If you change something in the Dockerfile and rebuild the container, each instruction is inspected in turn.
+If it has not changed, the cached layer is used and the build progresses.
+Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
+You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).
+Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
+You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
+A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;1):
 
-Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use CI services to test building and executing your image in an independent environment.
-Continuous integration increases stability and trust, and it allows for images to be published automatically.
-Automation strategies exist to build and test images for multiple platforms and software versions, even with CI.
-Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
-Furthermore, the commit messages in your version-controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container image and the git repository.
+1. System libraries
+2. Language-specific libraries or modules
+  1. from repositories (i.e., binaries)
+  2. from source (e.g., GitHub)
+3. Installation of your own software and scripts (if not mounted)
+4. Copying data and configuration files (if not mounted)
+5. Labels
+6. Entrypoint and default command
 
-While there are exceptions to the rule (cf.&nbsp;@kim_bio-docklets_2017), it is generally feasible to provide one `Dockerfile` per project.
-Alternatively, you could write multiple `Dockerfile`s starting `FROM` one another, i.e., write your own base images.
-However, because multiple files scatter information across multiple places, we recommend avoiding this at the cost of a longer `Dockerfile`, which can be mitigated with formatting (see&nbsp;\ruleref{rule:formatting}).
-
-Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
-If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
-
-It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to each other.
-When developing or working on projects with containers, you can switch between isolated project environments by stopping the container and restarting it when you are ready to work again, even on another machine or in a cloud environment.
-You can even run projects in parallel that do not share ports without interference.
-To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
-As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019] or community templates (e.g., [@marwick_rrtools_2019]) can provide the required structure and files, e.g., for documentation, CI, and licenses, for getting started.
-If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
-
-Part of your project template should be a protocol for publishing the `Dockerfile` and even exporting the image to a suitable location, e.g., a container registry or data repository, taking into consideration how your workflow can receive a DOI for citation.
-A template is preferable to your own set of base images because of the maintenance efforts the base images require.
-Therefore, instead of building your own independent solution, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs.
-
-# 10. Use the container daily, rebuild the image weekly, clean up and preserve if need be {-}
+# 10. Regularly use and rebuild containers {-}
 \rulelabel{10}{rule:usage}
 
 Using containers for research workflows requires not only technical understanding but also an awareness of risks that can be managed effectively by following a number of good _habits_, discussed in this section.
@@ -789,11 +787,7 @@ In you need a setup or configuration for the first two habits, it is good practi
 Furthermore, when you rebuild the image, you can take a fresh look at the `Dockerfile` and improve it over time, because it will be hard to apply all rules at once.
 A linter can help you with such optimisations, e.g., as a web service such as [Dockerfilelint](https://www.dockerfilelint.com/), [hadolint](https://hadolint.github.io/hadolint/) or [fromlatest](https://www.fromlatest.io/), as an extension to your integrated development environment, such as [vscode-docker](https://github.com/microsoft/vscode-docker), or as standalone tools like [`dockerfile-lint`](https://github.com/projectatomic/dockerfile_lint), which you can integrate with your `Makefile`.
 
-Third, from time to time you can reduce the system resources occupied by Docker images and their layers or unused containers, volumes and networks by running `docker system prune --all`.
-After a prune is performed, it follows naturally to rebuild a container for local usage or to pull it again from a newly built registry image.
-This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
-
-Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
+Third, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions for how to import and run the workflow based on the image archive and add your own image tags using semantic versioning (see \ruleref{rule:base}) for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but it is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
 Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker environment.
