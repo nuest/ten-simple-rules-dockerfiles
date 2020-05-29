@@ -787,11 +787,7 @@ In you need a setup or configuration for the first two habits, it is good practi
 Furthermore, when you rebuild the image, you can take a fresh look at the `Dockerfile` and improve it over time, because it will be hard to apply all rules at once.
 A linter can help you with such optimisations, e.g., as a web service such as [Dockerfilelint](https://www.dockerfilelint.com/), [hadolint](https://hadolint.github.io/hadolint/) or [fromlatest](https://www.fromlatest.io/), as an extension to your integrated development environment, such as [vscode-docker](https://github.com/microsoft/vscode-docker), or as standalone tools like [`dockerfile-lint`](https://github.com/projectatomic/dockerfile_lint), which you can integrate with your `Makefile`.
 
-Third, from time to time you can reduce the system resources occupied by Docker images and their layers or unused containers, volumes and networks by running `docker system prune --all`.
-After a prune is performed, it follows naturally to rebuild a container for local usage or to pull it again from a newly built registry image.
-This habit can be automated with a cron job [@wikipedia_contributors_cron_2019].
-
-Fourth, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
+Third, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions for how to import and run the workflow based on the image archive and add your own image tags using semantic versioning (see \ruleref{rule:base}) for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but it is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
 Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker environment.
