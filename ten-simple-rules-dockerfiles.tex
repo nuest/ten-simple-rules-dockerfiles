@@ -337,7 +337,7 @@ been demonstrated for capturing scientific notebooks {[}5{]} and
 reproducible workflows {[}6{]}.
 
 While several tutorials exist on how to use containers for reproducible
-research {[}7--11{]} and Guening et~al. {[}12{]} give very helpful
+research {[}7--11{]} and Guening et~al.~{[}12{]} give very helpful
 recommendations for packaging reusable software in a container, there is
 no detailed \emph{manual for how to write the actual instructions to
 create the containers for computational research} besides generic best
@@ -372,7 +372,7 @@ Although it is outside the scope of this article, we point readers to
 \texttt{docker-compose} {[}16{]} in the case where one might need
 container orchestration for multiple applications, e.g., web servers,
 databases, and worker containers. A \texttt{docker-compose.yml}
-configuration file allows for defining volumes, environment variables,
+configuration file allows for defining mounts, environment variables,
 and exposed ports and helps users stick to \emph{one purpose per
 container}, which often means one process running in the container, and
 to combine existing stable building blocks instead of bespoke massive
@@ -1043,7 +1043,7 @@ instructions}\label{include-usage-instructions}}
 It is often helpful to provide usage instructions, i.e., how to
 \texttt{docker\ build} and \texttt{docker\ run} the image, \emph{within}
 the \texttt{Dockerfile}, either at the top or bottom where the reader is
-likely to find them. Such documentation is especially relevant if volume
+likely to find them. Such documentation is especially relevant if bind
 mounts, specific names, or ports are important for using the container;
 see, for example, the final lines of Listing~1. These instructions are
 not limited to \texttt{docker\ \textless{}command\textgreater{}} but
@@ -1108,7 +1108,7 @@ separate these sections in your file (cf.~Listing~1):
 \item
   Labels
 \item
-  Default commands and entrypoints
+  Entrypoint and default command
 \end{enumerate}
 
 \hypertarget{specify-software-versions}{%
@@ -1196,14 +1196,13 @@ languages in scientific programming:
   Julia: \texttt{Project.toml} and \texttt{Manifest.toml} {[}45{]}
 \end{itemize}
 
-In some cases (e.g., Conda), the package manager is also able to make
+In some cases (e.g., Conda) the package manager is also able to make
 decisions about what versions to install, which is likely to lead to a
-non-reproducible build. Because all of the above files require the user
-to inspect the file or the build to see what is installed, we suggest
-that when you only have a few packages, write the install steps and
-versions directly into the \texttt{Dockerfile} (also for clarity, see
-\hyperref[{rule:clarity}]{Rule~\ztitleref{rule:clarity}}). For example,
-the \texttt{RUN} instruction here:
+non-reproducible build. For this reason, it is necessary to pin the
+dependency versions. In the case of having few packages, it may be
+simplest to write the install steps and versions directly into the
+\texttt{Dockerfile} (also for clarity, see
+\hyperref[{rule:clarity}]{Rule~\ztitleref{rule:clarity}}):
 
 \footnotesize
 
@@ -1217,117 +1216,106 @@ the \texttt{RUN} instruction here:
 
 \normalsize
 
-serves as more clear documentation in a \texttt{Dockerfile} than a
-\texttt{requirements.txt} file that lists the same:
+Alternatively, versions may be specified in a separate dependency file
+(e.g., \texttt{requirements.txt} or \texttt{environment.yml}) and
+\texttt{COPY}ied to the image for installation:
 
 \footnotesize
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\ExtensionTok{COPY}\NormalTok{ requirements.txt .}
 \ExtensionTok{RUN}\NormalTok{ pip install -r requirements.txt}
 \end{Highlighting}
 \end{Shaded}
 
 \normalsize
 
-This modularisation may pose a risk for understandability and
-consistency, but it can be mitigated by carefully managing all these
-files in the same version-controlled project. You can also use package
-managers to install software from source code \texttt{COPY}ied into the
-image (see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}). And,
-finally, you can use many package managers to install software obtained
-from code management repositories, e.g., installing a specific tool
-identified by a GitHub version tag or commit hash. Be aware of the risk
-of depending on such repositories, especially if they are out of your
-control, but the installation command with a full URL should allow
-readers of your \texttt{Dockerfile} to dig deeper if problems arise.
-Such an installation from a source gives you much freedom, including the
-freedom to shoot yourself in the foot! The version pinning capabilities
-of these file formats and package managers are described in their
-respective documentation.
+This modularization may reduce readability, but provides more
+flexibility in facilitating different ways of building a reproducible
+environment, provided the dependency file is under version control in
+the same repository (see
+\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). You can also
+use package managers to install software from source code
+\texttt{COPY}ied into the image
+(see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}). Finally, you
+can use many package managers to install software from source obtained
+from external code management repositories, e.g., installing a tool from
+a specific version tag or commit hash. Be aware of the risk that such
+installations may later fail, especially when the external repositories
+are out of your control. However, these concerns can be mitigated by
+running the installation command with the full URL (including the
+specific version tag or commit hash) which is helpful in troubleshooting
+if problems arise. The version pinning capabilities of these file
+formats and package managers are described in their respective
+documentation.
 
 As a final note on software installation, you should be aware of the
 \href{https://docs.docker.com/engine/reference/builder/\#user}{\texttt{USER}
 instruction} in a \texttt{Dockerfile} and how your base image might
-change the user for particular instructions, which can impact by which
-user account some commands can be run within the container. It is common
-to use images with the default user \texttt{root}, which is required for
-installing system dependencies. We recommend making sure that the image
-works without specifying any users, and, if your image deviates from
-that, we suggest you document it precisely. One reason you will
-encounter base images running a non-root user (popular examples are the
-Jupyter and Rocker images) is to avoid permission problems when mounting
-files into the container, especially for ``output'' files
-(see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}).
+change the user for particular instructions, restricting which commands
+can be run within the container. It is common to use images with the
+default user \texttt{root}, which is required for installing system
+dependencies. However you may encounter base images running as a
+non-root user (e.g., in the Jupyter and Rocker image stacks), in order
+to avoid permission problems when mounting files into the container,
+especially for ``output'' files
+(see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}). We recommend
+ensuring that the image works without specifying any users, and, if your
+image deviates from that, we suggest you document it precisely.
 
-\hypertarget{mount-user-scripts-and-data}{%
-\section*{7. Mount user scripts and
-data}\label{mount-user-scripts-and-data}}
-\addcontentsline{toc}{section}{7. Mount user scripts and data}
+\hypertarget{mount-datasets-at-run-time}{%
+\section*{7. Mount datasets at run
+time}\label{mount-datasets-at-run-time}}
+\addcontentsline{toc}{section}{7. Mount datasets at run time}
 
 \ztitlerefsetup{title=7} \zlabel{rule:mount} \label{rule:mount} \zrefused{rule:mount}
 
 The role of containers is to provide the computing environment, not to
-encapsulate datasets or custom scripts. It is better to include data
-files and custom scripts from the local machine in the container at
-runtime, and use the container image primarily for the software and
-dependencies. This insertion is achieved by using
+encapsulate (potentially very large) datasets. It is better to insert
+large data files from the local machine into the container at runtime,
+and use the image primarily for the software and dependencies. This
+insertion is achieved by using
 \href{https://docs.docker.com/storage/bind-mounts/}{\emph{bind mounts}}.
 Mounting these files is preferable to using the
 \texttt{ADD}/\texttt{COPY} instructions in the \texttt{Dockerfile},
 because files persist when the container instance or image is removed
 from your system, and the files are more accessible when the workspace
-is published. If you want to add local files to the container, we prefer
-\texttt{COPY} because it is explicit and you do not need \texttt{ADD}'s
-extra features, which are (a) URL as a source, which can be used instead
-of a \texttt{RUN\ wget} or \texttt{RUN\ curl} to download files and (b)
-a local \href{https://en.wikipedia.org/wiki/Tar_(computing)}{tar file}
-as a source, which you should avoid because such an archive file will be
-harder for future readers of your \texttt{Dockerfile} to make sense of
-and cannot be properly version controlled. Unless specific features are
-needed, bind mounts are also preferable to
-\href{https://docs.docker.com/storage/volumes/}{storage volumes}.
+is published. If you want to add local files to the container, (and do
+not need
+\href{https://docs.docker.com/engine/reference/builder/\#add}{\texttt{ADD}'s
+extra features}) we recommend \texttt{COPY} because it is simpler and
+explicit. Volumes are useful for persisting changes across runs of a
+container and offer faster file I/O compared to other mounting methods
+(particularly useful with databases for example). However they are less
+suitable for reproducibility, since these changes exist within the image
+(making them less in line with treating containers as ephemeral
+see~\hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}) and are not so
+easy to access or place under version control. Unless specific features
+are needed, bind mounts are therefore preferable to
+\href{https://docs.docker.com/storage/volumes/}{storage volumes} since
+the contents are directly accessible from both the container and the
+host and the files can be more easily included in the same repository.
 
-Standalone \emph{script files} are distinct from other software, as they
-are treated as files and managed software, i.e., installed with a
-package manager and versioned. If you developed extensive software for a
-specific analysis, you should ideally publish it as a software package
-and follow \hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} for
-installing it (cf. ``A package first'' in {[}12{]}). Consider using a
-suitable package system with pinned versions even for small scripts if
-the functions are reusable across datasets or workflows by you or
-others. If you cannot publish a software project in the appropriate
-language's package structure, you should make sure the source code files
-you \texttt{COPY} into the image are published together with the
-\texttt{Dockerfile}
-(see~\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). If the
-code and \texttt{Dockerfile} are in the same repository, the origin and
-results of the \texttt{COPY} instruction and subsequent installation
-code will be understandable in the future.
-
-Storing \emph{data files} outside of the container allows for handling
-of very large datasets and datasets with data worthy of protection,
-e.g., proprietary data or private information. Do not include such data
-in an image. To avoid publishing sensitive data by accident, you can add
-the data directory to the
+Storing \emph{data files} outside of the container allows handling of
+very large or sensitive datasets, e.g., proprietary data or private
+information. Do not include such data in an image! To avoid publishing
+sensitive data by accident, you can add the data directory to the
 \href{https://docs.docker.com/engine/reference/commandline/build/\#use-a-dockerignore-file}{\texttt{.dockerignore}}
 file, which excludes files and directories from the
 \href{https://docs.docker.com/engine/reference/commandline/build/\#extended-description}{build
 context}, i.e., the set of files considered by \texttt{docker\ build}.
 Ignoring data files also speeds up the build in cases where there are
-very large files or many small files; for example, large data files or
-the \texttt{.git} folder of the \href{https://git-scm.com/}{Git version
-control system}, which contains many small files across numerous
-folders, are usually not needed during image build. In any case, you
-should include dummy or test data into the image to ensure that a
+very large files or many small files. As an exception, you should
+include dummy or small test datasets in the image to ensure that a
 container is functional without the actual dataset, e.g., for automated
 tests, instructions in the user manual, or peer review (see also
 ``functional testing logic'' in {[}12{]}). For all these cases, you
-should provide clear instructions for users in the \texttt{README} on
-how to obtain actual or dummy data. When publishing your workspace,
-e.g., on Zenodo, having data and script contents as regular files
-outside of the container makes them more accessible to others, for
-example for reuse or analysis.
+should provide clear instructions in the \texttt{README} file on how to
+use the actual (or dummy) data, and how to obtain and mount it if it is
+kept outside of the image. When publishing your workspace, e.g., on
+Zenodo, having datasets outside of the container also makes them more
+accessible to others, for example for reuse or analysis.
 
 A mount can also be used to access \emph{output data} from a container;
 this can be an extra mount or the same \texttt{data} directory.
@@ -1338,25 +1326,28 @@ requires a specific handling, e.g., naming the container when starting
 it or using multiple shells, which requires very detailed instructions
 for users.
 
-You can use the \texttt{-v}/\texttt{-\/-volume} or \texttt{-\/-mount}
-flags to \texttt{docker\ run} to configure bind mounts of directories or
-files {[}46{]}, including options, as shown in the following examples.
-If the target path exists within the image, the bind mount will replace
-it for the started container.
+You can use the \texttt{-v}/\texttt{-\/-volume} or preferably
+\texttt{-\/-mount} flags to \texttt{docker\ run} to configure bind
+mounts of directories or files {[}46{]}, including options, as shown in
+the following examples. If the target path exists within the image, the
+bind mount will replace it for the started container. (Note,
+\texttt{\$HOME} is an environment variable in UNIX systems representing
+the path to the current user's home directory, e.g.,
+\texttt{/home/moby}, and \texttt{\$(pwd)} returns the current path.)
 
 \footnotesize
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# mount directory}
-\ExtensionTok{docker}\NormalTok{ run --volume /home/user/project:/project mycontainer}
+\ExtensionTok{docker}\NormalTok{ run --mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
 
 \CommentTok{# mount directory as read-only}
-\ExtensionTok{docker}\NormalTok{ run --volume /home/user/project:/project:ro mycontainer}
+\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
 
 \CommentTok{# mount multple directories, one with write access relative to current path (Linux)}
-\ExtensionTok{docker}\NormalTok{ run --volume /homse/user/article-x-supplement/data:/data:ro \textbackslash{}}
-\NormalTok{  --volume }\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs:/output-data:rw mycontainer}
+\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article-x-supplement/data,dst=/input-data,readonly \textbackslash{}}
+\NormalTok{  --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output-data mycontainer}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1392,29 +1383,30 @@ into a PDF in a container}. A workflow that does not support headless
 execution may even be seen as irreproducible.
 
 These two usages can be configured by the \texttt{Dockerfile}'s author
-and exposed to the user based on the \texttt{Dockerfile}'s \texttt{CMD}
-and \texttt{ENTRYPOINT} instructions. An image's main purpose is
-reflected by the default process and configuration, though the
-\texttt{CMD} and \texttt{ENTRYPOINT} can also be changed at runtime. It
-is considered good practice to have a combination of default command and
-entrypoint that meets reasonable user expectations. For example, a
-container known to be a workflow should execute the entrypoint to the
-workflow and perhaps use \texttt{-\/-help} as the command to print out
-usage. The container entrypoint should \emph{not} execute the workflow,
-as the user is likely to run the container for basic inspection, and
-starting an analysis as a surprise that might write files is undesired.
-As the maintainer of the workflow, you should write clear instructions
-for how to properly interact with the container, both for yourself and
-others. A possible weakness with using containers is that they can only
-provide one default command and entrypoint. However, tools, e.g., The
-Scientific Filesystem {[}48{]}, have been developed to expose multiple
-entrypoints, environments, help messages, labels, and even install
-sequences. With plain Docker, you can override the defaults as part of
-the \texttt{docker\ run} command or in an extra \texttt{Dockerfile}
-using the primary image as a base, as shown in Listing~5. In any case,
-you should document different variants very well and potentially capture
-build and run commands in a \texttt{Makefile} {[}27{]}. If you use a
-\texttt{Makefile}, then keep it in the same repository (see
+and exposed to the user based on the \texttt{Dockerfile}'s
+\texttt{ENTRYPOINT} and \texttt{CMD} instructions. An image's main
+purpose is reflected by the default process and configuration, though
+the \texttt{ENTRYPOINT} and \texttt{CMD} can also be changed at runtime.
+It is considered good practice to have a combination of default
+entrypoint and command that meets reasonable user expectations. For
+example, a container known to be a workflow should execute the
+entrypoint to the workflow and perhaps use \texttt{-\/-help} as the
+command to print out usage. The container entrypoint should \emph{not}
+execute the workflow, as the user is likely to run the container for
+basic inspection, and starting an analysis as a surprise that might
+write files is undesired. As the maintainer of the workflow, you should
+write clear instructions for how to properly interact with the
+container, both for yourself and others. A possible weakness with using
+containers is that they can only provide one default entrypoint and
+command. However, tools, e.g., The Scientific Filesystem {[}48{]}, have
+been developed to expose multiple entrypoints, environments, help
+messages, labels, and even install sequences. With plain Docker, you can
+override the defaults as part of the \texttt{docker\ run} command or in
+an extra \texttt{Dockerfile} using the primary image as a base, as shown
+in Listing~5. In any case, you should document different variants very
+well and potentially capture build and run commands in a
+\texttt{Makefile} {[}27{]}. If you use a \texttt{Makefile}, then keep it
+in the same repository (see
 \hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}) and include
 instructions for its usage (see
 \hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). To support
@@ -1562,17 +1554,17 @@ publish it with a version control system}
 
 \ztitlerefsetup{title=9} \zlabel{rule:publish} \label{rule:publish} \zrefused{rule:publish}
 
-Because a \texttt{Dockerfile} is a plain text-based format, it works
-well with version control systems. Including a \texttt{Dockerfile}
-alongside your code and data is an effective way to consistently build
-your software, to show visitors to the repository how it is built and
-used, to solicit feedback and collaborate with your peers, and to
-increase the impact and sustainability of your work (cf.~{[}56{]}). Most
-importantly, you should publish \emph{all} files \texttt{COPY}ied into
-the image, e.g., test data or files for software installation from
-source (see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}), in
-the same public repository as the \texttt{Dockerfile}, e.g., in a
-research compendium.
+As plain text files, \texttt{Dockerfile}s are well suited for use with
+version control systems. Including a \texttt{Dockerfile} alongside your
+code and data is an effective way to consistently build your software,
+to show visitors to the repository how it is built and used, to solicit
+feedback and collaborate with your peers, and to increase the impact and
+sustainability of your work (cf.~{[}56{]}). Most importantly, you should
+publish \emph{all} files \texttt{COPY}ied into the image, e.g., test
+data or files for software installation from source
+(see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}), in the same
+public repository as the \texttt{Dockerfile}, e.g., in a research
+compendium.
 
 Online collaboration platforms (e.g., GitHub, GitLab) also make it easy
 to use CI services to test building and executing your image in an
@@ -1596,6 +1588,16 @@ files scatter information across multiple places, we recommend avoiding
 this at the cost of a longer \texttt{Dockerfile}, which can be mitigated
 with formatting
 (see~\hyperref[{rule:formatting}]{Rule~\ztitleref{rule:formatting}}).
+
+Importantly, you should publish \emph{all} files \texttt{COPY}ied into
+the container, e.g., test data, custom scripts or files for software
+installation from source
+(see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}) in the same
+public repository as the \texttt{Dockerfile}, e.g., in a research
+compendium. If you prefer to edit your scripts more interactively in a
+running container (e.g., using Jupyter) then it may be more convenient
+to bind mount their directory from the host at run time, provided all
+changes are commited before sharing.
 
 It is likely going to be the case that over time you will work on
 projects and develop images that are similar in nature to each other.
