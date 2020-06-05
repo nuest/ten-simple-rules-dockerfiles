@@ -432,7 +432,7 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
   org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, \
-    Marwick, Eglen, Head, and Hirst' \
+    Marwick, Eglen, Head, Hirst, and Evans' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
   org.opencontainers.image.documentation='https://nuest.github.io/ten-simple-rules-\
     dockerfiles/ten-simple-rules-dockerfiles.pdf' \
