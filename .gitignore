@@ -9,3 +9,7 @@ ten-simple-rules-dockerfiles\.pdf
 *.tex
 
 README.html
+
+examples/full-demo/figures/
+
+examples/full-demo/outputData/

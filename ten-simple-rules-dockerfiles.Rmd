@@ -153,74 +153,12 @@ In fact, the `Dockerfile` itself represents powerful documentation to show from 
 \scriptsize
 
 \begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example.},breaklines=true,label={lst:full}]
-FROM docker.io/rocker/verse:3.6.2
 
-### INSTALL BASE SOFTWARE #####################################################
-# install Java, needed for package rJava
-RUN apt-get update && \
-  apt-get install -y default-jdk && \
-  rm -rf /var/lib/apt/lists/*
+```{r, results='asis', echo=FALSE}
+cat(readLines("examples/full-demo/Dockerfile"), sep = "\n")
+```
 
-# install system dependencies for R packages
-RUN apt-get update && \
-  apt-get install
-    # needed for RNetCDF:
-    netcdf udunits-2 \
-    # needed for ...:
-    more \
-    arguments
 
-# Taken from https://github.com/rocker-org/geospatial/blob/master/Dockerfile
-RUN install2.r --error \
-    RColorBrewer \
-    RandomFields \
-    RNetCDF
-
-WORKDIR /tmp
-
-### INSTALL WORKFLOW TOOLS ####################################################
-# Install latest version of crucial tool with bugfix from source
-RUN apt-get update && \
-  apt-get install -y \
-    build-essential && \
-  wget https://download.url/crucialware/version-1.2.3.zip && \
-  unzip *.zip -d crucialware && \
-  cd crucialware && \
-  ./configure && make && make install && \
-  rm -rf /tmp/crucialware version-*.zip && \
-  rm -rf /var/lib/apt/lists/*
-
-# Install Python tools
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-### ADD MY OWN SCRIPTS ########################################################
-# Add workflow scripts
-WORKDIR /work
-COPY myscript.sh myscript.sh
-COPY plots.R plots.R
-
-# Uncomment the following lines to execute preprocessing tasks during build
-#RUN snakemake --use-conda <other params>
-#RUN nextflow workflow.nf --in 'dataset/*.fa'
-#RUN java -jar cromwell-XY.jar run myWorkflow.wdl
-#RUN Rscript prepare-plots.R
-
-### WORKFLOW CONTAINER FEATURE ################################################
-# CMD from base image used for development, uncomment the following lines to 
-# have a "run workflow only" container
-# CMD["./myscript.sh"]
-
-### Usage instructions ########################################################
-# Build the images with
-# > docker build --tag great_workflow:1.0.0 .
-# Run the image:
-# > docker run --it --port 80:8787 --volume ./input:/input \
-#     --name gwf great_workflow
-# Extract the data:
-# > docker cp gwf:/output/ ./outputData
-# Extract the figures:
-# > docker cp gwf:/work/figures/ ./figures
 \end{lstlisting}
 
 \normalsize
