@@ -733,7 +733,7 @@ print(paste('Number of lines: ', l))
 [1] "Number of lines:  568"
 ```
 
-_Listing&nbsp;6_: Passing a parameter via environment variable.
+_Listing&nbsp;6_: Passing a parameter via environment variable (working code in example `pass-parameter-env`, see \nameref{examples}).
 
 \normalsize
 
