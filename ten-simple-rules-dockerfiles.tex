@@ -214,6 +214,9 @@
 \usepackage[user,titleref]{zref}
 \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
 \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
+\usepackage{listings}
+\lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\bfseries, identifierstyle=\color{black}, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
+\lstset{literate={ü}{{\"u}}1, showstringspaces=false}
 
 
 
@@ -337,7 +340,7 @@ been demonstrated for capturing scientific notebooks {[}5{]} and
 reproducible workflows {[}6{]}.
 
 While several tutorials exist on how to use containers for reproducible
-research {[}7--11{]} and Guening et~al.~{[}12{]} give very helpful
+research {[}7--11{]} and Guening et~al. {[}12{]} give very helpful
 recommendations for packaging reusable software in a container, there is
 no detailed \emph{manual for how to write the actual instructions to
 create the containers for computational research} besides generic best
@@ -449,11 +452,11 @@ Figure~1. Akin to compiling source code for a programming language,
 creating a container also starts with a plain text file (Dockerfile),
 which provides instructions for building an image. Similar to using a
 compiled binary file to launch a program, the image is then run to
-create a container instance. See Listing~1 for a full
+create a container instance. See Listing~\ref{lst:full} for a full
 \texttt{Dockerfile}, which we will refer to throughout this article.
 
 \begin{figure}[h]
-\includegraphics[width=1\linewidth]{container-analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).}\label{fig:container-analogy}
+\includegraphics[width=1\linewidth]{container-analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:container-analogy}
 \end{figure}
 
 While Docker was the original technology to support the
@@ -488,82 +491,78 @@ again.
 
 \scriptsize
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{FROM}\NormalTok{ rocker/verse:3.6.2}
+\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example.},breaklines=true,label={lst:full}]
+FROM docker.io/rocker/verse:3.6.2
 
-\CommentTok{### INSTALL BASE SOFTWARE #####################################################}
-\CommentTok{# install Java, needed for package rJava}
-\KeywordTok{RUN}\NormalTok{ apt-get update && \textbackslash{}}
-\NormalTok{  apt-get install -y default-jdk && \textbackslash{}}
-\NormalTok{  rm -rf /var/lib/apt/lists/*}
+### INSTALL BASE SOFTWARE #####################################################
+# install Java, needed for package rJava
+RUN apt-get update && \
+  apt-get install -y default-jdk && \
+  rm -rf /var/lib/apt/lists/*
 
-\CommentTok{# install system dependencies for R packages}
-\KeywordTok{RUN}\NormalTok{ apt-get update && \textbackslash{}}
-\NormalTok{  apt-get install}
-    \CommentTok{# needed for RNetCDF:}
-\NormalTok{    netcdf udunits-2 \textbackslash{}}
-    \CommentTok{# needed for ...:}
-\NormalTok{    more \textbackslash{}}
-\NormalTok{    arguments}
+# install system dependencies for R packages
+RUN apt-get update && \
+  apt-get install
+    # needed for RNetCDF:
+    netcdf udunits-2 \
+    # needed for ...:
+    more \
+    arguments
 
-\CommentTok{# Taken from https://github.com/rocker-org/geospatial/blob/master/Dockerfile}
-\KeywordTok{RUN}\NormalTok{ install2.r --error \textbackslash{}}
-\NormalTok{    RColorBrewer \textbackslash{}}
-\NormalTok{    RandomFields \textbackslash{}}
-\NormalTok{    RNetCDF}
+# Taken from https://github.com/rocker-org/geospatial/blob/master/Dockerfile
+RUN install2.r --error \
+    RColorBrewer \
+    RandomFields \
+    RNetCDF
 
-\KeywordTok{WORKDIR}\NormalTok{ /tmp}
+WORKDIR /tmp
 
-\CommentTok{### INSTALL WORKFLOW TOOLS ####################################################}
-\CommentTok{# Install latest version of crucial tool with bugfix from source}
-\KeywordTok{RUN}\NormalTok{ apt-get update && \textbackslash{}}
-\NormalTok{  apt-get install -y \textbackslash{}}
-\NormalTok{    build-essential && \textbackslash{}}
-\NormalTok{  wget https://download.url/crucialware/version-1.2.3.zip && \textbackslash{}}
-\NormalTok{  unzip *.zip -d crucialware && \textbackslash{}}
-\NormalTok{  cd crucialware && \textbackslash{}}
-\NormalTok{  ./configure && make && make install && \textbackslash{}}
-\NormalTok{  rm -rf /tmp/crucialware version-*.zip && \textbackslash{}}
-\NormalTok{  rm -rf /var/lib/apt/lists/*}
+### INSTALL WORKFLOW TOOLS ####################################################
+# Install latest version of crucial tool with bugfix from source
+RUN apt-get update && \
+  apt-get install -y \
+    build-essential && \
+  wget https://download.url/crucialware/version-1.2.3.zip && \
+  unzip *.zip -d crucialware && \
+  cd crucialware && \
+  ./configure && make && make install && \
+  rm -rf /tmp/crucialware version-*.zip && \
+  rm -rf /var/lib/apt/lists/*
 
-\CommentTok{# Install Python tools}
-\KeywordTok{COPY}\NormalTok{ requirements.txt requirements.txt}
-\KeywordTok{RUN}\NormalTok{ pip install -r requirements.txt}
+# Install Python tools
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-\CommentTok{### ADD MY OWN SCRIPTS ########################################################}
-\CommentTok{# Add workflow scripts}
-\KeywordTok{WORKDIR}\NormalTok{ /work}
-\KeywordTok{COPY}\NormalTok{ myscript.sh myscript.sh}
-\KeywordTok{COPY}\NormalTok{ plots.R plots.R}
+### ADD MY OWN SCRIPTS ########################################################
+# Add workflow scripts
+WORKDIR /work
+COPY myscript.sh myscript.sh
+COPY plots.R plots.R
 
-\CommentTok{# Uncomment the following lines to execute preprocessing tasks during build}
-\CommentTok{#RUN snakemake --use-conda <other params>}
-\CommentTok{#RUN nextflow workflow.nf --in 'dataset/*.fa'}
-\CommentTok{#RUN java -jar cromwell-XY.jar run myWorkflow.wdl}
-\CommentTok{#RUN Rscript prepare-plots.R}
+# Uncomment the following lines to execute preprocessing tasks during build
+#RUN snakemake --use-conda <other params>
+#RUN nextflow workflow.nf --in 'dataset/*.fa'
+#RUN java -jar cromwell-XY.jar run myWorkflow.wdl
+#RUN Rscript prepare-plots.R
 
-\CommentTok{### WORKFLOW CONTAINER FEATURE ################################################}
-\CommentTok{# CMD from base image used for development, uncomment the following lines to }
-\CommentTok{# have a "run workflow only" container}
-\CommentTok{# CMD["./myscript.sh"]}
+### WORKFLOW CONTAINER FEATURE ################################################
+# CMD from base image used for development, uncomment the following lines to 
+# have a "run workflow only" container
+# CMD["./myscript.sh"]
 
-\CommentTok{### Usage instructions ########################################################}
-\CommentTok{# Build the images with}
-\CommentTok{# > docker build --tag great_workflow:1.0.0 .}
-\CommentTok{# Run the image:}
-\CommentTok{# > docker run --it --port 80:8787 --volume ./input:/input \textbackslash{}}
-\CommentTok{#     --name gwf great_workflow}
-\CommentTok{# Extract the data:}
-\CommentTok{# > docker cp gwf:/output/ ./outputData}
-\CommentTok{# Extract the figures:}
-\CommentTok{# > docker cp gwf:/work/figures/ ./figures}
-\end{Highlighting}
-\end{Shaded}
+### Usage instructions ########################################################
+# Build the images with
+# > docker build --tag great_workflow:1.0.0 .
+# Run the image:
+# > docker run --it --port 80:8787 --volume ./input:/input \
+#     --name gwf great_workflow
+# Extract the data:
+# > docker cp gwf:/output/ ./outputData
+# Extract the figures:
+# > docker cp gwf:/work/figures/ ./figures
+\end{lstlisting}
 
 \normalsize
-
-\emph{Listing~1}: \texttt{Dockerfile} full example.
 
 \newpage
 
@@ -744,11 +743,11 @@ published to the parent tag \texttt{1.2}.
 
 For data science workflows, you should always rely on version-specific
 image tags both for base images that you use and for images that you
-build yourself and then run (see usage instructions in Listing~1 for an
-example of the \texttt{-\/-tag} parameter of \texttt{docker\ build}).
-When keeping different versions (tags) available, it is good practice to
-publish an image in an image registry. For details, we refer you to the
-documentation on automated builds, see
+build yourself and then run (see usage instructions in
+Listing~\ref{lst:full} for an example of the \texttt{-\/-tag} parameter
+of \texttt{docker\ build}). When keeping different versions (tags)
+available, it is good practice to publish an image in an image registry.
+For details, we refer you to the documentation on automated builds, see
 \href{https://docs.docker.com/docker-hub/builds/}{Docker Hub Builds} or
 \href{https://docs.gitlab.com/ee/user/packages/container_registry/index.html\#build-and-push-images}{GitLab's
 Container Registry} as well as continuous integration (CI) services such
@@ -900,41 +899,38 @@ should be documented in the \texttt{Dockerfile}. All instructions can be
 grouped starting with a short comment, which also makes it easier to
 spot changes if your \texttt{Dockerfile} is managed in some version
 control system (see
-\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). Listing~2
-shows a selection of typical kinds of comments that are useful to
-include in a \texttt{Dockerfile}.
+\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}).
+Listing~\ref{lst:comments} shows a selection of typical kinds of
+comments that are useful to include in a \texttt{Dockerfile}.
 
 \scriptsize
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{...}
+\begin{minipage}{\linewidth}
 
-\CommentTok{# apt-get install specific version, use 'apt-cache madison <pkg>' }
-\CommentTok{# to see available versions}
-\KeywordTok{RUN}\NormalTok{ apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1}
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with examples for helpful comments.},breaklines=true,label={lst:comments}]
+...
 
-\CommentTok{# RUN command spreading several lines}
-\KeywordTok{RUN}\NormalTok{ R -e }\StringTok{'getOption("repos")'}\NormalTok{ && \textbackslash{}}
-\NormalTok{  install2.r \textbackslash{}}
-\NormalTok{    fortunes \textbackslash{}}
-\NormalTok{    here}
+# apt-get install specific version, use 'apt-cache madison <pkg>' 
+# to see available versions
+RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-\CommentTok{# this library must be installed from source to get version newer}
-\CommentTok{# than in sources}
-\KeywordTok{RUN}\NormalTok{ git clone http://url.of/repo && \textbackslash{}}
-\NormalTok{  cd repo && \textbackslash{}}
-\NormalTok{  make build && \textbackslash{}}
-\NormalTok{  make install}
+# RUN command spreading several lines
+RUN R -e 'getOption("repos")' && \
+  install2.r \
+    fortunes \
+    here
 
-\CommentTok{# following commands from instructions at https://gitlab.com/helpful/repo}
-\end{Highlighting}
-\end{Shaded}
+# this library must be installed from source to get version newer
+# than in sources
+RUN git clone http://url.of/repo && \
+  cd repo && \
+  make build && \
+  make install
+\end{lstlisting}
+
+\end{minipage}
 
 \normalsize
-
-\emph{Listing~2}: Partial \texttt{Dockerfile} with examples for helpful
-comments.
 
 \hypertarget{add-metadata-as-labels}{%
 \subsection{Add metadata as labels}\label{add-metadata-as-labels}}
@@ -945,14 +941,14 @@ such as the version of Docker used for building the image. The
 instruction} can add \emph{custom metadata} to images. You can view all
 labels and other image metadata with
 \href{https://docs.docker.com/engine/reference/commandline/inspect/}{\texttt{docker\ inspect}}
-command. Listing~3 shows the most relevant ones for data science
-workflows. Labels serve as structured metadata that can be leveraged by
-services, e.g., https://microbadger.com/labels. For example, software
-versions of containerised applications (cf.~{[}12{]}), licenses, and
-maintainer contact information are commonly seen, and they are very
-useful if a \texttt{Dockerfile} is discovered out of context. Regarding
-licensing information, this should include the license of your own code
-and could point to a \texttt{LICENSE} file within the image
+command. Listing~\ref{lst:labels} shows the most relevant ones for data
+science workflows. Labels serve as structured metadata that can be
+leveraged by services, e.g., https://microbadger.com/labels. For
+example, software versions of containerised applications (cf.~{[}12{]}),
+licenses, and maintainer contact information are commonly seen, and they
+are very useful if a \texttt{Dockerfile} is discovered out of context.
+Regarding licensing information, this should include the license of your
+own code and could point to a \texttt{LICENSE} file within the image
 (cf.~{[}12{]}). While you can add arbitrarily complex information with
 labels, for data science scenarios the user-facing documentation is much
 more important. Relevant metadata that might be more utilised with
@@ -982,31 +978,31 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 
 \scriptsize
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{...}
+\begin{minipage}{\linewidth}
 
-\KeywordTok{LABEL}\NormalTok{ maintainer=}\StringTok{'D. Nüst <daniel.nuest@uni-muenster.de>'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.authors=}\StringTok{'Nüst (daniel.nuest@uni-muenster.de), Sochat, \textbackslash{}}
-\StringTok{    Marwick, Eglen, Head, and Hirst'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.url=}\StringTok{'https://github.com/nuest/ten-simple-rules'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.documentation=}\StringTok{'https://nuest.github.io/ten-simple-rules-\textbackslash{}}
-\StringTok{    dockerfiles/ten-simple-rules-dockerfiles.pdf'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.version=}\StringTok{'1.0.0'}
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels.},breaklines=true,label={lst:labels}]
+...
 
-\KeywordTok{LABEL}\NormalTok{ org.opencontainers.image.vendor=}\StringTok{'Ten Simple Institute, Uni of Rules'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.description=}\StringTok{'Reproducible workflow image'}\NormalTok{ \textbackslash{}}
-\NormalTok{  org.opencontainers.image.licenses=}\StringTok{'Apache-2.0'}
+LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
+  org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), }
+    Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
+  org.opencontainers.image.url="https://github.com/nuest/ten-simple-rules" \
+  org.opencontainers.image.documentation="https://nuest.github.io/ \
+    ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf" \
+  org.opencontainers.image.version="1.0.0"
 
-\KeywordTok{LABEL}\NormalTok{ edu.science.data.group.project=}\StringTok{'Find out something (Grant #123456)'}\NormalTok{ \textbackslash{}}
-\NormalTok{  edu.science.data.group.name=}\StringTok{'Data Science Lab'}\NormalTok{ \textbackslash{}}
-\NormalTok{  author.orcid=}\StringTok{'0000-0002-1825-0097'}
-\end{Highlighting}
-\end{Shaded}
+LABEL org.opencontainers.image.vendor="Ten Simple Institute, Uni of Rules" \
+  org.opencontainers.image.description="Reproducible workflow image" \
+  org.opencontainers.image.licenses="Apache-2.0"
+
+LABEL edu.science.data.group.project="Find out something (Grant #123456)" \
+  edu.science.data.group.name="Data Science Lab" \
+  author.orcid="0000-0002-1825-0097"
+\end{lstlisting}
+
+\end{minipage}
 
 \normalsize
-
-\emph{Listing~3}: Partial \texttt{Dockerfile} with commonly used labels.
 
 \hypertarget{define-versions-parameters-and-paths-once}{%
 \subsection{Define versions, parameters, and paths
@@ -1022,45 +1018,45 @@ specifying metadata intended to be discovered by installed libraries or
 software, or (c) adding binaries to the path (\texttt{PATH}) or library
 path (\texttt{LD\_LIBRARY\_PATH}). You should be careful to distinguish
 these environment variables from those that might vary and be required
-at runtime. Listing~4 shows some examples. For runtime environment
-variables, either to set a new variable or override one set in the
-container, you can use the \texttt{-\/-env} parameter of
-\texttt{docker\ run} (see Listings~4 and~6).
+at runtime. Listing~\ref{lst:envvars} shows some examples. For runtime
+environment variables, either to set a new variable or override one set
+in the container, you can use the \texttt{-\/-env} parameter of
+\texttt{docker\ run} (see Listings~\ref{lst:envvars}
+and~\ref{lst:passparam}).
 
 \scriptsize
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{...}
+\begin{minipage}{\linewidth}
 
-\CommentTok{# Define number of cores used by PowerfulAlgorithm to something that is widely available}
-\KeywordTok{ENV}\NormalTok{ POWER_ALG_CORES 2}
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} showing usage of environment variables with the `ENV` instruction.},breaklines=true,label={lst:envvars}]
+...
 
-\CommentTok{# Install UsefulSoft tool in specific version from source}
-\KeywordTok{ENV}\NormalTok{ USEFULSOFT_VERSION=1.0.0 \textbackslash{}}
-\NormalTok{  USEFULSOFT_INSTALLDIR=/workspace/bin}
+# Define number of cores used by PowerfulAlgorithm
+ENV POWER_ALG_CORES 2
 
-\KeywordTok{RUN}\NormalTok{ wget http://usesoft.url/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \textbackslash{}}
-\NormalTok{  unzip useful-$USEFULSOFT_VERSION.zip -d useful-src && \textbackslash{}}
-\NormalTok{  cd useful-src && \textbackslash{}}
-\NormalTok{  bash install.sh --target $USEFULSOFT_INSTALLDIR && \textbackslash{}}
-\NormalTok{  cd .. && \textbackslash{}}
-\NormalTok{  rm -r useful-src useful-$USEFULSOFT_VERSION.zip}
+# Install UsefulSoft tool in specific version from source
+ENV USEFULSOFT_VERSION=1.0.0 \
+  USEFULSOFT_INSTALLDIR=/workspace/bin
 
-\CommentTok{# Puth UsefulSoft tool on the path for subsequent instructions}
-\KeywordTok{ENV}\NormalTok{ PATH $PATH:$USEFULSOFT_INSTALLDIR}
+RUN wget http://usesoft.url/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSOFT_VERSION.zip && \
+  unzip useful-$USEFULSOFT_VERSION.zip -d useful-src && \
+  cd useful-src && \
+  bash install.sh --target $USEFULSOFT_INSTALLDIR && \
+  cd .. && \
+  rm -r useful-src useful-$USEFULSOFT_VERSION.zip
 
-\CommentTok{### Usage instructions }\AlertTok{###}
-\CommentTok{# [...]}
-\CommentTok{# Run the image (defining the number of cores used):}
-\CommentTok{# > docker run --it --env POWER_ALG_CORES 32 my_workflow}
-\end{Highlighting}
-\end{Shaded}
+# Puth UsefulSoft tool on the path for subsequent instructions
+ENV PATH $PATH:$USEFULSOFT_INSTALLDIR
+
+### Usage instructions ###
+# [...]
+# Run the image (defining the number of cores used):
+# > docker run --it --env POWER_ALG_CORES 32 my_workflow
+\end{lstlisting}
+
+\end{minipage}
 
 \normalsize
-
-\emph{Listing~4}: Partial \texttt{Dockerfile} showing usage of
-environment variables with the \texttt{ENV} instruction.
 
 \hypertarget{include-usage-instructions}{%
 \subsection{Include usage
@@ -1071,10 +1067,10 @@ It is often helpful to provide usage instructions, i.e., how to
 the \texttt{Dockerfile}, either at the top or bottom where the reader is
 likely to find them. Such documentation is especially relevant if bind
 mounts, specific names, or ports are important for using the container;
-see, for example, the final lines of Listing~1. These instructions are
-not limited to \texttt{docker\ \textless{}command\textgreater{}} but
-include the usage of bespoke scripts, a \texttt{Makefile}, or
-\texttt{docker-compose} (see
+see, for example, the final lines of Listing~\ref{lst:full}. These
+instructions are not limited to
+\texttt{docker\ \textless{}command\textgreater{}} but include the usage
+of bespoke scripts, a \texttt{Makefile}, or \texttt{docker-compose} (see
 \hyperref[{rule:interactive}]{Rule~\ztitleref{rule:interactive}} and
 \hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}). Following a
 common coding aphorism, we might say \emph{``A Dockerfile written three
@@ -1133,12 +1129,12 @@ the currently installed versions of software on your system:
 \end{itemize}
 
 When you install several system libraries, it is good practice to add
-comments about why the dependencies are needed (see Listing~1). This
-way, if a piece of software is removed from the container, it will be
-easier to remove the system dependencies that are no longer needed,
-thereby reducing maintenance overhead: You will not unnecessarily fix
-problems with a library that is no longer needed or include long-running
-installations.
+comments about why the dependencies are needed (see
+Listing~\ref{lst:full}). This way, if a piece of software is removed
+from the container, it will be easier to remove the system dependencies
+that are no longer needed, thereby reducing maintenance overhead: You
+will not unnecessarily fix problems with a library that is no longer
+needed or include long-running installations.
 
 \hypertarget{extension-packages-and-programming-language-modules}{%
 \subsection{Extension packages and programming language
@@ -1420,10 +1416,10 @@ been developed to expose multiple entrypoints, environments, help
 messages, labels, and even install sequences. With plain Docker, you can
 override the defaults as part of the \texttt{docker\ run} command or in
 an extra \texttt{Dockerfile} using the primary image as a base, as shown
-in Listing~5. In any case, you should document different variants very
-well and potentially capture build and run commands in a
-\texttt{Makefile} {[}27{]}. If you use a \texttt{Makefile}, then keep it
-in the same repository (see
+in Listing~\ref{lst:runnerimage}. In any case, you should document
+different variants very well and potentially capture build and run
+commands in a \texttt{Makefile} {[}27{]}. If you use a
+\texttt{Makefile}, then keep it in the same repository (see
 \hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}) and include
 instructions for its usage (see
 \hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). To support
@@ -1435,37 +1431,34 @@ or via wrappers using Docker, such as Kliko {[}53{]}.
 
 \scriptsize
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# base image (interactive)}
-\KeywordTok{FROM}\NormalTok{ jupyter/datascience-notebook:python-3.7.6}
+\begin{minipage}{\linewidth}
 
-\CommentTok{# Usage instructions:}
-\CommentTok{# $ docker build --tag workflow:1.0 .}
-\CommentTok{# $ docker run workflow:1.0}
-\end{Highlighting}
-\end{Shaded}
+\begin{lstlisting}[language=docker,caption={Workflow \texttt{Dockerfile} and derived "runner image" \texttt{Dockerfile} with file name \texttt{Dockerfile.runner}.},breaklines=true,label={lst:runnerimage}]
+#----- File: Dockerfile --------------------------------------------------
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# interactive image}
-\KeywordTok{FROM}\NormalTok{ workflow:1.0}
+# base image (interactive)
+FROM jupyter/datascience-notebook:python-3.7.6
 
-\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"python"}\NormalTok{]}
-\KeywordTok{CMD}\NormalTok{ [}\StringTok{"/workspace/run-all.sh"}\NormalTok{]}
+# Usage instructions:
+# docker build --tag workflow:1.0 .
+# docker run workflow:1.0
 
-\CommentTok{# Usage instructions:}
-\CommentTok{# $ docker build --tag workflow-runner:1.0 --file Dockerfile.runner .}
-\CommentTok{# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced \textbackslash{}}
-\CommentTok{#     --volume /tmp/results:/workspace/output_data workflow-runner:1.0}
-\end{Highlighting}
-\end{Shaded}
+#----- File: Dockerfile.runner -------------------------------------------
+# interactive image
+FROM workflow:1.0
+
+ENTRYPOINT ["python"]
+CMD ["/workspace/run-all.sh"]
+
+# Usage instructions:
+# docker build --tag workflow-runner:1.0 --file Dockerfile.runner .
+# docker run -e ITERATIONS=10 -e ALGORITHM=advanced \
+#     --volume /tmp/results:/workspace/output_data workflow-runner:1.0
+\end{lstlisting}
+
+\end{minipage}
 
 \normalsize
-
-\emph{Listing~5}: Workflow \texttt{Dockerfile} and derived ``runner
-image'' \texttt{Dockerfile} with file name \texttt{Dockerfile.runner}.
-\newline
 
 \emph{Interactive graphical interfaces}, such as
 \href{https://rstudio.com/products/rstudio/}{RStudio},
@@ -1527,26 +1520,23 @@ variable.
 
 \footnotesize
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\ExtensionTok{docker}\NormalTok{ run \textbackslash{}}
-\NormalTok{  --env CONFIG_PARAM=}\StringTok{"/data/ten-simple-rules-dockerfiles.Rmd"}\NormalTok{ \textbackslash{}}
-\NormalTok{  --volume }\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{:/data \textbackslash{}}
-\NormalTok{  jupyter/datascience-notebook:7a0c7325e470 \textbackslash{}}
-\NormalTok{  R --quiet -e }\StringTok{"}
-\StringTok{l = length(readLines(Sys.getenv('CONFIG_PARAM')));}
-\StringTok{print(paste('Number of lines: ', l))}
-\StringTok{"}
-\end{Highlighting}
-\end{Shaded}
+\begin{minipage}{\linewidth}
 
-\begin{verbatim}
+\begin{lstlisting}[language=bash,caption={Passing a parameter via environment variable.},breaklines=true,label={lst:passparam}]
+docker run \
+  --env CONFIG_PARAM="/data/ten-simple-rules-dockerfiles.Rmd" \
+  --volume $(pwd):/data \
+  jupyter/datascience-notebook:7a0c7325e470 \
+  R --quiet -e "l = length(readLines(Sys.getenv('CONFIG_PARAM'))); \
+    print(paste('Number of lines: ', l))"
+
 > l = length(readLines(Sys.getenv('CONFIG_PARAM')));
 > print(paste('Number of lines: ', l))
 [1] "Number of lines:  568"
-\end{verbatim}
 
-\emph{Listing~6}: Passing a parameter via environment variable.
+\end{lstlisting}
+
+\end{minipage}
 
 \normalsize
 
@@ -1589,7 +1579,7 @@ iteratively developing the \texttt{Dockerfile}, and the formatting. You
 can add a version tag to the image before the re-build to make sure to
 keep a working environment at hand. A recommended ordering based on
 these considerations is as follows, and you can use comments to visually
-separate these sections in your file (cf.~Listing~1):
+separate these sections in your file (cf.~Listing~\ref{lst:full}):
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1697,13 +1687,16 @@ positioned for the future of scholarly communication and open science,
 where these may be standard practices required for publication
 {[}21,60--62{]}.
 
-\hypertarget{example-dockerfiles}{%
-\section{Example Dockerfiles}\label{example-dockerfiles}}
+\hypertarget{examples}{%
+\section{Examples}\label{examples}}
 
 To demonstrate the ten rules, we maintain a collection of annotated
-example \texttt{Dockerfile}s in a GitHub repository, some of which we
-took from public repositories and updated to adhere better to the rules:
-\url{https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples}
+example \texttt{Dockerfile}s in the \texttt{examples} directory of this
+article's GitHub repository. The \texttt{Dockerfile}s were mostly
+discovered in public repositories and updated to adhere better to the
+rules, see
+\url{https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples},
+archived at \url{https://doi.org/10.5281/zenodo.3878582}.
 
 \hypertarget{conclusion}{%
 \section*{Conclusion}\label{conclusion}}
