@@ -664,8 +664,8 @@ To support advanced custom configuration, it is helpful to expose settings via a
 FROM jupyter/datascience-notebook:python-3.7.6
 
 # Usage instructions:
-# $ docker build --tag workflow:1.0 .
-# $ docker run workflow:1.0
+# docker build --tag workflow:1.0 .
+# docker run workflow:1.0
 ```
 ```Dockerfile
 # interactive image
@@ -675,8 +675,8 @@ ENTRYPOINT ["python"]
 CMD ["/workspace/run-all.sh"]
 
 # Usage instructions:
-# $ docker build --tag workflow-runner:1.0 --file Dockerfile.runner .
-# $ docker run -e ITERATIONS=10 -e ALGORITHM=advanced \
+# docker build --tag workflow-runner:1.0 --file Dockerfile.runner .
+# docker run -e ITERATIONS=10 -e ALGORITHM=advanced \
 #     --volume /tmp/results:/workspace/output_data workflow-runner:1.0
 ```
 
