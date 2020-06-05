@@ -796,9 +796,10 @@ Sharing the actual image via a registry and a version-controlled `Dockerfile` to
 Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science, where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
 
-# Example Dockerfiles
+# Examples
 
-To demonstrate the ten rules, we maintain a collection of annotated example `Dockerfile`s in a GitHub repository, some of which we took from public repositories and updated to adhere better to the rules: [https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples](https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples)
+To demonstrate the ten rules, we maintain a collection of annotated example `Dockerfile`s in the `examples` directory of this article's GitHub repository.
+The `Dockerfile`s were mostly discovered in public repositories and updated to adhere better to the rules, see [https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples](https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples), archived at [https://doi.org/10.5281/zenodo.3878582](https://doi.org/10.5281/zenodo.3878582).
 
 # Conclusion {#conclusion .unnumbered}
 

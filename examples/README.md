@@ -1,5 +1,7 @@
 # Dockerfile Examples
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3878583.svg)](https://doi.org/10.5281/zenodo.3878583)
+
 ## About
 
 This directory contains `Dockerfile`s to demonstrate the application of the rules in [_Ten Simple _Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science_](https://github.com/nuest/ten-simple-rules-dockerfiles/).
