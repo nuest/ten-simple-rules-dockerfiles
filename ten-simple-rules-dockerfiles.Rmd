@@ -56,6 +56,7 @@ output:
   rticles::plos_article
 header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
+  - \usepackage[T1]{fontenc}
   - \usepackage[user,titleref]{zref}
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
   - \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
@@ -95,7 +96,7 @@ Furthermore, workflows interacting with many petabytes of data and executed in h
 Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right. 
 For the HPC use case, we encourage the reader to look at Singularity [@kurtzer_singularity_2017].
 For this article, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server.
-The reader might scope the data requirement to less than a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
+The reader might scope the data requirement to under a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
 Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
 A `docker-compose.yml` configuration file allows for defining mounts, environment variables, and exposed ports and helps users stick to _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
@@ -132,7 +133,7 @@ Akin to compiling source code for a programming language, creating a container a
 Similar to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;1 for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the `docker build` command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the `docker run` command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
+```{r container-analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
 knitr::include_graphics("container-analogy.png")
 ```
 
@@ -326,7 +327,7 @@ For example, here is how we would use a base image `verse`, which provides the p
 \footnotesize
 
 ```dockerfile
-FROM docker.io/rocker/r-ver:3.5.2
+FROM docker.io/rocker/verse:3.6.2
 ```
 
 \normalsize
@@ -399,7 +400,6 @@ RUN git clone http://url.of/repo && \
   make build && \
   make install
 
-# following commands from instructions at https://gitlab.com/helpful/repo
 ```
 
 \normalsize
@@ -432,7 +432,7 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
   org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, \
-    Marwick, Eglen, Head, and Hirst' \
+    Marwick, Eglen, Head, Hirst and Evans' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \
   org.opencontainers.image.documentation='https://nuest.github.io/ten-simple-rules-\
     dockerfiles/ten-simple-rules-dockerfiles.pdf' \
@@ -496,7 +496,7 @@ _Listing&nbsp;4_: Partial `Dockerfile` showing usage of environment variables wi
 It is often helpful to provide usage instructions, i.e., how to `docker build` and `docker run` the image, _within_ the `Dockerfile`, either at the top or bottom where the reader is likely to find them.
 Such documentation is especially relevant if bind mounts, specific names, or ports are important for using the container; see, for example, the final lines of Listing&nbsp;1.
 These instructions are not limited to `docker <command>` but include the usage of bespoke scripts, a `Makefile`, or `docker-compose` (see \ruleref{rule:interactive} and \ruleref{rule:usage}).
-Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
+Following a common coding aphorism, we might say _"A Dockerfile you wrote three months ago may just as well have been written by someone else"_.
 Thus, usage instructions help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
