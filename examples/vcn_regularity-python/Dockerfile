@@ -17,7 +17,6 @@ RUN conda env update -v -n root -f environment.yml
 # Install and configure nbextensions
 RUN jupyter nbextension enable --py widgetsnbextension
 RUN conda install --quiet --yes jupyter_contrib_nbextensions==0.3.3
-#RUN jupyter nbextension enable init_cell/main
 RUN jupyter nbextension enable hide_input_all/main
 
 # Trust notebooks
@@ -41,7 +40,7 @@ RUN python -c "import matplotlib.pyplot as plt"
 ## Build the image locally
 # As an alternative to using Binder, the image can be built locally:
 # $ docker build --tag vcn-regularity .
-#
+
 ## Run the image for interactive UI
 # $ docker run -it -p 8888:8888 vcn-regularity
 # Next, open a browser at http://localhost:8888 or click on the login link shown in the console.
