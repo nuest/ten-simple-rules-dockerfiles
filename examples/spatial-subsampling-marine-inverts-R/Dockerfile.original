@@ -1,0 +1,19 @@
+# Written by Roger A. Close to accompany analysis R code for Close et al. (in review) The spatial structure of Phanerozoic marine animal diversity.
+
+FROM rocker/rstudio:3.6.0
+
+RUN apt-get update && apt-get install -y \
+	r-cran-ncdf4 \
+	netcdf-* \
+	libnetcdf-dev \
+	libproj-dev \
+	default-jre \
+	default-jdk \
+	libxml2-* \
+	libmagick++-dev \
+	libgdal-dev libproj-dev libgeos-dev \
+	lbzip2 \
+	nano \
+&& rm -rf /var/lib/apt/lists/*
+
+RUN R CMD javareconf
