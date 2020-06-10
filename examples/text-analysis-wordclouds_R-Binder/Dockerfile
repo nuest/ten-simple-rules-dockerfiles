@@ -1,7 +1,7 @@
 # This Dockerfile is based on the rocker/binder example Dockerfile from https://github.com/rocker-org/binder/
 # We use 3.6.0 because it is a recent version of R that has a fixed MRAN date in the Rocker image.
 # The used MRAN URL is: https://mran.microsoft.com/snapshot/2019-07-05
-FROM rocker/binder:3.6.0
+FROM docker.io/rocker/binder:3.6.0
 
 ## Declares build arguments
 ARG NB_USER

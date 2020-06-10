@@ -58,6 +58,7 @@ header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   # using lst language based on https://github.com/marekaf/docker-lstlisting
   - \usepackage[T1]{fontenc}
+  - \usepackage{lmodern}
   - \usepackage[user,titleref]{zref}
   - \usepackage{nameref}
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
@@ -375,7 +376,7 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
-  org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), }
+  org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), \
     Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
   org.opencontainers.image.url="https://github.com/nuest/ten-simple-rules" \
   org.opencontainers.image.documentation="https://nuest.github.io/ \
@@ -669,7 +670,7 @@ The file path is passed as an environment variable.
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=bash,caption={Passing a parameter via environment variable.},breaklines=true,label={lst:passparam}]
+\begin{lstlisting}[language=bash,caption={Passing a parameter via environment variable; working code in example `pass-parameter-env`, see \nameref{examples}.},breaklines=true,label={lst:passparam}]
 docker run \
   --env CONFIG_PARAM="/data/ten-simple-rules-dockerfiles.Rmd" \
   --volume $(pwd):/data \
@@ -747,7 +748,6 @@ Finally, for a sanity check and to foster even higher trust in the stability and
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science, where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
 
 # Examples
-\label{examples}
 
 To demonstrate the ten rules, we maintain a collection of annotated example `Dockerfile`s in the `examples` directory of this article's GitHub repository.
 The `Dockerfile`s were mostly discovered in public repositories and updated to adhere better to the rules, see [https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples](https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples), archived at [https://doi.org/10.5281/zenodo.3878582](https://doi.org/10.5281/zenodo.3878582).

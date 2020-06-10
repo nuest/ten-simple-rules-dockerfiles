@@ -211,6 +211,8 @@
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
 
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[user,titleref]{zref}
 \usepackage{nameref}
 \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
@@ -368,9 +370,9 @@ would require a collection of ``Ten Simple Rules'' articles in their own
 right. For the HPC use case, we encourage the reader to look at
 Singularity {[}15{]}. For this article, we focus on workflows that
 typically run on single machine, e.g., a researchers laptop computer or
-a virtual server. The reader might scope the data requirement to less
-than a terabyte, and compute requirement to a machine with 16 cores
-running over the weekend.
+a virtual server. The reader might scope the data requirement to under a
+terabyte, and compute requirement to a machine with 16 cores running
+over the weekend.
 
 Although it is outside the scope of this article, we point readers to
 \texttt{docker-compose} {[}16{]} in the case where one might need
@@ -799,7 +801,7 @@ Hub (\texttt{docker.io}, which is the default and can be omitted).
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{FROM}\NormalTok{ docker.io/rocker/r-ver:3.5.2}
+\KeywordTok{FROM}\NormalTok{ docker.io/rocker/verse:3.6.2}
 \end{Highlighting}
 \end{Shaded}
 
@@ -986,7 +988,7 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
-  org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), }
+  org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), \
     Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
   org.opencontainers.image.url="https://github.com/nuest/ten-simple-rules" \
   org.opencontainers.image.documentation="https://nuest.github.io/ \
@@ -1075,11 +1077,11 @@ instructions are not limited to
 of bespoke scripts, a \texttt{Makefile}, or \texttt{docker-compose} (see
 \hyperref[{rule:interactive}]{Rule~\ztitleref{rule:interactive}} and
 \hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}). Following a
-common coding aphorism, we might say \emph{``A Dockerfile written three
-months ago may just as well have been written by someone else''}. Thus,
-usage instructions help others, because they quickly get them running
-your workflow and interacting with the container in the intended way
-without reading all of the instructions (a
+common coding aphorism, we might say \emph{``A Dockerfile you wrote
+three months ago may just as well have been written by someone else''}.
+Thus, usage instructions help others, because they quickly get them
+running your workflow and interacting with the container in the intended
+way without reading all of the instructions (a
 \href{https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn\%27t_read}{``tl;dr''}-kind
 of usage). The \texttt{Dockerfile} alongside your documentation strategy
 is a demonstration of your careful work habits and good intentions for
@@ -1524,7 +1526,7 @@ variable.
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=bash,caption={Passing a parameter via environment variable.},breaklines=true,label={lst:passparam}]
+\begin{lstlisting}[language=bash,caption={Passing a parameter via environment variable; working code in example `pass-parameter-env`, see \nameref{examples}.},breaklines=true,label={lst:passparam}]
 docker run \
   --env CONFIG_PARAM="/data/ten-simple-rules-dockerfiles.Rmd" \
   --volume $(pwd):/data \
@@ -1574,14 +1576,17 @@ step is executed afresh, and then every subsequent instruction will have
 to be executed in case the changed line influences a later instruction.
 You should regularly re-build the image using the \texttt{-\/-no-cache}
 option to learn about broken instructions as soon as possible
-(cf.~\hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}). Such a
-re-build is also a good occasion to revisit the order of instructions,
-e.g., if you appended an instruction at the end to save time while
-iteratively developing the \texttt{Dockerfile}, and the formatting. You
-can add a version tag to the image before the re-build to make sure to
-keep a working environment at hand. A recommended ordering based on
-these considerations is as follows, and you can use comments to visually
-separate these sections in your file (cf.~Listing~\ref{lst:full}):
+(cf.~\hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}; as an aside,
+\texttt{docker\ image\ prune\ -\/-all} is a good way to remove unused
+images, as these tend to accrue silently in your system and take up
+significant disk space). Such a re-build is also a good occasion to
+revisit the order of instructions, e.g., if you appended an instruction
+at the end to save time while iteratively developing the
+\texttt{Dockerfile}, and the formatting. You can add a version tag to
+the image before the re-build to make sure to keep a working environment
+at hand. A recommended ordering based on these considerations is as
+follows, and you can use comments to visually separate these sections in
+your file (cf.~Listing~\ref{lst:full}):
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1649,15 +1654,9 @@ good practice to provide a \texttt{Makefile} alongside your container,
 which can capture the specific commands. Furthermore, when you rebuild
 the image, you can take a fresh look at the \texttt{Dockerfile} and
 improve it over time, because it will be hard to apply all rules at
-once. A linter can help you with such optimisations, e.g., as a web
-service such as \href{https://www.dockerfilelint.com/}{Dockerfilelint},
-\href{https://hadolint.github.io/hadolint/}{hadolint} or
-\href{https://www.fromlatest.io/}{fromlatest}, as an extension to your
-integrated development environment, such as
-\href{https://github.com/microsoft/vscode-docker}{vscode-docker}, or as
-standalone tools like
-\href{https://github.com/projectatomic/dockerfile_lint}{\texttt{dockerfile-lint}},
-which you can integrate with your \texttt{Makefile}.
+once. Various linting tools, either on the command line {[}60{]} or as a
+web service {[}61{]}, are available and can be integrated into your
+workflow.
 
 Third, you can export the image to file and deposit it in a public data
 repository, where it not only becomes citable but also provides a
@@ -1687,12 +1686,10 @@ container on a machine of their own. You can do this shortly before
 submitting your reproducible workflow for peer-review, so you are well
 positioned for the future of scholarly communication and open science,
 where these may be standard practices required for publication
-{[}21,60--62{]}.
+{[}21,62--64{]}.
 
 \hypertarget{examples}{%
 \section{Examples}\label{examples}}
-
-\label{examples}
 
 To demonstrate the ten rules, we maintain a collection of annotated
 example \texttt{Dockerfile}s in the \texttt{examples} directory of this
@@ -1717,7 +1714,7 @@ workflows provides incredibly useful and valuable transparency for a
 project. We encourage researchers to follow these steps taken by their
 peers to use \texttt{Dockerfile}s to practice reproducible research, and
 we encourage them to change the way they communicate towards
-``preproducibility'' {[}63{]}, which values openness, transparency and
+``preproducibility'' {[}65{]}, which values openness, transparency and
 honesty to find fascinating problems and advance science. So, we ask
 researchers, with their best efforts and with their current knowledge,
 to strive to write readable \texttt{Dockerfile}s for functional
@@ -1743,19 +1740,20 @@ funded by the German Research Foundation (DFG) under project number PE
 1632/17-1. DN and SJE are supported by a Mozilla mini science grant. The
 funders had no role in study design, data collection and analysis,
 decision to publish, or preparation of the manuscript. We thank Dav
-Clark who provided feedback on the preprint {[}64{]} of this paper.
+Clark who provided feedback on the preprint {[}66{]} of this paper.
 
 \hypertarget{contributions}{%
 \section*{Author contributions}\label{contributions}}
 \addcontentsline{toc}{section}{Author contributions}
 
 DN conceived the idea and contributed to conceptualisation, methodology,
-and writing - original draft, review \& editing. VS contributed to
-conceptualisation, methodology, and writing - original draft, review \&
-editing. BM contributed to writing -- review \& editing. SJE contributed
-to conceptualisation and writing -- review \& editing. THe contributed
-to conceptualisation. THi contributed to writing -- review \& editing.
-BE contributed to visulisation and writing -- review \& editing. This
+and writing - original draft, review \& editing, and validation. VS
+contributed to conceptualisation, methodology, and writing - original
+draft, and review \& editing. BM contributed to writing -- review \&
+editing. SJE contributed to conceptualisation, writing -- review \&
+editing, and validation. THe contributed to conceptualisation. THi
+contributed to writing -- review \& editing. BE contributed to
+visulisation, writing -- review \& editing, and conceptualisation. This
 articles was written collaboratively on GitHub, where
 \href{https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors}{contributions
 in form of text or discussions comments} are documented:
@@ -2062,30 +2060,38 @@ Available: \url{https://github.com/yuvipanda/jupyter-desktop-server}
 59. Marwick B. README of 1989-excavation-report-Madjebebe. 2015;
 doi:\href{https://doi.org/10.6084/m9.figshare.1297059}{10.6084/m9.figshare.1297059}
 
+\leavevmode\hypertarget{ref-dockerfile-lint}{}%
+60. A rule-based linter for dockerfiles {[}Internet{]}. 2020. Available:
+\url{https://github.com/projectatomic/dockerfile_lint}
+
+\leavevmode\hypertarget{ref-hadolint}{}%
+61. Dockerfile linter {[}Internet{]}. 2020. Available:
+\url{https://hadolint.github.io/hadolint/}
+
 \leavevmode\hypertarget{ref-eglen_codecheck_2019}{}%
-60. Eglen S, Nüst D. CODECHECK: An open-science initiative to facilitate
+62. Eglen S, Nüst D. CODECHECK: An open-science initiative to facilitate
 sharing of computer programs and results presented in scientific
 publications. Septentrio Conference Series. 2019;
 doi:\href{https://doi.org/10.7557/5.4910}{10.7557/5.4910}
 
 \leavevmode\hypertarget{ref-schonbrodt_training_2019}{}%
-61. Schönbrodt F. Training students for the Open Science future. Nature
+63. Schönbrodt F. Training students for the Open Science future. Nature
 Human Behaviour. 2019;3: 1031--1031.
 doi:\href{https://doi.org/10.1038/s41562-019-0726-z}{10.1038/s41562-019-0726-z}
 
 \leavevmode\hypertarget{ref-eglen_recent_2018}{}%
-62. Eglen SJ, Mounce R, Gatto L, Currie AM, Nobis Y. Recent developments
+64. Eglen SJ, Mounce R, Gatto L, Currie AM, Nobis Y. Recent developments
 in scholarly publishing to improve research practices in the life
 sciences. Emerging Topics in Life Sciences. 2018;2: 775--778.
 doi:\href{https://doi.org/10.1042/ETLS20180172}{10.1042/ETLS20180172}
 
 \leavevmode\hypertarget{ref-stark_before_2018}{}%
-63. Stark PB. Before reproducibility must come preproducibility
+65. Stark PB. Before reproducibility must come preproducibility
 {[}Internet{]}. Nature. 2018.
 doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0}
 
 \leavevmode\hypertarget{ref-nust_ten_2020}{}%
-64. Nüst D, Sochat V, Marwick B, Eglen S, Head T, Hirst T. Ten Simple
+66. Nüst D, Sochat V, Marwick B, Eglen S, Head T, Hirst T. Ten Simple
 Rules for Writing Dockerfiles for Reproducible Data Science
 {[}Internet{]}. Open Science Framework; 2020 Apr.
 doi:\href{https://doi.org/10.31219/osf.io/fsd7t}{10.31219/osf.io/fsd7t}

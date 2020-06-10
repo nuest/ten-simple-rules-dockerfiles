@@ -3,7 +3,7 @@
 # This Dockerfile is a rewrite based on
 # - https://github.com/innovationOUtside/tm351vm/blob/master/build/minimal/Dockerfile
 # - https://github.com/innovationOUtside/tm351vm/blob/master/build/openrefine/Dockerfile
-FROM ubuntu:16.04
+FROM docker.io/ubuntu:16.04
 
 RUN apt-get update && \
   apt-get upgrade -y && \
