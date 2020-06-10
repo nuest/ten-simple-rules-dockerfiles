@@ -1,4 +1,4 @@
-FROM jupyter/scipy-notebook:82b978b3ceeb
+FROM docker.io/jupyter/scipy-notebook:82b978b3ceeb
 
 USER root
 #ADD * /home/jovyan/

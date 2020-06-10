@@ -7,3 +7,4 @@ The `environment.yml` file is used to install additional required dependencies.
 ## Review and changes
 
 - The original Dockerfile did not have usage instructions, which were only in the projects [README.md](https://github.com/neural-reckoning/vcn_regularity/blob/master/README.md)
+- Explicitly mention the image registry (i.e., starting image name with `docker.io/`)
