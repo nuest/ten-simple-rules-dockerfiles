@@ -1,3 +1,6 @@
+# Originally written by Dan Goodman (@thesamovar) to make interactive models to accompany:
+# "Modelling firing regularity in the ventral cochlear nucleus: mechanisms, and effects of stimulus level and synaptopathy" (Goodman et al. 2017).
+# Paper: https://doi.org/10.1016/j.heares.2017.09.010
 FROM docker.io/jupyter/scipy-notebook:82b978b3ceeb
 
 # Copy notebooks and data into the image and set permissions
