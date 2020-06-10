@@ -35,6 +35,15 @@ RUN rm -rf /home/main/.cache/matplolib
 RUN rm -rf /home/main/.cache/fontconfig
 RUN python -c "import matplotlib.pyplot as plt"
 
+# --- Metadata ---
+LABEL maintainer="d.goodman@imperial.ac.uk" \
+    Name="Modelling of firing regularity of VCN cells" \
+    org.opencontainers.image.created="2020-05" \
+    org.opencontainers.image.authors="Dan Goodman" \
+    org.opencontainers.image.url="https://github.com/neural-reckoning/vcn_regularity/blob/master/Dockerfile" \
+    org.opencontainers.image.documentation="https://github.com/neural-reckoning/vcn_regularity/" \
+    org.label-schema.description="Reproducible Binder image (license: MIT)"
+
 # --- Usage instructions ---
 # The Dockerfile is designed to run on the Binder service which can be 
 # launched by navigating to the following address in a browser: 
