@@ -58,6 +58,7 @@ header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   # using lst language based on https://github.com/marekaf/docker-lstlisting
   - \usepackage[T1]{fontenc}
+  - \usepackage{lmodern}
   - \usepackage[user,titleref]{zref}
   - \usepackage{nameref}
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
