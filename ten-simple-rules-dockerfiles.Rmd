@@ -782,13 +782,13 @@ We thank Dav Clark who provided feedback on the preprint [@nust_ten_2020] of thi
 
 # Author contributions {#contributions .unnumbered}
 
-DN conceived the idea and contributed to conceptualisation, methodology, and writing - original draft, review & editing.
-VS contributed to conceptualisation, methodology, and writing - original draft, review & editing.
+DN conceived the idea and contributed to conceptualisation, methodology, and writing - original draft, review & editing, and validation.
+VS contributed to conceptualisation, methodology, and writing - original draft, and review & editing.
 BM contributed to writing – review & editing.
-SJE contributed to conceptualisation and writing – review & editing.
+SJE contributed to conceptualisation, writing – review & editing, and validation.
 THe contributed to conceptualisation.
 THi contributed to writing – review & editing.
-BE contributed to visulisation and writing – review & editing.
+BE contributed to visulisation, writing – review & editing, and conceptualisation.
 This articles was written collaboratively on GitHub, where [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
