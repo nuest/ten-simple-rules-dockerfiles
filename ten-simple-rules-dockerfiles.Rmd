@@ -33,7 +33,7 @@ author:
     email: tony.hirst@open.ac.uk
     affiliation: "Department of Computing and Communications, The Open University, GB"
     orcid: 0000-0001-6921-702X
-  - name: Benjamin Evans
+  - name: Benjamin D. Evans
     # https://github.com/bdevans
     email: benjamin.evans@bristol.ac.uk
     affiliation: "School of Psychological Science, University of Bristol, Bristol, GB"
