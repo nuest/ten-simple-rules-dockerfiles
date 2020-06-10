@@ -753,7 +753,7 @@ Docker will execute the instructions in the order that they appear in the `Docke
 If you change something in the Dockerfile and rebuild the container, each instruction is inspected in turn.
 If it has not changed, the cached layer is used and the build progresses.
 Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
-You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).
+You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}; as an aside, `docker image prune --all` is a good way to remove unused images, as these tend to accrue silently in your system and take up significant disk space).
 Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
 You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
 A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;1):
