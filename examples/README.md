@@ -4,7 +4,7 @@
 
 ## About
 
-This directory contains `Dockerfile`s to demonstrate the application of the rules in [_Ten Simple _Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science_](https://github.com/nuest/ten-simple-rules-dockerfiles/).
+This directory contains `Dockerfile`s to demonstrate the application of the rules in [_Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science_](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 Each subdirectory contains an example consisting of a `README.md` with documentation, a `Dockerfile.before` showing the original as created by the author (optional), and a `Dockerfile` demonstrating the improvements made based on the articles rules.
 
 **Note:** The `Dockerfile`s in this repository serve as examples, but should be used carefully as templates for new projects because, while it should be possible to build an image from them, they might not be up to date.

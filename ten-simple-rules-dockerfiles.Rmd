@@ -57,6 +57,7 @@ output:
 header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   # using lst language based on https://github.com/marekaf/docker-lstlisting
+  - \usepackage[T1]{fontenc}
   - \usepackage[user,titleref]{zref}
   - \usepackage{nameref}
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
@@ -100,7 +101,7 @@ Furthermore, workflows interacting with many petabytes of data and executed in h
 Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right. 
 For the HPC use case, we encourage the reader to look at Singularity [@kurtzer_singularity_2017].
 For this article, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server.
-The reader might scope the data requirement to less than a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
+The reader might scope the data requirement to under a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
 Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
 A `docker-compose.yml` configuration file allows for defining mounts, environment variables, and exposed ports and helps users stick to _one purpose per container_, which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
@@ -267,7 +268,7 @@ For example, here is how we would use a base image `verse`, which provides the p
 \footnotesize
 
 ```dockerfile
-FROM docker.io/rocker/r-ver:3.5.2
+FROM docker.io/rocker/verse:3.6.2
 ```
 
 \normalsize
@@ -441,7 +442,7 @@ ENV PATH $PATH:$USEFULSOFT_INSTALLDIR
 It is often helpful to provide usage instructions, i.e., how to `docker build` and `docker run` the image, _within_ the `Dockerfile`, either at the top or bottom where the reader is likely to find them.
 Such documentation is especially relevant if bind mounts, specific names, or ports are important for using the container; see, for example, the final lines of Listing&nbsp;\ref{lst:full}.
 These instructions are not limited to `docker <command>` but include the usage of bespoke scripts, a `Makefile`, or `docker-compose` (see \ruleref{rule:interactive} and \ruleref{rule:usage}).
-Following a common coding aphorism, we might say _"A Dockerfile written three months ago may just as well have been written by someone else"_.
+Following a common coding aphorism, we might say _"A Dockerfile you wrote three months ago may just as well have been written by someone else"_.
 Thus, usage instructions help others, because they quickly get them running your workflow and interacting with the container in the intended way without reading all of the instructions (a ["tl;dr"](https://en.wikipedia.org/wiki/Wikipedia:Too_long;_didn%27t_read)-kind of usage).
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
@@ -702,7 +703,7 @@ Docker will execute the instructions in the order that they appear in the `Docke
 If you change something in the Dockerfile and rebuild the container, each instruction is inspected in turn.
 If it has not changed, the cached layer is used and the build progresses.
 Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
-You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}).
+You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}; as an aside, `docker image prune --all` is a good way to remove unused images, as these tend to accrue silently in your system and take up significant disk space).
 Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
 You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
 A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;\ref{lst:full}):
@@ -715,6 +716,10 @@ A recommended ordering based on these considerations is as follows, and you can 
 4. Copying data and configuration files (if not mounted)
 5. Labels
 6. Entrypoint and default command
+
+<!-- I was going to add `docker image prune -a` here, but on -->
+<!-- reflection it does seem like that it distracts from the flow of -->
+<!-- the article. -->
 
 # 10. Regularly use and rebuild containers {-}
 \rulelabel{10}{rule:usage}
@@ -732,9 +737,15 @@ Ideally, containers that we built years ago should rebuild seamlessly, but this 
 Habitually deleting a container and performing a cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveal issues requiring manual intervention, e.g., changes to code or configuration that are not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
 This habit can be supported by using continuous deployment or CI strategies.
 
-In you need a setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
-Furthermore, when you rebuild the image, you can take a fresh look at the `Dockerfile` and improve it over time, because it will be hard to apply all rules at once.
-A linter can help you with such optimisations, e.g., as a web service such as [Dockerfilelint](https://www.dockerfilelint.com/), [hadolint](https://hadolint.github.io/hadolint/) or [fromlatest](https://www.fromlatest.io/), as an extension to your integrated development environment, such as [vscode-docker](https://github.com/microsoft/vscode-docker), or as standalone tools like [`dockerfile-lint`](https://github.com/projectatomic/dockerfile_lint), which you can integrate with your `Makefile`.
+In you need a setup or configuration for the first two habits, it is
+good practice to provide a `Makefile` alongside your container, which
+can capture the specific commands.  Furthermore, when you rebuild the
+image, you can take a fresh look at the `Dockerfile` and improve it
+over time, because it will be hard to apply all rules at once.
+Various linting tools, either on the command line [@dockerfile-lint]
+or as a web service [@hadolint], are available and can be integrated
+into your workflow.
+
 
 Third, you can export the image to file and deposit it in a public data repository, where it not only becomes citable but also provides a snapshot of the _actual_ environment you used at a specific point in time.
 You should include instructions for how to import and run the workflow based on the image archive and add your own image tags using semantic versioning (see \ruleref{rule:base}) for clarity.
