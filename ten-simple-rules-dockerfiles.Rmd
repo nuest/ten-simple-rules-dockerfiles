@@ -58,6 +58,7 @@ header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   # using lst language based on https://github.com/marekaf/docker-lstlisting
   - \usepackage[user,titleref]{zref}
+  - \usepackage{nameref}
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
   - \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
   - \usepackage{listings}
@@ -145,14 +146,14 @@ The container software Singularity [@kurtzer_singularity_2017], which is optimis
 The rules here are transferable to Singularity recipes to some extent.
 
 While some may argue against publishing reproducibly, e.g., due to a lack of time and incentives, a reluctance to share (cf.&nbsp;@boettiger_introduction_2015), and the substantial technical challenges involved in maintaining software and documentation, it should become increasingly easier for the average researcher to provide with their publication a `Dockerfile`, a pre-built Docker image, or another type of container.
-If a researcher can find and create containers or write a `Dockerfile` to address their most common use cases, then, arguably, providing it would not make for extra work after this initial setup (cf.&nbsp;README of @marwick_madjebebe_2015).
+If a researcher can find and create containers or write a `Dockerfile` to address their most common use cases, then, arguably, providing it would not make for extra work after this initial setup (cf.&nbsp;`readme.md` of @marwick_madjebebe_2015).
 In fact, the `Dockerfile` itself represents powerful documentation to show from where data and code were derived, i.e., downloaded or installed, and, consequently, where a third party might obtain the data again.
 
 \clearpage
 
 \scriptsize
 
-\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example.},breaklines=true,label={lst:full}]
+\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
 
 ```{r, results='asis', echo=FALSE}
 cat(readLines("examples/full-demo/Dockerfile"), sep = "\n")
@@ -745,6 +746,7 @@ Finally, for a sanity check and to foster even higher trust in the stability and
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science, where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
 
 # Examples
+\label{examples}
 
 To demonstrate the ten rules, we maintain a collection of annotated example `Dockerfile`s in the `examples` directory of this article's GitHub repository.
 The `Dockerfile`s were mostly discovered in public repositories and updated to adhere better to the rules, see [https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples](https://github.com/nuest/ten-simple-rules-dockerfiles/tree/master/examples), archived at [https://doi.org/10.5281/zenodo.3878582](https://doi.org/10.5281/zenodo.3878582).

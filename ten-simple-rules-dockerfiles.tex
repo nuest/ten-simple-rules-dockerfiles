@@ -212,6 +212,7 @@
 
 
 \usepackage[user,titleref]{zref}
+\usepackage{nameref}
 \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
 \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
 \usepackage{listings}
@@ -481,17 +482,17 @@ researcher to provide with their publication a \texttt{Dockerfile}, a
 pre-built Docker image, or another type of container. If a researcher
 can find and create containers or write a \texttt{Dockerfile} to address
 their most common use cases, then, arguably, providing it would not make
-for extra work after this initial setup (cf.~README of {[}29{]}). In
-fact, the \texttt{Dockerfile} itself represents powerful documentation
-to show from where data and code were derived, i.e., downloaded or
-installed, and, consequently, where a third party might obtain the data
-again.
+for extra work after this initial setup (cf.~\texttt{readme.md} of
+{[}29{]}). In fact, the \texttt{Dockerfile} itself represents powerful
+documentation to show from where data and code were derived, i.e.,
+downloaded or installed, and, consequently, where a third party might
+obtain the data again.
 
 \clearpage
 
 \scriptsize
 
-\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example.},breaklines=true,label={lst:full}]
+\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
 
 FROM docker.io/rocker/verse:3.6.2
 
@@ -550,11 +551,11 @@ ENV DATA_SIZE 42
 
 ### Usage instructions ########################################################
 # Build the images with
-# > docker build --tag great_workflow:1.0.0 .
+# > docker build --tag datascidockerfiles:1.0.0 .
 # Run the image interactively with RStudio, open it on http://localhost/
-# > docker run -it -p 80:8787 -e PASSWORD=ten --volume $(pwd)/input:/input great_workflow:1.0.0
+# > docker run -it -p 80:8787 -e PASSWORD=ten --volume $(pwd)/input:/input datascidockerfiles:1.0.0
 # Run the workflow:
-# > docker run -it --name gwf great_workflow:1.0.0 /work/myscript.sh
+# > docker run -it --name gwf datascidockerfiles:1.0.0 /work/myscript.sh
 # Extract the data:
 # > docker cp gwf:/output/ ./outputData
 # Extract the figures:
@@ -1690,6 +1691,8 @@ where these may be standard practices required for publication
 
 \hypertarget{examples}{%
 \section{Examples}\label{examples}}
+
+\label{examples}
 
 To demonstrate the ten rules, we maintain a collection of annotated
 example \texttt{Dockerfile}s in the \texttt{examples} directory of this

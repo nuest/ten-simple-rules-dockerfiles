@@ -55,11 +55,11 @@ ENV DATA_SIZE 42
 
 ### Usage instructions ########################################################
 # Build the images with
-# > docker build --tag great_workflow:1.0.0 .
+# > docker build --tag datascidockerfiles:1.0.0 .
 # Run the image interactively with RStudio, open it on http://localhost/
-# > docker run -it -p 80:8787 -e PASSWORD=ten --volume $(pwd)/input:/input great_workflow:1.0.0
+# > docker run -it -p 80:8787 -e PASSWORD=ten --volume $(pwd)/input:/input datascidockerfiles:1.0.0
 # Run the workflow:
-# > docker run -it --name gwf great_workflow:1.0.0 /work/myscript.sh
+# > docker run -it --name gwf datascidockerfiles:1.0.0 /work/myscript.sh
 # Extract the data:
 # > docker cp gwf:/output/ ./outputData
 # Extract the figures:
