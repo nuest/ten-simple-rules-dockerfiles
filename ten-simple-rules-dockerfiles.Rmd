@@ -469,7 +469,8 @@ Here are some examples of terminal commands that will list the currently install
 - CentOS: `yum list installed` or `rpm -qa`
 
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed (see Listing&nbsp;\ref{lst:full}).
-This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: You will not unnecessarily fix problems with a library that is no longer needed or include long-running installations. A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
+This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: You will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
+A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
 
 ## Extension packages and programming language modules
 
@@ -710,9 +711,9 @@ You can add a version tag to the image before the re-build to make sure to keep 
 A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;\ref{lst:full}):
 
 1. System libraries
-2. Language-specific libraries or modules \newline
-\indent  1. from repositories (i.e., binaries) \newline
-\indent  2. from source (e.g., GitHub)
+2. Language-specific libraries or modules
+    1. from repositories (i.e., binaries)
+    2. from source (e.g., GitHub)
 3. Installation of your own software and scripts (if not mounted)
 4. Copying data and configuration files (if not mounted)
 5. Labels
