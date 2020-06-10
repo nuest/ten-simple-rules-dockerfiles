@@ -1,9 +1,12 @@
 FROM docker.io/jupyter/scipy-notebook:82b978b3ceeb
 
+# Copy notebooks and data into the image
+# N.B. Mount arguments can not be used with Binder so all necessary files must
+# be included in the image build process
 USER root
-#ADD * /home/jovyan/
-ADD ./ /home/jovyan/
+COPY ./ /home/jovyan/
 RUN chown -R jovyan /home/jovyan
+# Switch back to unprivileged user and set working directory
 USER jovyan
 WORKDIR $HOME
 
