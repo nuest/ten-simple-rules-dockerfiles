@@ -1,6 +1,6 @@
 FROM docker.io/jupyter/scipy-notebook:82b978b3ceeb
 
-# Copy notebooks and data into the image
+# Copy notebooks and data into the image and set permissions
 # N.B. Mount arguments can not be used with Binder so all necessary files must
 # be included in the image build process
 USER root
