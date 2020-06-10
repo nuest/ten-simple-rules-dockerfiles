@@ -38,7 +38,7 @@ RUN python -c "import matplotlib.pyplot as plt"
 # --- Metadata ---
 LABEL maintainer="d.goodman@imperial.ac.uk" \
     Name="Modelling of firing regularity of VCN cells" \
-    org.opencontainers.image.created="2020-05" \
+    org.opencontainers.image.created="2020-06" \
     org.opencontainers.image.authors="Dan Goodman" \
     org.opencontainers.image.url="https://github.com/neural-reckoning/vcn_regularity/blob/master/Dockerfile" \
     org.opencontainers.image.documentation="https://github.com/neural-reckoning/vcn_regularity/" \
