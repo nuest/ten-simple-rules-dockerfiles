@@ -44,6 +44,9 @@ LABEL maintainer="d.goodman@imperial.ac.uk" \
     org.opencontainers.image.documentation="https://github.com/neural-reckoning/vcn_regularity/" \
     org.label-schema.description="Reproducible Binder image (license: MIT)"
 
+# Print out all packages in environment
+RUN conda list --explicit
+
 # --- Usage instructions ---
 # The Dockerfile is designed to run on the Binder service which can be 
 # launched by navigating to the following address in a browser: 
