@@ -37,6 +37,7 @@ LABEL maintainer="daniel.nuest@uni-muenster.de" \
   org.opencontainers.image.authors="Daniel Nüst" \
   org.opencontainers.image.url="https://github.com/nuest/reproducible-research-at-giscience/blob/master/Dockerfile" \
   org.opencontainers.image.documentation="https://github.com/nuest/reproducible-research-at-giscience/" \
+  org.opencontainers.image.licenses="Apache-2.0" \
   org.label-schema.description="Reproducible workflow image (license: Apache 2.0)"
 
 # --- Development instructions ---
