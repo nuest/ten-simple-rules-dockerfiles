@@ -779,7 +779,7 @@ BM contributed to writing – review & editing.
 SJE contributed to conceptualisation, writing – review & editing, and validation.
 THe contributed to conceptualisation.
 THi contributed to writing – review & editing.
-BE contributed to conceptualisation, writing – review & editing, visualisation, and validation.
+BDE contributed to conceptualisation, writing – review & editing, visualisation, and validation.
 This articles was written collaboratively on GitHub, where [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
 
 # References {#references .unnumbered}
