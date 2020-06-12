@@ -584,7 +584,7 @@ How your container expects external resources to be mounted into the container s
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
-# 8. Make it one-click runnable {-}
+# 8. Make the image one-click runnable {-}
 \rulelabel{8}{rule:interactive}
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
