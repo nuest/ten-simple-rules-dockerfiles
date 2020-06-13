@@ -28,7 +28,7 @@ Summary
     a. Use bind mounts for accessibility
     b. Keep large or sensitive datasets out with `.dockerignore`
     c. Document expected mounts for external resources
-8. Make it one-click runnable
+8. Make the image one-click runnable
     a. Set default behaviour with `CMD` and `ENTRYPOINT`
     b. Document how to use it interactively
 9. Order the instructions
