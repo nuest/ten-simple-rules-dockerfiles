@@ -349,7 +349,11 @@ is no detailed \emph{manual for how to write the actual instructions to
 create the containers for computational research} besides generic best
 practices {[}13,14{]}. Here we introduce these instructions for the
 popular \texttt{Dockerfile} format in the context of data science
-workflows.
+workflows, summarised in Figure~\ref{fig:summary}.
+
+\begin{figure}[h]
+\includegraphics[width=0.5\linewidth]{summary} \caption{Summary of the ten simple rules for writing Dockerfiles for reproducible data science.}\label{fig:summary}
+\end{figure}
 
 \hypertarget{prerequisites-scope}{%
 \section{Prerequisites \& scope}\label{prerequisites-scope}}
@@ -451,15 +455,16 @@ images. Further, containers can be modified, stopped, restarted and
 purged.
 
 A visual analogy for building and running a container is provided in
-Figure~1. Akin to compiling source code for a programming language,
-creating a container also starts with a plain text file (Dockerfile),
-which provides instructions for building an image. Similar to using a
-compiled binary file to launch a program, the image is then run to
-create a container instance. See Listing~\ref{lst:full} for a full
-\texttt{Dockerfile}, which we will refer to throughout this article.
+Figure~\ref{fig:analogy}. Akin to compiling source code for a
+programming language, creating a container also starts with a plain text
+file (Dockerfile), which provides instructions for building an image.
+Similar to using a compiled binary file to launch a program, the image
+is then run to create a container instance. See Listing~\ref{lst:full}
+for a full \texttt{Dockerfile}, which we will refer to throughout this
+article.
 
 \begin{figure}[h]
-\includegraphics[width=1\linewidth]{container-analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:container-analogy}
+\includegraphics[width=1\linewidth]{analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:analogy}
 \end{figure}
 
 While Docker was the original technology to support the
@@ -562,7 +567,6 @@ ENV DATA_SIZE 42
 # > docker cp gwf:/output/ ./outputData
 # Extract the figures:
 # > docker cp gwf:/work/figures/ ./figures
-
 
 \end{lstlisting}
 
@@ -1383,10 +1387,10 @@ default, writing a new file from inside the container will be owned by
 user \texttt{root} on your host, because that is the default user within
 the container.
 
-\hypertarget{make-it-one-click-runnable}{%
-\section*{8. Make it one-click
-runnable}\label{make-it-one-click-runnable}}
-\addcontentsline{toc}{section}{8. Make it one-click runnable}
+\hypertarget{make-the-image-one-click-runnable}{%
+\section*{8. Make the image one-click
+runnable}\label{make-the-image-one-click-runnable}}
+\addcontentsline{toc}{section}{8. Make the image one-click runnable}
 
 \ztitlerefsetup{title=8} \zlabel{rule:interactive} \label{rule:interactive} \zrefused{rule:interactive}
 
@@ -1760,8 +1764,8 @@ contributed to conceptualisation, methodology, and writing - original
 draft, and review \& editing. BM contributed to writing -- review \&
 editing. SJE contributed to conceptualisation, writing -- review \&
 editing, and validation. THe contributed to conceptualisation. THi
-contributed to writing -- review \& editing. BE contributed to
-conceptualisation, writing -- review \& editing, visulisation, and
+contributed to writing -- review \& editing. BDE contributed to
+conceptualisation, writing -- review \& editing, visualisation, and
 validation. This articles was written collaboratively on GitHub, where
 \href{https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors}{contributions
 in form of text or discussions comments} are documented:
