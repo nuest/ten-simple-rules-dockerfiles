@@ -91,7 +91,7 @@ The containers built from these recipes are portable encapsulated snapshots of a
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
 While several tutorials exist on how to use containers for reproducible research ([@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017] and Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging reusable software in a container), there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
-Here we introduce these instructions for the popular `Dockerfile` format in the context of data science workflows, summarised in Figure&nbsp;1..
+Here we introduce these instructions for the popular `Dockerfile` format in the context of data science workflows, summarised in Figure&nbsp;\ref{fig:summary}.
 
 ```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing Dockerfiles for reproducible data science.", out.width = '100%', fig.pos="h"}
 knitr::include_graphics("summary.png")
@@ -138,7 +138,7 @@ Each instruction adds a layer to the image, which can be cached across image bui
 The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.
 Further, containers can be modified, stopped, restarted and purged.
 
-A visual analogy for building and running a container is provided in Figure&nbsp;2.
+A visual analogy for building and running a container is provided in Figure&nbsp;\ref{fig:analogy}.
 Akin to compiling source code for a programming language, creating a container also starts with a plain text file (Dockerfile), which provides instructions for building an image.
 Similar to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;\ref{lst:full} for a full `Dockerfile`, which we will refer to throughout this article.
