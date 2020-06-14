@@ -6,9 +6,9 @@ Summary
     b. Dockerfile generators (e.g. repo2docker)
     c. Linters
     d. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter)) [new]
-2. Use versioned images
-    a. Use version-tagged base images
-    b. Publish your own images with version tags [revise]
+2. Build upon existing images
+    a. Use version-specific tags
+    b. Publish your own images with version tags
 3. Format for clarity
     a. Use indentation, line breaks and unabbreviated arguments
     b. Clarity is better than brevity
