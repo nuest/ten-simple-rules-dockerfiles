@@ -267,7 +267,7 @@ FROM docker.io/rocker/verse:3.6.2
 
 \normalsize
 
-## Use version-specific images
+## Use version-specific tags
 
 Images have **tags** associated with them, and these tags have specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants like `slim` that attempt to reduce image size.
 Tags are defined at the time of image build and appear in the image name after the `:` when you use an image, e.g., `python:3.7`.
