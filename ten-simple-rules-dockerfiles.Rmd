@@ -93,7 +93,7 @@ Such containers have been demonstrated for capturing scientific notebooks [@rule
 While several tutorials exist on how to use containers for reproducible research ([@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017] and Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging reusable software in a container), there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
 Here we introduce these instructions for the popular `Dockerfile` format in the context of data science workflows, summarised in Figure&nbsp;\ref{fig:summary}.
 
-```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing Dockerfiles for reproducible data science.", out.width = '50%', fig.pos="h"}
+```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing \\texttt{Dockerfile}s for reproducible data science.", out.width = '50%', fig.pos="h"}
 knitr::include_graphics("summary.png")
 ```
 
@@ -139,11 +139,11 @@ The images have a main executable exposed as an "entrypoint" that is started whe
 Further, containers can be modified, stopped, restarted and purged.
 
 A visual analogy for building and running a container is provided in Figure&nbsp;\ref{fig:analogy}.
-Akin to compiling source code for a programming language, creating a container also starts with a plain text file (Dockerfile), which provides instructions for building an image.
+Akin to compiling source code for a programming language, creating a container also starts with a plain text file (`Dockerfile`), which provides instructions for building an image.
 Similar to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;\ref{lst:full} for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
+```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
 knitr::include_graphics("analogy.png")
 ```
 
@@ -709,7 +709,7 @@ You will regularly build an image during development of your workflow.
 You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or copying a file that gets cached.
 Therefore, you should keep instructions _in order_ of least likely to change to most likely to change.
 Docker will execute the instructions in the order that they appear in the `Dockerfile`; when one instruction is completed, the result is cached, and the build moves to the next one.
-If you change something in the Dockerfile and rebuild the container, each instruction is inspected in turn.
+If you change something in the `Dockerfile` and rebuild the container, each instruction is inspected in turn.
 If it has not changed, the cached layer is used and the build progresses.
 Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
 You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}; as an aside, `docker image prune --all` is a good way to remove unused images, as these tend to accrue silently in your system and take up significant disk space).
@@ -742,7 +742,7 @@ Ideally, containers that we built years ago should rebuild seamlessly, but this 
 Habitually deleting a container and performing a cache-less rebuild of the image (a) increases security due to updating underlying software, (b) helps to reveal issues requiring manual intervention, e.g., changes to code or configuration that are not documented in the `Dockerfile` but perhaps should be, and (c) allows you to more incrementally debug issues.
 This habit can be supported by using continuous deployment or CI strategies.
 
-In you need a setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your container, which can capture the specific commands.
+In you need a setup or configuration for the first two habits, it is good practice to provide a `Makefile` alongside your `Dockerfile`, which can capture the specific commands.
 Furthermore, when you rebuild the image, you can take a fresh look at the `Dockerfile` and improve it over time, because it will be hard to apply all rules at once.
 Various linting tools, either on the command line [@dockerfile-lint] or as a web service [@hadolint], are available and can be integrated into your workflow.
 
