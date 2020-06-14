@@ -269,7 +269,7 @@ package software and data dependencies. In a scholarly context, the main
 drivers for using these containers are transparency and support of
 reproducibility; in turn, a workflow's reproducibility can be greatly
 affected by the choices that are made with respect to building
-containers. Because the build for the container image is often created
+containers. Because the build for the container's image is often created
 based on the instructions in the \texttt{Dockerfile} format, here we
 present rules to help researchers write understandable
 \texttt{Dockerfile}s for typical data science workflows. By following
@@ -329,18 +329,19 @@ environment that produced a result {[}2{]}.
 Containerisation helps provide instructions for packaging the building
 blocks of computer-based research (i.e., code, data, documentation, and
 the computing environment). Specifically, containers are built from
-plain text files that represent a human- \emph{and} machine-readable
-recipe for creating the computing environment and interacting with data.
-By providing this recipe, authors of scientific articles greatly improve
-their work's level of documentation, transparency, and reusability,
-which is an important part of common practices for scientific computing
-{[}3,4{]}; an overall goal of these practices is to ensure that both the
-author and others are able to reproduce and extend an analysis workflow.
-The containers built from these recipes are portable encapsulated
-snapshots of a specific computing environment that are both more
-lightweight and transparent than virtual machines. Such containers have
-been demonstrated for capturing scientific notebooks {[}5{]} and
-reproducible workflows {[}6{]}.
+plain text files (via an image) that represent a human- \emph{and}
+machine-readable recipe for creating the computing environment and
+interacting with data. By providing this recipe, authors of scientific
+articles greatly improve their work's level of documentation,
+transparency, and reusability, which is an important part of common
+practices for scientific computing {[}3,4{]}; an overall goal of these
+practices is to ensure that both the author and others are able to
+reproduce and extend an analysis workflow. The containers built from
+these recipes are portable encapsulated snapshots of a specific
+computing environment that are both more lightweight and transparent
+than virtual machines. Such containers have been demonstrated for
+capturing scientific notebooks {[}5{]} and reproducible workflows
+{[}6{]}.
 
 While several tutorials exist on how to use containers for reproducible
 research ({[}7--11{]} and Guening et~al. {[}12{]} give very helpful
@@ -352,7 +353,7 @@ popular \texttt{Dockerfile} format in the context of data science
 workflows, summarised in Figure~\ref{fig:summary}.
 
 \begin{figure}[h]
-\includegraphics[width=0.5\linewidth]{summary} \caption{Summary of the ten simple rules for writing Dockerfiles for reproducible data science.}\label{fig:summary}
+\includegraphics[width=0.5\linewidth]{summary} \caption{Summary of the ten simple rules for writing \texttt{Dockerfile}s for reproducible data science.}\label{fig:summary}
 \end{figure}
 
 \hypertarget{prerequisites-scope}{%
@@ -367,7 +368,7 @@ eventually share with others can only run open source software, tools
 like Mathematica and Matlab are out of scope for this example. A
 workflow that does not support scripted execution is also out of scope
 for reproducible research, as it does not fit well with
-containerization. Furthermore, workflows interacting with many petabytes
+containerisation. Furthermore, workflows interacting with many petabytes
 of data and executed in high-performance computing (HPC) infrastructures
 are out of scope. Using such HPC job managers or cloud infrastructures
 would require a collection of ``Ten Simple Rules'' articles in their own
@@ -457,14 +458,14 @@ purged.
 A visual analogy for building and running a container is provided in
 Figure~\ref{fig:analogy}. Akin to compiling source code for a
 programming language, creating a container also starts with a plain text
-file (Dockerfile), which provides instructions for building an image.
-Similar to using a compiled binary file to launch a program, the image
-is then run to create a container instance. See Listing~\ref{lst:full}
-for a full \texttt{Dockerfile}, which we will refer to throughout this
-article.
+file (\texttt{Dockerfile}), which provides instructions for building an
+image. Similar to using a compiled binary file to launch a program, the
+image is then run to create a container instance. See
+Listing~\ref{lst:full} for a full \texttt{Dockerfile}, which we will
+refer to throughout this article.
 
 \begin{figure}[h]
-\includegraphics[width=1\linewidth]{analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a Dockerfile, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:analogy}
+\includegraphics[width=1\linewidth]{analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a \texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:analogy}
 \end{figure}
 
 While Docker was the original technology to support the
@@ -590,20 +591,20 @@ practices when reapplied at a later point in time. Therefore, the most
 important rule is to apply a multi-step process for your specific use
 case.
 
-First, you want to determine whether there is an existing container that
-you can use; if so, you want to be able to use it and add the
-instructions for doing so to your workflow documentation. As an example,
-you might be doing some kind of interactive development. For interactive
-development environments such as notebooks and development servers or
-databases, you can readily find containers that come installed with all
-the software that you need. You can look for information about images in
-(a) the documentation of the used software, (b) the Docker image
-registry \emph{Docker Hub}, \url{https://hub.docker.com/}, or (c) the
-source code projects of the used software, as many developers today rely
-on containers for development, testing, and teaching.
+First, you want to determine whether there is an existing image that you
+can use; if so, you want to be able to use it and add the instructions
+for doing so to your workflow documentation. As an example, you might be
+doing some kind of interactive development. For interactive development
+environments such as notebooks and development servers or databases, you
+can readily find images that come installed with all the software that
+you need. You can look for information about images in (a) the
+documentation of the used software, (b) the Docker image registry
+\emph{Docker Hub}, \url{https://hub.docker.com/}, or (c) the source code
+projects of the used software, as many developers today rely on
+containers for development, testing, and teaching.
 
-Second, if there is no suitable pre-existing container for your needs,
-you might next look to well-maintained tools to help with
+Second, if there is no suitable pre-existing image for your needs, you
+might next look to well-maintained tools to help with
 \texttt{Dockerfile} generation. These tools can add required software
 packages to an existing image without you having to manually write a
 \texttt{Dockerfile} at all. ``Well-maintained'' not only refers to the
@@ -706,33 +707,84 @@ labels see~\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}).
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\hypertarget{use-versioned-images}{%
-\section*{2. Use versioned images}\label{use-versioned-images}}
-\addcontentsline{toc}{section}{2. Use versioned images}
+\hypertarget{build-upon-existing-images}{%
+\section*{2. Build upon existing
+images}\label{build-upon-existing-images}}
+\addcontentsline{toc}{section}{2. Build upon existing images}
 
 \ztitlerefsetup{title=2} \zlabel{rule:base} \label{rule:base} \zrefused{rule:base}
 
-A good understanding of how \emph{base images} and \emph{image tags}
-work is crucial, as the image and tag that you choose has important
-implications for your container. It is good practice to use \textbf{base
-images} that are maintained by the Docker library, so called
-\emph{``official images''} {[}35{]}, which benefit from a review for
-best practices and vulnerability scanning {[}13{]}. You can identify
-these images by the missing user portion of the image name, which comes
-before the \texttt{/}, e.g., \texttt{r-base} or \texttt{python}.
-However, these images only provide basic programming languages or very
-widely used software, so you will likely use images maintained by
-organisations or fellow researchers. While some organisations can be
-trusted to update containers with security fixes (see list below), for
-most individual accounts that provide ready-to-use images, it is likely
-that these will not be updated regularly. Further, it's even possible
-that an image or a \texttt{Dockerfile} could disappear, or an image
-could be published with malicious intent (though we have not heard of
-any such case in academia). Therefore, for security, transparency, and
-reproducibility, you should only use images where you have access to the
+Many pre-built community and developer contributed Docker images are
+publically available for anyone to pull, run and extend, without having
+to replicate their construction. However, a good understanding of how
+\emph{base images} and \emph{image tags} work is crucial, as the image
+and tag that you choose has important implications for your derived
+images and containers. It is good practice to use \textbf{base images}
+that are maintained by the Docker library, so called \emph{``official
+images''} {[}35{]}, which benefit from a review for best practices and
+vulnerability scanning {[}13{]}. You can identify these images by the
+missing user portion of the image name, which comes before the
+\texttt{/}, e.g., \texttt{r-base} or \texttt{python}. However, these
+images only provide basic programming languages or very widely used
+software, so you will likely use images maintained by organisations or
+fellow researchers.
+
+While some organisations can be trusted to update images with security
+fixes (see list below), for most individual accounts that provide
+ready-to-use images, it is likely that these will not be updated
+regularly. Further, it's even possible that an image or a
+\texttt{Dockerfile} could disappear, or an image could be published with
+malicious intent (though we have not heard of any such case in
+academia). Therefore, for security, transparency, and reproducibility,
+you should only use images where you have access to the
 \texttt{Dockerfile}. In case a repository goes away, we suggest that you
 save a copy of the \texttt{Dockerfile} within your project (see
 \hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}).
+
+The following list is a selection of communities that produce widely
+used, regularly updated images, including ready-to-use images with
+preinstalled collections of software configured to work out of the box.
+Do take advantage of such images, especially for complex software
+environments, e.g., machine learning tool stacks, or a specific
+\href{https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms}{BLAS}
+library.
+
+\begin{itemize}
+\tightlist
+\item
+  \href{https://www.rocker-project.org/}{Rocker} for R and RStudio
+  images {[}20{]}
+\item
+  \href{https://bioconductor.org/help/docker/}{Bioconductor Docker
+  images} for bioinformatics with R
+\item
+  \href{https://hub.docker.com/_/neurodebian}{NeuroDebian images} for
+  neuroscience {[}36{]}
+\item
+  \href{https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html}{Jupyter
+  Docker Stacks} for Notebook-based computing
+\item
+  \href{https://hub.docker.com/r/taverna/taverna-server}{Taverna Server}
+  for running Taverna workflows
+\end{itemize}
+
+For example, here is how we would use a base image \texttt{verse}, which
+provides the popular Tidyverse suite of packages {[}37{]}, with R
+version \texttt{3.5.2} from the \texttt{rocker} organisation on Docker
+Hub (\texttt{docker.io}, which is the default and can be omitted).
+
+\footnotesize
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ docker.io/rocker/verse:3.6.2}
+\end{Highlighting}
+\end{Shaded}
+
+\normalsize
+
+\hypertarget{use-version-specific-tags}{%
+\subsection{Use version-specific tags}\label{use-version-specific-tags}}
 
 Images have \textbf{tags} associated with them, and these tags have
 specific meanings, e.g., a version indicator such as \texttt{3.7} or
@@ -744,13 +796,13 @@ the word \texttt{latest}, which gives you the latest updates but is also
 a moving target for your computing environment that can break your
 workflow. Note that a version tag means that the tagged software is
 frozen, but it does not mean that the image will not change, as
-backwards compatible fixes (cf.~semantic versioning, {[}36{]}), e.g.,
+backwards compatible fixes (cf.~semantic versioning, {[}38{]}), e.g.,
 version \texttt{1.2.3} that fixes a security problem in version
 \texttt{1.2.2} or updates to an underlying system library, would be
 published to the parent tag \texttt{1.2}.
 
 For data science workflows, you should always rely on version-specific
-image tags both for base images that you use and for images that you
+image tags, both for base images that you use, and for images that you
 build yourself and then run (see usage instructions in
 Listing~\ref{lst:full} for an example of the \texttt{-\/-tag} parameter
 of \texttt{docker\ build}). When keeping different versions (tags)
@@ -768,48 +820,6 @@ built image, because that counteracts the considerations outlined above.
 If a pre-built image is provided in a public image registry, do not
 forget to direct the user to it in your documentation, e.g., in the
 \texttt{README} file or in an article.
-
-The following list is a selection of communities that produce widely
-used, regularly updated images, including ready-to-use images with
-preinstalled collections of software configured to work out of the box.
-Do take advantage of images, especially for complex software
-environments, e.g., machine learning tool stacks, or a specific
-\href{https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms}{BLAS}
-library.
-
-\begin{itemize}
-\tightlist
-\item
-  \href{https://www.rocker-project.org/}{Rocker} for R and RStudio
-  images {[}20{]}
-\item
-  \href{https://bioconductor.org/help/docker/}{Bioconductor Docker
-  images} for bioinformatics with R
-\item
-  \href{https://hub.docker.com/_/neurodebian}{NeuroDebian images} for
-  neuroscience {[}37{]}
-\item
-  \href{https://jupyter-docker-stacks.readthedocs.io/en/latest/index.html}{Jupyter
-  Docker Stacks} for Notebook-based computing
-\item
-  \href{https://hub.docker.com/r/taverna/taverna-server}{Taverna Server}
-  for running Taverna workflows
-\end{itemize}
-
-For example, here is how we would use a base image \texttt{verse}, which
-provides the popular Tidyverse suite of packages {[}38{]}, with R
-version \texttt{3.5.2} from the \texttt{rocker} organisation on Docker
-Hub (\texttt{docker.io}, which is the default and can be omitted).
-
-\footnotesize
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{FROM}\NormalTok{ docker.io/rocker/verse:3.6.2}
-\end{Highlighting}
-\end{Shaded}
-
-\normalsize
 
 \hypertarget{format-for-clarity}{%
 \section{3. Format for clarity}\label{format-for-clarity}}
@@ -1276,11 +1286,11 @@ operating across a wide range of target platforms and environments, and
 they can be leveraged if you expect your workflow to fall into this
 category. Furthermore, the commit messages in your version-controlled
 repository preserve a record of all changes to the \texttt{Dockerfile},
-and you can use the same versions in tags for both the container image
+and you can use the same versions in tags for both the container's image
 and the git repository.
 
 Importantly, you should publish \emph{all} files \texttt{COPY}ied into
-the container, e.g., test data, custom scripts or files for software
+the image, e.g., test data, custom scripts or files for software
 installation from source
 (see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}) in the same
 public repository as the \texttt{Dockerfile}, e.g., in a research
@@ -1378,8 +1388,8 @@ the path to the current user's home directory, e.g.,
 
 \normalsize
 
-How your container expects external resources to be mounted into the
-container should be included in the example commands (see
+How your container expects external resources to be mounted into it
+should be included in the example commands (see
 \hyperref[{rule:formatting}]{Rule~\ztitleref{rule:formatting}}). In
 these commands, you can also make sure to avoid issues with file
 permissions by using Docker's \texttt{-\/-user} option. For example, by
@@ -1576,7 +1586,7 @@ copying a file that gets cached. Therefore, you should keep instructions
 Docker will execute the instructions in the order that they appear in
 the \texttt{Dockerfile}; when one instruction is completed, the result
 is cached, and the build moves to the next one. If you change something
-in the Dockerfile and rebuild the container, each instruction is
+in the \texttt{Dockerfile} and rebuild the image, each instruction is
 inspected in turn. If it has not changed, the cached layer is used and
 the build progresses. Conversely, if the line has changed, that build
 step is executed afresh, and then every subsequent instruction will have
@@ -1662,13 +1672,13 @@ incrementally debug issues. This habit can be supported by using
 continuous deployment or CI strategies.
 
 In you need a setup or configuration for the first two habits, it is
-good practice to provide a \texttt{Makefile} alongside your container,
-which can capture the specific commands. Furthermore, when you rebuild
-the image, you can take a fresh look at the \texttt{Dockerfile} and
-improve it over time, because it will be hard to apply all rules at
-once. Various linting tools, either on the command line {[}61{]} or as a
-web service {[}62{]}, are available and can be integrated into your
-workflow.
+good practice to provide a \texttt{Makefile} alongside your
+\texttt{Dockerfile}, which can capture the specific commands.
+Furthermore, when you rebuild the image, you can take a fresh look at
+the \texttt{Dockerfile} and improve it over time, because it will be
+hard to apply all rules at once. Various linting tools, either on the
+command line {[}61{]} or as a web service {[}62{]}, are available and
+can be integrated into your workflow.
 
 Third, you can export the image to file and deposit it in a public data
 repository, where it not only becomes citable but also provides a
@@ -1956,21 +1966,21 @@ doi:\href{https://doi.org/10.21105/joss.01603}{10.21105/joss.01603}
 Documentation. 2020. Available:
 \url{https://docs.docker.com/docker-hub/official_images/}
 
-\leavevmode\hypertarget{ref-preston-werner_semantic_2013}{}%
-36. Preston-Werner T. Semantic Versioning 2.0.0 {[}Internet{]}. Semantic
-Versioning. 2013. Available: \url{https://semver.org/}
-
 \leavevmode\hypertarget{ref-halchenko_open_2012}{}%
-37. Halchenko YO, Hanke M. Open is Not Enough. Let's Take the Next Step:
+36. Halchenko YO, Hanke M. Open is Not Enough. Let's Take the Next Step:
 An Integrated, Community-Driven Computing Platform for Neuroscience.
 Frontiers in Neuroinformatics. 2012;6.
 doi:\href{https://doi.org/10.3389/fninf.2012.00022}{10.3389/fninf.2012.00022}
 
 \leavevmode\hypertarget{ref-Wickham2019}{}%
-38. Wickham H, Averick M, Bryan J, Chang W, McGowan L, François R, et
+37. Wickham H, Averick M, Bryan J, Chang W, McGowan L, François R, et
 al. Welcome to the tidyverse. Journal of Open Source Software. The Open
 Journal; 2019;4: 1686.
 doi:\href{https://doi.org/10.21105/joss.01686}{10.21105/joss.01686}
+
+\leavevmode\hypertarget{ref-preston-werner_semantic_2013}{}%
+38. Preston-Werner T. Semantic Versioning 2.0.0 {[}Internet{]}. Semantic
+Versioning. 2013. Available: \url{https://semver.org/}
 
 \leavevmode\hypertarget{ref-docker_multi-stage_2020}{}%
 39. Docker Inc. Use multi-stage builds {[}Internet{]}. Docker
