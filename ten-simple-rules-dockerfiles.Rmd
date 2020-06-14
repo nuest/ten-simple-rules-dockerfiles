@@ -41,7 +41,7 @@ author:
 abstract: |
   Computational science has been greatly improved by containers, which can package software and data dependencies.
   In a scholarly context, the main drivers for using these containers are transparency and support of reproducibility; in turn, a workflow's reproducibility can be greatly affected by the choices that are made with respect to building containers.
-  Because the build for the container image is often created based on the instructions in the `Dockerfile` format, here we present rules to help researchers write understandable `Dockerfile`s for typical data science workflows.
+  Because the build for the container's image is often created based on the instructions in the `Dockerfile` format, here we present rules to help researchers write understandable `Dockerfile`s for typical data science workflows.
   By following the rules in this article, researchers can create containers suitable for sharing with fellow scientists, for including in scholarly communication such as education or scientific papers, and for effective and sustainable personal workflows.
 author_summary: |
   Computers and algorithms are ubiquitous in research.
@@ -85,7 +85,7 @@ While papers based on the traditional journal article format can share extensive
 In this field and whenever software is used to analyse or visualise data, containerisation is needed because a papers's actual contribution to knowledge includes the full computing environment that produced a result [@donoho_invitation_2010].
 
 Containerisation helps provide instructions for packaging the building blocks of computer-based research (i.e., code, data, documentation, and the computing environment).
-Specifically, containers are built from plain text files that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
+Specifically, containers are built from plain text files (via an image) that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
 By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability, which is an important part of common practices for scientific computing [@wilson_best_2014; @wilson_good_2017]; an overall goal of these practices is to ensure that both the author and others are able to reproduce and extend an analysis workflow.
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment that are both more lightweight and transparent than virtual machines.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
@@ -180,12 +180,12 @@ Thus, a good strategy is to first look at tools that can help generate a `Docker
 Such tools have likely thought about and implemented good practices, and they may even have incorporated newer practices when reapplied at a later point in time.
 Therefore, the most important rule is to apply a multi-step process for your specific use case.
 
-First, you want to determine whether there is an existing container that you can use; if so, you want to be able to use it and add the instructions for doing so to your workflow documentation.
+First, you want to determine whether there is an existing image that you can use; if so, you want to be able to use it and add the instructions for doing so to your workflow documentation.
 As an example, you might be doing some kind of interactive development.
-For interactive development environments such as notebooks and development servers or databases, you can readily find containers that come installed with all the software that you need.
+For interactive development environments such as notebooks and development servers or databases, you can readily find images that come installed with all the software that you need.
 You can look for information about images in (a) the documentation of the used software, (b) the Docker image registry _Docker Hub_, [https://hub.docker.com/](https://hub.docker.com/), or (c) the source code projects of the used software, as many developers today rely on containers for development, testing, and teaching.
 
-Second, if there is no suitable pre-existing container for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
+Second, if there is no suitable pre-existing image for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
 These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
 "Well-maintained" not only refers to the tool's own stability and usability but also indicates that suitable base images are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
 See the next section "Tools for container generation" for details.
@@ -244,7 +244,7 @@ It is good practice to use **base images** that are maintained by the Docker lib
 You can identify these images by the missing user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
 However, these images only provide basic programming languages or very widely used software, so you will likely use images maintained by organisations or fellow researchers.
 
-While some organisations can be trusted to update containers with security fixes (see list below), for most individual accounts that provide ready-to-use images, it is likely that these will not be updated regularly.
+While some organisations can be trusted to update images with security fixes (see list below), for most individual accounts that provide ready-to-use images, it is likely that these will not be updated regularly.
 Further, it's even possible that an image or a `Dockerfile` could disappear, or an image could be published with malicious intent (though we have not heard of any such case in academia).
 Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`.
 In case a repository goes away, we suggest that you save a copy of the `Dockerfile` within your project (see \ruleref{rule:mount}).
@@ -539,9 +539,9 @@ Online collaboration platforms (e.g., GitHub, GitLab) also make it easy to use C
 Continuous integration increases stability and trust, and it allows for images to be published automatically.
 Automation strategies exist to build and test images for multiple platforms and software versions, even with CI.
 Such approaches are often used when developing popular software packages for a broad user base operating across a wide range of target platforms and environments, and they can be leveraged if you expect your workflow to fall into this category.
-Furthermore, the commit messages in your version-controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container image and the git repository.
+Furthermore, the commit messages in your version-controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container's image and the git repository.
 
-Importantly, you should publish _all_ files `COPY`ied into the container, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
+Importantly, you should publish _all_ files `COPY`ied into the image, e.g., test data, custom scripts or files for software installation from source (see&nbsp;\ruleref{rule:mount}) in the same public repository as the `Dockerfile`, e.g., in a research compendium.
 If you prefer to edit your scripts more interactively in a running container (e.g., using Jupyter) then it may be more convenient to bind mount their directory from the host at run time, provided all changes are commited before sharing. 
 
 # 7. Mount datasets at run time {-}
@@ -587,7 +587,7 @@ docker run --mount type=bind,src=$(pwd)/article-x-supplement/data,dst=/input-dat
 
 \normalsize
 
-How your container expects external resources to be mounted into the container should be included in the example commands (see \ruleref{rule:formatting}).
+How your container expects external resources to be mounted into it should be included in the example commands (see \ruleref{rule:formatting}).
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
@@ -709,7 +709,7 @@ You will regularly build an image during development of your workflow.
 You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or copying a file that gets cached.
 Therefore, you should keep instructions _in order_ of least likely to change to most likely to change.
 Docker will execute the instructions in the order that they appear in the `Dockerfile`; when one instruction is completed, the result is cached, and the build moves to the next one.
-If you change something in the `Dockerfile` and rebuild the container, each instruction is inspected in turn.
+If you change something in the `Dockerfile` and rebuild the image, each instruction is inspected in turn.
 If it has not changed, the cached layer is used and the build progresses.
 Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
 You should regularly re-build the image using the `--no-cache` option to learn about broken instructions as soon as possible (cf.&nbsp;\ruleref{rule:usage}; as an aside, `docker image prune --all` is a good way to remove unused images, as these tend to accrue silently in your system and take up significant disk space).
