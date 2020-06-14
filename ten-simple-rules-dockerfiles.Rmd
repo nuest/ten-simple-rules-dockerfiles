@@ -249,7 +249,7 @@ Therefore, for security, transparency, and reproducibility, you should only use 
 In case a repository goes away, we suggest that you save a copy of the `Dockerfile` within your project (see \ruleref{rule:mount}).
 
 The following list is a selection of communities that produce widely used, regularly updated images, including ready-to-use images with preinstalled collections of software configured to work out of the box.
-Do take advantage of images, especially for complex software environments, e.g., machine learning tool stacks, or a specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library.
+Do take advantage of such images, especially for complex software environments, e.g., machine learning tool stacks, or a specific [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) library.
 
 - [Rocker](https://www.rocker-project.org/) for R and RStudio images [@boettiger_introduction_2017]
 - [Bioconductor Docker images](https://bioconductor.org/help/docker/) for bioinformatics with R
