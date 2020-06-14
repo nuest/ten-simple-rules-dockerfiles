@@ -238,7 +238,8 @@ For any tool that you use, be sure to look at documentation for usage and config
 # 2. Build upon existing images {-}
 \rulelabel{2}{rule:base}
 
-A good understanding of how _base images_ and _image tags_ work is crucial, as the image and tag that you choose has important implications for your container.
+Many pre-built community and developer contributed Docker images are publically available for anyone to pull, run and extend, without having to replicate their construction. 
+However, a good understanding of how _base images_ and _image tags_ work is crucial, as the image and tag that you choose has important implications for your container.
 It is good practice to use **base images** that are maintained by the Docker library, so called _"official images"_ [@docker_inc_official_2020], which benefit from a review for best practices and vulnerability scanning [@docker_inc_best_2020].
 You can identify these images by the missing user portion of the image name, which comes before the `/`, e.g., `r-base` or `python`.
 However, these images only provide basic programming languages or very widely used software, so you will likely use images maintained by organisations or fellow researchers.
