@@ -5,7 +5,7 @@ Summary
     a. Use ready-made images (e.g. from Docker Hub)
     b. Dockerfile generators (e.g. repo2docker)
     c. Linters
-    d. Project templates (e.g. [cookie cutter](https://github.com/cookiecutter/cookiecutter)) [new]
+    d. Tools for templating
 2. Build upon existing images
     a. Use version-specific tags
     b. Publish your own images with version tags
@@ -33,10 +33,10 @@ Summary
     b. Document how to use it interactively
 9. Order the instructions
     a. Least --> most changable for caching and fast builds
-    b. Regularly use `--no-cache` to catch problems [duplicate: 10b]
+    b. Regularly use `--no-cache` to catch problems
 10. Regularly use and rebuild containers
     a. Use the container throughout each project for confidence in your workflow
-    b. Rebuild every 1-2 weeks with `--no-cache` to catch problems
+    b. Rebuild every 1-2 weeks to catch problems
     c. Provide a `Makefile` or script for convenience
     d. Ask a colleague to try it
     e. Publicly archive the image used for the publication
