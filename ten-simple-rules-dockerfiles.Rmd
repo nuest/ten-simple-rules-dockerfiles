@@ -235,7 +235,7 @@ For any tool that you use, be sure to look at documentation for usage and config
 
 ------
 
-# 2. Use versioned images {-}
+# 2. Build upon existing images {-}
 \rulelabel{2}{rule:base}
 
 A good understanding of how _base images_ and _image tags_ work is crucial, as the image and tag that you choose has important implications for your container.
