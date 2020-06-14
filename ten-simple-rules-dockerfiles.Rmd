@@ -248,6 +248,8 @@ Further, it's even possible that an image or a `Dockerfile` could disappear, or 
 Therefore, for security, transparency, and reproducibility, you should only use images where you have access to the `Dockerfile`.
 In case a repository goes away, we suggest that you save a copy of the `Dockerfile` within your project (see \ruleref{rule:mount}).
 
+## Use version-specific images
+
 Images have **tags** associated with them, and these tags have specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants like `slim` that attempt to reduce image size.
 Tags are defined at the time of image build and appear in the image name after the `:` when you use an image, e.g., `python:3.7`.
 By _convention_ a missing tag is assumed to be the word `latest`, which gives you the latest updates but is also a moving target for your computing environment that can break your workflow.
