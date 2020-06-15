@@ -184,7 +184,7 @@ Therefore, the most important rule is to apply a multi-step process to creating 
 First, you want to determine whether there is an existing image that you can use; if so, you want to be able to use it and add the instructions for doing so to your workflow documentation.
 As an example, you might be doing some kind of interactive development.
 For interactive development environments such as notebooks and development servers or databases, you can readily find images that come installed with all the software that you need.
-You can look for information about images in (a) the documentation of the used software, (b) the Docker image registry _Docker Hub_, [https://hub.docker.com/](https://hub.docker.com/), or (c) the source code projects of the used software, as many developers today rely on containers for development, testing, and teaching.
+You can look for information about images in (a) the documentation of the software you intend to use, (b) the Docker image registry _Docker Hub_, [https://hub.docker.com/](https://hub.docker.com/), or (c) the source code projects of the  software being used, as many developers today rely on containers for development, testing, and teaching.
 
 Second, if there is no suitable pre-existing image for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
 These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
