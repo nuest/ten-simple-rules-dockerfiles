@@ -365,7 +365,7 @@ Regarding licensing information, this should include the license of your own cod
 While you can add arbitrarily complex information with labels, for data science scenarios the user-facing documentation is much more important.
 Relevant metadata that might be utilised with future tools include global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
 You can use the [`ARG` instruction](https://docs.docker.com/engine/reference/builder/#arg) to pass variables at build time, for example to pass values into labels, such as the current date or version control revision.
-However, a script or `Makefile` might be required to not forget that you set the argument (see \ruleref{rule:usage}).
+However, a script or `Makefile` might be required so that you do not forget that you set the argument, or how you set it (see \ruleref{rule:usage}).
 
 The Open Container Initiative (OCI) Image Format Specification provides some common label keys (see the "Annotations" section in @opencontainers_image-spec_2017) to help standardise field names across container tools, as shown below.
 Some keys hold specific content, e.g., `org.opencontainers.image.documentation` is a URL as character string pointing to documentation on the image, and `org.opencontainers.image.licenses` is the [SPDX license identifier](https://spdx.org/licenses/).
