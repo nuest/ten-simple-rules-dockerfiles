@@ -777,7 +777,7 @@ Most importantly, we ask researchers to share and exchange their `Dockerfile`s f
 DN is supported by the project Opening Reproducible Research II (\href{https://o2r.info/}{https://o2r.info/}; \href{https://www.uni-muenster.de/forschungaz/project/12343}{https://www.uni-muenster.de/forschungaz/project/12343}) funded by the German Research Foundation (DFG) under project number PE 1632/17-1.
 DN and SJE are supported by a Mozilla mini science grant.
 The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.
-We thank Dav Clark who provided feedback on the preprint [@nust_ten_2020] of this paper.
+We thank Dav Clark who provided feedback on the preprint [@nust_ten_2020] and Celeste&nbsp;R. Brennecka from the Scientific Editing Service of the University of Münster for her editorial support.
 
 # Author contributions {#contributions .unnumbered}
 
