@@ -267,7 +267,7 @@ FROM docker.io/rocker/verse:3.6.2
 
 ## Use version-specific tags
 
-Images have **tags** associated with them, and these tags have specific meanings, e.g., a version indicator such as `3.7` or `dev`, or variants like `slim` that attempt to reduce image size.
+Images have **tags** associated with them, and these tags have specific meanings, e.g., a semantic version indicator such as `3.7` or `dev`, or variants like `slim` that attempt to reduce image size.
 Tags are defined at the time of image build and appear in the image name after the `:` when you use an image, e.g., `python:3.7`.
 By _convention_ a missing tag is assumed to be the word `latest`, which gives you the latest updates but is also a moving target for your computing environment that can break your workflow.
 Note that a version tag means that the tagged software is frozen, but it does not mean that the image will not change, as backwards compatible fixes (cf.&nbsp;semantic versioning, [@preston-werner_semantic_2013]), e.g., version `1.2.3` that fixes a security problem in version `1.2.2` or updates to an underlying system library, would be published to the parent tag `1.2`.
