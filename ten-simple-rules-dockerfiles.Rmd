@@ -669,7 +669,7 @@ A person who is unfamiliar with Docker but wants to use your image may rely on g
 _Interactive usage of a command-line interface_ is quite straightforward to access from containers, if users are familiar with this style of user interface.
 Running the container will provide a shell where a tool can be used and where help or error messages can assist the user.
 For example, complex workflows in any programming language can, with suitable pre-configuration, be triggered by running a specific script file.
-If your workflow can be executed via a command line client, you may use that to validate correct functionality of an image in automated builds, e.g., by using a small toy example and checking the output, by checking successful responses from HTTP endpoints provided by the container, such as with an HTTP response code of `200`, or by using a controller such as Selenium [@selenium_2019].
+If your workflow can be executed via a command line client, you may use that to validate correct functionality of an image in automated builds, e.g., by using a small toy example and checking the output by checking successful responses from HTTP endpoints provided by the container, such as with an HTTP response code of `200`, or by using a browser automation tool such as Selenium [@selenium_2019].
 
 The following example runs a simple R command counting the lines in this article's source file.
 The file path is passed as an environment variable.
