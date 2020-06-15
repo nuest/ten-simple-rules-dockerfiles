@@ -160,7 +160,7 @@ In fact, the `Dockerfile` itself represents powerful documentation to show from 
 
 \scriptsize
 
-\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
+\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{docker.io/nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
 
 ```{r, results='asis', echo=FALSE}
 cat(readLines("examples/full-demo/Dockerfile"), sep = "\n")
