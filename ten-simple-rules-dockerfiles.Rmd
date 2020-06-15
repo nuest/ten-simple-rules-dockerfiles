@@ -123,7 +123,7 @@ The goal of this article is to guide you as you write a `Dockerfile`, the file f
 The rules will help you ensure that the `Dockerfile` allows for interactive development as well as for reaching the higher goals of reproducibility and preservation of knowledge.
 Such practices do not generally appear in generic containerisation tutorials and they are rarely found in the `Dockerfile`s published as part of software projects that are often used as templates by novices.
 The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles are not obvious, especially for researchers who do not have extensive software development experience or formal training.
-Yet, by committing to this article's rules, one can ensure that their workflows are reproducible and reusable, that computing environments are understandable by others, and that researchers have the opportunity to collaborate effectively.
+By committing to this article's rules, one can ensure that their workflows are reproducible and reusable, that computing environments are understandable by others, and that researchers have the opportunity to collaborate effectively.
 Applying these rules should not be triggered by the publication of a finished project but should instead be weaved into day-to-day habits (cf.&nbsp;thoughts on openness as an afterthought by @chen_open_2019 and on computational reproducibility by @donoho_invitation_2010).
 
 # Docker & Dockerfiles
