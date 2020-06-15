@@ -525,6 +525,8 @@ It is common to use images with the default user `root`, which is required for i
 However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks) in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 We recommend ensuring that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
 
+\newpage <!-- preprint PDF only -->
+
 # 6. Use version control {-}
 \rulelabel{9}{rule:publish}
 
@@ -713,6 +715,8 @@ You should regularly re-build the image using the `--no-cache` option to learn a
 Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
 You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
 A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;\ref{lst:full}):
+
+\filbreak
 
 1. System libraries
 2. Language-specific libraries or modules
