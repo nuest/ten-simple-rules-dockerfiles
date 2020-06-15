@@ -221,8 +221,8 @@ While perhaps more useful for fine-tuning, linters can also be helpful when writ
 
 ## Tools for templating
 
-It is likely going to be the case that over time you will work on projects and develop images that are similar in nature to each other.
-To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a clean slate for a new project.
+It is likely that over time you will work on projects and develop images that are similar in nature to each other.
+To avoid constantly repeating yourself, you should consider adopting a standard workflow that will give you a quick start for a new project.
 As an example, cookie cutter templates [@cookiecutter_contributors_cookiecutter_2019] or community templates (e.g., [@marwick_rrtools_2019]) can provide the required structure and files (e.g., for documentation, CI, and licenses), for getting started.
 If you decide to build your own cookie cutter template, consider collaborating with your community during development of the standard to ensure it will be useful to others.
 
