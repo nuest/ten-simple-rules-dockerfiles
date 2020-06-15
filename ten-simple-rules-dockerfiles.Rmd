@@ -106,7 +106,7 @@ A workflow that does not support scripted execution is also out of scope for rep
 Furthermore, workflows interacting with many petabytes of data and executed in high-performance computing (HPC) infrastructures are out of scope.
 Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right. 
 For the HPC use case, we encourage the reader to look at Singularity [@kurtzer_singularity_2017].
-For this article, we focus on workflows that typically run on single machine, e.g., a researchers laptop computer or a virtual server.
+For this article, we focus on workflows that typically run on single machine, e.g., a researcher's own laptop computer or a virtual server.
 The reader might scope the data requirement to under a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
 Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
