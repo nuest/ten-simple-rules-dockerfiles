@@ -119,7 +119,7 @@ We encourage you to reach out to your local or national community of research so
 
 While many different container technologies exist, this article focuses on Docker [@wikipedia_contributors_docker_2019].
 Docker is a highly suitable tool for reproducible research (e.g., @boettiger_introduction_2017), and our observations indicate it is the most widely used container technology in academic data science.
-The goal of this article is to guide you as you write a `Dockerfile`, which is a file format for creating container images.
+The goal of this article is to guide you as you write a `Dockerfile`, the file format used to create Docker container images.
 The rules will help you ensure that the `Dockerfile` allows for interactive development as well as for reaching the higher goals of reproducibility and preservation of knowledge.
 Such practices are generally not part of generic containerisation tutorials and are rarely found in `Dockerfile`s published as part of software projects that are often used as templates by novices.
 The differences between a helpful, stable `Dockerfile` and one that is misleading, prone to failure, and full of potential obstacles are not obvious, especially for researchers who do not have extensive software development experience or formal training.
