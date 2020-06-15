@@ -57,6 +57,7 @@ output:
 header-includes:
   # did not get automatic extraction of the first letter of the section name¸ to work with stringsstrings and/or cref, zref
   # using lst language based on https://github.com/marekaf/docker-lstlisting
+  # use simple minus not hypens in listing: https://tex.stackexchange.com/a/495037/212961
   - \usepackage[T1]{fontenc}
   - \usepackage{lmodern}
   - \usepackage[user,titleref]{zref}
@@ -64,8 +65,8 @@ header-includes:
   - \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
   - \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
   - \usepackage{listings}
-  - \lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\bfseries, identifierstyle=\color{black}, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
-  - \lstset{literate={ü}{{\"u}}1, showstringspaces=false}
+  - \lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\ttfamily, identifierstyle=\color{black}\ttfamily, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
+  - \lstset{language=docker, literate={ü}{{\"u}}1 {-}{-}1, showstringspaces=false}
 csl: plos.csl
 Submission notes:
  - The authors declare that no competing interests exist.
