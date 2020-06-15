@@ -94,7 +94,7 @@ Such containers have been demonstrated for capturing scientific notebooks [@rule
 While several tutorials exist on how to use containers for reproducible research ([@nust_author_2017; @chapman_reproducible_2018; @ropensci_labs_r_2015; @udemy_docker_2019; @psomopoulos_lesson_2017] and Guening et&nbsp;al. [@gruening_recommendations_2019] give very helpful recommendations for packaging reusable software in a container), there is no detailed _manual for how to write the actual instructions to create the containers for computational research_ besides generic best practices [@docker_inc_best_2020; @vass_intro_2019].
 Here we introduce these instructions for the popular `Dockerfile` format in the context of data science workflows, summarised in Figure&nbsp;\ref{fig:summary}.
 
-```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing \\texttt{Dockerfile}s for reproducible data science.", out.width = '50%', fig.pos="h"}
+```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing \\texttt{Dockerfile}s for reproducible data science.", out.width = "50%", fig.pos="h", fig.align="center"}
 knitr::include_graphics("summary.png")
 ```
 
@@ -144,7 +144,7 @@ Akin to compiling source code for a programming language, creating a container a
 Similar to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;\ref{lst:full} for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = '100%', fig.pos="h"}
+```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = "100%", fig.pos="h", fig.align="center"}
 knitr::include_graphics("analogy.png")
 ```
 
