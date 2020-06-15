@@ -664,7 +664,7 @@ docker run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470
 
 \normalsize
 
-A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like [ContainDS](https://containds.com/), [Portainer](https://www.portainer.io/), or the [Docker Desktop Dashboard](https://docs.docker.com/desktop/dashboard/) for assistance in managing containers on their machine without using the Docker CLI.
+A person who is unfamiliar with Docker but wants to use your image may rely on graphical tools like [ContainDS](https://containds.com/), [Portainer](https://www.portainer.io/), or the [Docker Desktop Dashboard](https://docs.docker.com/desktop/dashboard/) for assistance in managing containers on their machine without using the Docker CLI. Such tools will often detect exposed ports and declared volumes and make the user aware of them.
 
 _Interactive usage of a command-line interface_ is quite straightforward to access from containers, if users are familiar with this style of user interface.
 Running the container will provide a shell where a tool can be used and where help or error messages can assist the user.
