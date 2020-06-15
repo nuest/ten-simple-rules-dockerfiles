@@ -363,7 +363,7 @@ Labels serve as structured metadata that can be leveraged by services, e.g., htt
 For example, software versions of containerised applications (cf.&nbsp;@gruening_recommendations_2019), licenses, and maintainer contact information are commonly seen, and they are very useful if a `Dockerfile` is discovered out of context.
 Regarding licensing information, this should include the license of your own code and could point to a `LICENSE` file within the image (cf.&nbsp;@gruening_recommendations_2019).
 While you can add arbitrarily complex information with labels, for data science scenarios the user-facing documentation is much more important.
-Relevant metadata that might be more utilised with future tools include global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
+Relevant metadata that might be utilised with future tools include global identifiers such as [ORCID identifiers](https://orcid.org/), DOIs of the research compendium (cf.&nbsp;[https://research-compendium.science](https://research-compendium.science)), e.g., [reserved on Zenodo](https://help.zenodo.org/), or a funding agency's grant number.
 You can use the [`ARG` instruction](https://docs.docker.com/engine/reference/builder/#arg) to pass variables at build time, for example to pass values into labels, such as the current date or version control revision.
 However, a script or `Makefile` might be required to not forget that you set the argument (see \ruleref{rule:usage}).
 
