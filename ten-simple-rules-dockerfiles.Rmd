@@ -41,14 +41,16 @@ author:
 abstract: |
   Computational science has been greatly improved by the use of containers for packaging software and data dependencies.
   In a scholarly context, the main drivers for using these containers are transparency and support of reproducibility; in turn, a workflow's reproducibility can be greatly affected by the choices that are made with respect to building containers.
-  In many cases, the build process for the container's image is created from instructions provided in a `Dockerfile` format. In support of this approach, we present a set of rules to help researchers write understandable `Dockerfile`s for typical data science workflows.
+  In many cases, the build process for the container's image is created from instructions provided in a `Dockerfile` format. 
+  In support of this approach, we present a set of rules to help researchers write understandable `Dockerfile`s for typical data science workflows.
   By following the rules in this article, researchers can create containers suitable for sharing with fellow scientists, for including in scholarly communication such as education or scientific papers, and for effective and sustainable personal workflows.
 author_summary: |
   Computers and algorithms are ubiquitous in research.
   Therefore, defining the computing environment, i.e., the body of all software used directly or indirectly by a researcher, is important, because it allows other researchers to recreate the environment to understand, inspect, and reproduce an analysis.
   A helpful abstraction for capturing the computing environment is a _container_, whereby a container is created from a set of instructions in a recipe.
   For the most common containerisation software, Docker, this recipe is called a Dockerfile.
-  We believe that in a scientific context, researchers should follow specific practices for writing a Dockerfile. These practices might be somewhat different from the practices of generic software developers in that researchers often need to focus on transparency and understandability rather than performance considerations.
+  We believe that in a scientific context, researchers should follow specific practices for writing a Dockerfile.
+  These practices might be somewhat different from the practices of generic software developers in that researchers often need to focus on transparency and understandability rather than performance considerations.
   The rules presented here are intended to help researchers, especially newcomers to containerisation, leverage containers for open and effective scholarly communication and collaboration while avoiding the pitfalls that are especially irksome in a research lifecycle.
   The recommendations cover a deliberate approach to Dockerfile creation, formatting and style, documentation, and habits for using containers.
 bibliography: bibliography.bib
@@ -87,7 +89,9 @@ Approaches such as containerisation are needed to support computational research
 
 Containerisation helps provide instructions for packaging the building blocks of computer-based research (i.e., code, data, documentation, and the computing environment).
 Specifically, containers are built from plain text files that represent a human- _and_ machine-readable recipe for creating the computing environment and interacting with data.
-By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability. This is an important part of common practice for scientific computing [@wilson_best_2014; @wilson_good_2017]. An overall goal of these practices is to ensure that both the author and others are able to reproduce and extend an analysis workflow.
+By providing this recipe, authors of scientific articles greatly improve their work's level of documentation, transparency, and reusability.
+This is an important part of common practice for scientific computing [@wilson_best_2014; @wilson_good_2017].
+An overall goal of these practices is to ensure that both the author and others are able to reproduce and extend an analysis workflow.
 The containers built from these recipes are portable encapsulated snapshots of a specific computing environment that are both more lightweight and transparent than virtual machines.
 Such containers have been demonstrated for capturing scientific notebooks [@rule_ten_2019] and reproducible workflows [@sandve_ten_2013].
 
@@ -101,7 +105,7 @@ knitr::include_graphics("summary.png")
 # Prerequisites & scope
 
 To start with, we assume the existence of a scripted scientific workflow, i.e. you can, at least at a certain point in time, execute the full process with a fixed set of commands, for example `make prepare_data` followed by `Rscript analysis.R`, or only `python3 my-workflow.py`.
-To maximise reach, we assume that containers that you eventually share with others can only run open source software; tools like Mathematica and Matlab are out of scope for this example.
+To maximise reach, we assume that containers, which you eventually share with others, can only run open source software; tools like Mathematica and Matlab are out of scope for this example.
 A workflow that does not support scripted execution is also out of scope for reproducible research, as it does not fit well with containerisation.
 Furthermore, workflows interacting with many petabytes of data and executed in high-performance computing (HPC) infrastructures are out of scope.
 Using such HPC job managers or cloud infrastructures would require a collection of "Ten Simple Rules" articles in their own right. 
@@ -132,7 +136,8 @@ Docker [@wikipedia_contributors_docker_2019] is a container technology that has 
 Containers are distinct from virtual machines or hypervisors, as they do not emulate hardware or operating system kernels and hence do not require the same system resources.
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
-To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019]. A `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
+To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019].
+A `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
 Here, container images include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 Thus, a `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
@@ -554,7 +559,8 @@ Mounting these files is preferable to using the `ADD`/`COPY` instructions in the
 If you want to add local files to the container, (and do not need [`ADD`'s extra features](https://docs.docker.com/engine/reference/builder/#add)) we recommend `COPY` because it is simpler and explicit.
 Volumes are useful for persisting changes across runs of a container and offer faster file I/O compared to other mounting methods (particularly useful with databases for example). 
 However they are less suitable for reproducibility, since these changes exist within the image (making them less in line with treating containers as ephemeral see&nbsp;\ruleref{rule:usage}) and are not so easy to access or place under version control. 
-Unless specific features are needed, bind mounts are preferable to [storage volumes](https://docs.docker.com/storage/volumes/) since the contents are directly accessible from both the container and the host. The files can also be more easily included in the same repository. 
+Unless specific features are needed, bind mounts are preferable to [storage volumes](https://docs.docker.com/storage/volumes/) since the contents are directly accessible from both the container and the host.
+The files can also be more easily included in the same repository. 
 
 Storing _data files_ outside of the container allows handling of very large or sensitive datasets, e.g., proprietary data or private information.
 Do not include such data in an image!
@@ -753,7 +759,7 @@ Third, you can export the image to file and deposit it in a public data reposito
 You should include instructions for how to import and run the workflow based on the image archive and add your own image tags using semantic versioning (see \ruleref{rule:base}) for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but it is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
 Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker environment.
-Sharing the actual image via a registry and a version-controlled `Dockerfile` together allows you to freely experiment and continue developing your workflow and keep the image up to date, e.g. updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
+Sharing the actual image via a registry and a version-controlled `Dockerfile` together allows you to freely experiment and continue developing your workflow and keep the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
 
 Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science, where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].
