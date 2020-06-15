@@ -188,7 +188,7 @@ You can look for information about images in (a) the documentation of the softwa
 
 Second, if there is no suitable pre-existing image for your needs, you might next look to well-maintained tools to help with `Dockerfile` generation.
 These tools can add required software packages to an existing image without you having to manually write a `Dockerfile` at all.
-"Well-maintained" not only refers to the tool's own stability and usability but also indicates that suitable base images are used, likely from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
+"Well-maintained" not only refers to the tool's own stability and usability but also indicates that suitable base images are used, typically from the official Docker library [@docker_inc_official_2019], to ensure that the container has the most recent security fixes for the operating system in question.
 See the next section "Tools for container generation" for details.
 
 Third, if these tools do not meet your needs, you may want to write you own `Dockerfile`.
