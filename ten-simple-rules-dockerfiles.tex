@@ -218,8 +218,8 @@
 \newcommand*{\rulelabel}[2]{\ztitlerefsetup{title=#1} \zlabel{#2} \label{#2} \zrefused{#2}}
 \newcommand*{\ruleref}[1]{\hyperref[{#1}]{Rule~\ztitleref{#1}}}
 \usepackage{listings}
-\lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\bfseries, identifierstyle=\color{black}, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
-\lstset{literate={ü}{{\"u}}1, showstringspaces=false}
+\lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\ttfamily, identifierstyle=\color{black}\ttfamily, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
+\lstset{language=docker, literate={ü}{{\"u}}1 {-}{-}1, showstringspaces=false}
 
 
 
@@ -323,7 +323,7 @@ article format can share extensive details about the research,
 computational research is often far too complicated to be effectively
 disseminated in this format {[}1{]}. In this field and whenever software
 is used to analyse or visualise data, containerisation is needed because
-a papers's actual contribution to knowledge includes the full computing
+a paper's actual contribution to knowledge includes the full computing
 environment that produced a result {[}2{]}.
 
 Containerisation helps provide instructions for packaging the building
@@ -353,7 +353,12 @@ popular \texttt{Dockerfile} format in the context of data science
 workflows, summarised in Figure~\ref{fig:summary}.
 
 \begin{figure}[h]
-\includegraphics[width=0.5\linewidth]{summary} \caption{Summary of the ten simple rules for writing \texttt{Dockerfile}s for reproducible data science.}\label{fig:summary}
+
+{\centering \includegraphics[width=0.5\linewidth]{summary} 
+
+}
+
+\caption{Summary of the ten simple rules for writing \texttt{Dockerfile}s for reproducible data science.}\label{fig:summary}
 \end{figure}
 
 \hypertarget{prerequisites-scope}{%
@@ -465,7 +470,12 @@ Listing~\ref{lst:full} for a full \texttt{Dockerfile}, which we will
 refer to throughout this article.
 
 \begin{figure}[h]
-\includegraphics[width=1\linewidth]{analogy} \caption{The workflow to create Docker containers by analogy. Containers begin with a \texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:analogy}
+
+{\centering \includegraphics[width=1\linewidth]{analogy} 
+
+}
+
+\caption{The workflow to create Docker containers by analogy. Containers begin with a \texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:analogy}
 \end{figure}
 
 While Docker was the original technology to support the
@@ -500,7 +510,7 @@ obtain the data again.
 
 \scriptsize
 
-\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
+\begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{docker.io/nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
 
 FROM docker.io/rocker/verse:3.6.2
 
@@ -618,8 +628,6 @@ Third, if these tools do not meet your needs, you may want to write you
 own \texttt{Dockerfile}. \emph{In this case, follow the remaining
 rules.}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \hypertarget{tools-for-container-generation}{%
 \subsection{Tools for container
 generation}\label{tools-for-container-generation}}
@@ -704,8 +712,6 @@ these for your needs.
 For any tool that you use, be sure to look at documentation for usage
 and configuration options, and look for options to add metadata (e.g.,
 labels see~\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}).
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{build-upon-existing-images}{%
 \section*{2. Build upon existing
@@ -1064,7 +1070,7 @@ RUN wget http://usesoft.url/useful_software/$USEFULSOFT_VERSION/useful-$USEFULSO
   cd .. && \
   rm -r useful-src useful-$USEFULSOFT_VERSION.zip
 
-# Puth UsefulSoft tool on the path for subsequent instructions
+# Put UsefulSoft tool on the path for subsequent instructions
 ENV PATH $PATH:$USEFULSOFT_INSTALLDIR
 
 ### Usage instructions ###
@@ -1224,7 +1230,7 @@ Alternatively, versions may be specified in a separate dependency file
 
 \normalsize
 
-This modularization may reduce readability, but provides more
+This modularisation may reduce readability, but provides more
 flexibility in facilitating different ways of building a reproducible
 environment, provided the dependency file is under version control in
 the same repository (see
@@ -1256,6 +1262,8 @@ especially for ``output'' files
 (see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}). We recommend
 ensuring that the image works without specifying any users, and, if your
 image deviates from that, we suggest you document it precisely.
+
+\newpage
 
 \hypertarget{use-version-control}{%
 \section*{6. Use version control}\label{use-version-control}}
@@ -1605,6 +1613,8 @@ at hand. A recommended ordering based on these considerations is as
 follows, and you can use comments to visually separate these sections in
 your file (cf.~Listing~\ref{lst:full}):
 
+\filbreak
+
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
@@ -1762,7 +1772,9 @@ funded by the German Research Foundation (DFG) under project number PE
 1632/17-1. DN and SJE are supported by a Mozilla mini science grant. The
 funders had no role in study design, data collection and analysis,
 decision to publish, or preparation of the manuscript. We thank Dav
-Clark who provided feedback on the preprint {[}67{]} of this paper.
+Clark who provided feedback on the preprint {[}67{]} and Celeste~R.
+Brennecka from the Scientific Editing Service of the University of
+Münster for her editorial support.
 
 \hypertarget{contributions}{%
 \section*{Author contributions}\label{contributions}}
