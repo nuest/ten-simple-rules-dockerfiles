@@ -48,7 +48,7 @@ author_summary: |
   Therefore, defining the computing environment, i.e., the body of all software used directly or indirectly by a researcher, is important, because it allows other researchers to recreate the environment to understand, inspect, and reproduce an analysis.
   A helpful abstraction for capturing the computing environment is a _container_, whereby a container is created from a set of instructions in a recipe.
   For the most common containerisation software, Docker, this recipe is called a Dockerfile.
-  We think that in a scientific context, researchers should follow specific practices for writing a Dockerfile, and these practices might be somewhat different from the practices of generic software developers in that researchers should focus on transparency and understandability over performance considerations.
+  We believe that in a scientific context, researchers should follow specific practices for writing a Dockerfile. These practices might be somewhat different from the practices of generic software developers in that researchers often need to focus on transparency and understandability rather than performance considerations.
   The rules presented here are intended to help researchers, especially newcomers to containerisation, leverage containers for open and effective scholarly communication and collaboration while avoiding the pitfalls that are especially irksome in a research lifecycle.
   The recommendations cover a deliberate approach to Dockerfile creation, formatting and style, documentation, and habits for using containers.
 bibliography: bibliography.bib
