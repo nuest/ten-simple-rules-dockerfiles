@@ -150,7 +150,7 @@ knitr::include_graphics("analogy.png")
 
 While Docker was the original technology to support the `Dockerfile` format, other container technologies now offer support for it, including [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
 The container software Singularity [@kurtzer_singularity_2017], which is optimised for scientific computing and the security needs of HPC environments, uses its own format, called the _Singularity recipe_, but it can also import and run Docker images.
-The rules here are transferable to Singularity recipes to some extent.
+The rules here are, to some extent, transferable to Singularity recipes.
 
 While some may argue against publishing reproducibly, e.g., due to a lack of time and incentives, a reluctance to share (cf.&nbsp;@boettiger_introduction_2015), and the substantial technical challenges involved in maintaining software and documentation, it should become increasingly easier for the average researcher to provide with their publication a `Dockerfile`, a pre-built Docker image, or another type of container.
 If a researcher can find and create containers or write a `Dockerfile` to address their most common use cases, then, arguably, providing it would not make for extra work after this initial setup (cf.&nbsp;`README.md` of @marwick_madjebebe_2015).
