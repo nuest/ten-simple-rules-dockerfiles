@@ -474,7 +474,7 @@ Here are some examples of terminal commands that will list the currently install
 - CentOS: `yum list installed` or `rpm -qa`
 
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed (see Listing&nbsp;\ref{lst:full}).
-This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: You will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
+This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
 A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
 
 ## Extension packages and programming language modules
