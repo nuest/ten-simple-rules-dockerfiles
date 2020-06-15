@@ -732,7 +732,7 @@ A recommended ordering based on these considerations is as follows, and you can 
 \rulelabel{10}{rule:usage}
 
 Using containers for research workflows requires not only technical understanding but also an awareness of risks that can be managed effectively by following a number of good _habits_, discussed in this section.
-While there is no firm rule, if you use a container daily, is good practice to rebuild that container every one or two weeks.
+While there is no firm rule, if you use a container daily, is good practice to rebuild that container every one or two weeks; this helps identify breaking changes early and prevents mutliple issues compounding on each other.
 At the time of publication of research results, it is good practice to save a copy of the image in a public data repository so that readers of the publication can access the resources that produced the published results. 
 
 First, it is a good habit to use your container every time you work on a project and not just as a final step during publication.
