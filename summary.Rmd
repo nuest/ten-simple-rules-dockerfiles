@@ -1,5 +1,4 @@
-Summary
-=======
+# Summary
 
 1. Use available tools
     a. Use ready-made images (e.g. from Docker Hub)

@@ -1,4 +1,4 @@
-# Ten simple rules for Writing Dockerfiles for Reproducible Research
+# Ten Simple Rules for Writing Dockerfiles for Reproducible Research
 
 [![DOI](https://img.shields.io/badge/DOI-10.31219%2Fosf.io%2Ffsd7t-blue)](https://doi.org/10.31219/osf.io/fsd7t)
 
@@ -10,6 +10,10 @@ We especially welcome you help by creating strong illustrating examples, see [is
 [Ten Simple Rules Collection on PLOS](https://collections.plos.org/ten-simple-rules)
 
 [Current draft as PDF](https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf)
+
+<center>
+<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="summary.png" width="50%">
+</center>
 
 ## Run container for editing the document
 
