@@ -1,4 +1,4 @@
-# Ten simple rules for Writing Dockerfiles for Reproducible Research
+# Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science
 
 [![DOI](https://img.shields.io/badge/DOI-10.31219%2Fosf.io%2Ffsd7t-blue)](https://doi.org/10.31219/osf.io/fsd7t)
 
