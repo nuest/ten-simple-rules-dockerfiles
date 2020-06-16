@@ -1,18 +1,18 @@
-# Ten Simple Rules for Writing Dockerfiles for Reproducible Research
+# Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science
 
 [![DOI](https://img.shields.io/badge/DOI-10.31219%2Fosf.io%2Ffsd7t-blue)](https://doi.org/10.31219/osf.io/fsd7t)
 
 The manuscript is published as a preprint: **[https://osf.io/fsd7t](https://osf.io/fsd7t)**
 
 We welcome your feedback, e.g., by opening issues on this repository or with [OSF annotations](https://help.osf.io/hc/en-us/articles/360019738554-Annotate-a-Preprint).
-We especially welcome you help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
+We especially welcome your help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
 
 [Ten Simple Rules Collection on PLOS](https://collections.plos.org/ten-simple-rules)
 
 [Current draft as PDF](https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf)
 
 <center>
-<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="summary.png" width="50%">
+<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="summary.png" width="30%">
 </center>
 
 ## Run container for editing the document
