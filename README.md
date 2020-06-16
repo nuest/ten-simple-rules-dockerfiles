@@ -5,7 +5,7 @@
 The manuscript is published as a preprint: **[https://osf.io/fsd7t](https://osf.io/fsd7t)**
 
 We welcome your feedback, e.g., by opening issues on this repository or with [OSF annotations](https://help.osf.io/hc/en-us/articles/360019738554-Annotate-a-Preprint).
-We especially welcome you help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
+We especially welcome your help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
 
 [Ten Simple Rules Collection on PLOS](https://collections.plos.org/ten-simple-rules)
 
