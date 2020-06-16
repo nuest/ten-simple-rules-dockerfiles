@@ -1,7 +1,7 @@
 # This Dockerfile is based on the rocker/binder example Dockerfile from https://github.com/rocker-org/binder/
 # We use 3.6.0 because it is a recent version of R that has a fixed MRAN date in the Rocker image.
 # The used MRAN URL is: https://mran.microsoft.com/snapshot/2019-07-05
-FROM rocker/binder:3.6.0
+FROM docker.io/rocker/binder:3.6.0
 
 ## Declares build arguments
 ARG NB_USER
@@ -37,6 +37,7 @@ LABEL maintainer="daniel.nuest@uni-muenster.de" \
   org.opencontainers.image.authors="Daniel Nüst" \
   org.opencontainers.image.url="https://github.com/nuest/reproducible-research-at-giscience/blob/master/Dockerfile" \
   org.opencontainers.image.documentation="https://github.com/nuest/reproducible-research-at-giscience/" \
+  org.opencontainers.image.licenses="Apache-2.0" \
   org.label-schema.description="Reproducible workflow image (license: Apache 2.0)"
 
 # --- Development instructions ---

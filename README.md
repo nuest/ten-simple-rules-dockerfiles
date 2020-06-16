@@ -11,6 +11,10 @@ We especially welcome your help by creating strong illustrating examples, see [i
 
 [Current draft as PDF](https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf)
 
+<center>
+<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="summary.png" width="30%">
+</center>
+
 ## Run container for editing the document
 
 First, build the container. It will install the dependencies that you

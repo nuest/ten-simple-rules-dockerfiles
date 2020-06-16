@@ -7,6 +7,7 @@ Binder's `install.R` file is used to install required dependencies and the base 
 ## Review and changes
 
 - The original Dockerfile did not have usage instructions, which were only in the projects [README.md](https://github.com/nuest/reproducible-research-and-giscience/blob/master/README.md)
+- Explicitly mention the image registry (i.e., starting image name with `docker.io/`)
 - Some reasoning behind instructions was not explained well
 - The base image version changed because
 - I removed the explicit setting of the MRAN date, instead relying on the MRAN date already specified in the base image, which was obtained with `docker run --rm -it rocker/binder:3.6.0 Rscript -e 'options("repos")`

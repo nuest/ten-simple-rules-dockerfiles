@@ -9,3 +9,11 @@ ten-simple-rules-dockerfiles\.pdf
 *.tex
 
 README.html
+
+examples/full-demo/figures/
+
+examples/full-demo/outputData/
+
+examples/microsimulation-model-virus-C\+\+/covid-sim
+
+examples/geospatial-python-qgis-model-workflow/docker-qgis-model/
