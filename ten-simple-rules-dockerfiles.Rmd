@@ -602,7 +602,7 @@ For example, by default, writing a new file from inside the container will be ow
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
 But they are also useful for a "headless" execution of full workflows.
-For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, and this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which included cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml#L18).
+For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, and this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which included cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml\#L18).
 A workflow that does not support headless execution may even be seen as irreproducible.
 
 These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `ENTRYPOINT` and `CMD` instructions.
