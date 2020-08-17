@@ -49,6 +49,16 @@ See the end of the `Dockerfile` for instructions.
   ```bash
   cat *.Rmd | grep 'email:' | sed 's|    email: ||'
   ```
+- [Work in progress!] Get a `.docx` file out of the Rmd so one can compare versions and generate marked-up copies of changes:
+  ```r
+  # https://github.com/davidgohel/officedown
+  library("officedown")
+  rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_format = officedown::rdocx_document(), output_file = "tsrd.docx")
+  
+  # https://noamross.github.io/redoc/articles/mixed-workflows-with-redoc.html
+  library("redoc")
+  rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_format = redoc::redoc(), output_file = "tsrd.docx")
+  ```
 
 ## License
 
