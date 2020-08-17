@@ -297,6 +297,7 @@ When you need to change a directory, use `WORKDIR`, because it not only creates 
 
 Second, clarity is nearly always more important than brevity.
 For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image sizes (cf.&nbsp;@gruening_recommendations_2019), you should keep the script in the container for a future user to inspect; the script size is negligible compared to the image size.
+Clarity of the steps within a Dockerfile is most important, and if it requires verbosity or adds to the final image size, that is an acceptable tradeoff.
 One common pattern you will encounter is a single and very lengthy `RUN` instruction chaining multiple commands, which installs software and cleans up afterwards.
 For example (a) the instruction updates the database of available packages, installs a piece of software from a package repository, and purges the cache of the package manager, or (b) the instruction downloads a software's source archive, unpacks it, builds and installs the software, and then removes the downloaded archive and all temporary files.
 Although this pattern creates instructions that may be hard to read, it is very common and can even increase clarity within the image file system because installation and build artifacts are gone.
@@ -340,14 +341,14 @@ Listing&nbsp;\ref{lst:comments} shows a selection of typical kinds of comments t
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# RUN command spreading several lines
+# RUN command with && \ to continue over several lines
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
     here
 
 # this library must be installed from source to get version newer
-# than in sources
+# than in apt sources
 RUN git clone http://url.of/repo && \
   cd repo && \
   make build && \
@@ -481,6 +482,24 @@ Here are some examples of terminal commands that will list the currently install
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed (see Listing&nbsp;\ref{lst:full}).
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
 A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
+
+## Version Control
+
+Software can often be installed directly from a version controlled repository (e.g., GitHub, GitLab, or Mercurial). 
+It's recommended to checkout a specific version, tag, or commit to ensure pinning a version for the repository.
+For example, here is how to clone a specific release tag (`v3.6.1`) of the Singularity container software:
+
+```bash
+git clone -b v3.6.1 https://github.com/hpcng/singularity
+```
+
+In the case that you want to clone and checkout a specific commit, you can use the `checkout` command.
+
+```bash
+git clone https://github.com/hpcng/singularity
+cd singularity
+git checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434
+```
 
 ## Extension packages and programming language modules
 
