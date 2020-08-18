@@ -855,25 +855,25 @@ routine, instead of removing it from the container upon completion,
 which is commonly seen in production \texttt{Dockerfile}s aiming at
 small image sizes (cf.~{[}12{]}), you should keep the script in the
 container for a future user to inspect; the script size is negligible
-compared to the image size. Clarity of the steps within a Dockerfile is
-most important, and if it requires verbosity or adds to the final image
-size, that is an acceptable tradeoff. One common pattern you will
-encounter is a single and very lengthy \texttt{RUN} instruction chaining
-multiple commands, which installs software and cleans up afterwards. For
-example (a) the instruction updates the database of available packages,
-installs a piece of software from a package repository, and purges the
-cache of the package manager, or (b) the instruction downloads a
-software's source archive, unpacks it, builds and installs the software,
-and then removes the downloaded archive and all temporary files.
-Although this pattern creates instructions that may be hard to read, it
-is very common and can even increase clarity within the image file
-system because installation and build artifacts are gone. In general, if
-your container is mostly software dependencies, you should not need to
-worry about image size because (a) your data is likely to have much
-larger storage requirements, and (b) transparency and inspectability
-outweigh storage concerns in data science. If you really need to reduce
-the size, you may look into using multiple containers (cf.~{[}12{]}) or
-multi-stage builds {[}39{]}.
+compared to the image size. Second, clarity of the steps within a
+Dockerfile is most important, and if it requires verbosity or adds to
+the final image size, that is an acceptable tradeoff. One common pattern
+you will encounter is a single and very lengthy \texttt{RUN} instruction
+chaining multiple commands, which installs software and cleans up
+afterwards. For example (a) the instruction updates the database of
+available packages, installs a piece of software from a package
+repository, and purges the cache of the package manager, or (b) the
+instruction downloads a software's source archive, unpacks it, builds
+and installs the software, and then removes the downloaded archive and
+all temporary files. Although this pattern creates instructions that may
+be hard to read, it is very common and can even increase clarity within
+the image file system because installation and build artifacts are gone.
+In general, if your container is mostly software dependencies, you
+should not need to worry about image size because (a) your data is
+likely to have much larger storage requirements, and (b) transparency
+and inspectability outweigh storage concerns in data science. If you
+really need to reduce the size, you may look into using multiple
+containers (cf.~{[}12{]}) or multi-stage builds {[}39{]}.
 
 Depending on the programming language used, your project may already
 contain files to manage dependencies, and you may use a package manager
@@ -941,7 +941,7 @@ comments that are useful to include in a \texttt{Dockerfile}.
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# RUN command with && \ to continue over several lines
+# install required R packages; before log the used repository for better provenance in the build log
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
@@ -1179,7 +1179,7 @@ tag (\texttt{v3.6.1}) of the Singularity container software:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{git}\NormalTok{ clone -b v3.6.1 https://github.com/hpcng/singularity}
+\ExtensionTok{RUN}\NormalTok{ git clone -b v3.6.1 https://github.com/hpcng/singularity}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1188,9 +1188,10 @@ can use the \texttt{checkout} command.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{git}\NormalTok{ clone https://github.com/hpcng/singularity}
-\BuiltInTok{cd}\NormalTok{ singularity}
-\FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434}
+\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \CommentTok{# install steps go here}
 \end{Highlighting}
 \end{Shaded}
 
