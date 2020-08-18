@@ -842,12 +842,13 @@ and their arguments to make clear what belongs together, especially when
 connecting multiple commands in a \texttt{RUN} instruction with
 \texttt{\&\&}. Use \texttt{\textbackslash{}} at the end of a line to
 break a single command into multiple lines. This will ensure that no
-single line gets too long to comfortably read. Further, use long
-versions of parameters for readability (e.g., \texttt{-\/-input} instead
-of \texttt{-i}). When you need to change a directory, use
-\texttt{WORKDIR}, because it not only creates the directory if it does
-not exist but also persists the change across multiple \texttt{RUN}
-instructions.
+single line gets too long to comfortably read. Content spread across
+more and shorter lines also improves readability of changes in version
+control systems. Further, use long versions of parameters for
+readability (e.g., \texttt{-\/-input} instead of \texttt{-i}). When you
+need to change a directory, use \texttt{WORKDIR}, because it not only
+creates the directory if it does not exist but also persists the change
+across multiple \texttt{RUN} instructions.
 
 Second, clarity is nearly always more important than brevity. For
 example, if your container uses a script to run a complex install
