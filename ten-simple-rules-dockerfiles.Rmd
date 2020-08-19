@@ -99,7 +99,7 @@ While several tutorials exist on how to use containers for reproducible research
 Here we introduce a set of recommendations for producing container configurations in the context of data science workflows using the popular `Dockerfile` format, summarised in Figure&nbsp;\ref{fig:summary}.
 
 ```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing \\texttt{Dockerfile}s for reproducible data science.", out.width = "50%", fig.pos="h", fig.align="center"}
-knitr::include_graphics("summary.png")
+knitr::include_graphics("figures/summary.png")
 ```
 
 # Prerequisites & scope
@@ -150,7 +150,7 @@ Similar to using a compiled binary file to launch a program, the image is then r
 See Listing&nbsp;\ref{lst:full} for a full `Dockerfile`, which we will refer to throughout this article.
 
 ```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = "100%", fig.pos="h", fig.align="center"}
-knitr::include_graphics("analogy.png")
+knitr::include_graphics("figures/analogy.png")
 ```
 
 While Docker was the original technology to support the `Dockerfile` format, other container technologies now offer support for it, including [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
