@@ -444,18 +444,19 @@ complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files
 that follow a particular format called \texttt{Dockerfile} {[}26{]}. A
-\texttt{Dockerfile} is a machine- \emph{and} human-readable recipe for
-building images, comparable to a \texttt{Makefile} {[}27{]}. Here,
-container images include the application, e.g., the programming language
-interpreter needed to run a workflow, and the system libraries required
-by an application to run. Thus, a \texttt{Dockerfile} consists of a
-sequence of instructions to copy files and install software. Each
-instruction adds a layer to the image, which can be cached across image
-builds for minimizing build and download times. The images have a main
+\texttt{Dockerfile} is a machine- \emph{and} human-readable recipe,
+comparable to a \texttt{Makefile} {[}27{]}, for building images. Here,
+container images are executable files that include the application,
+e.g., the programming language interpreter needed to run a workflow, and
+the system libraries required by an application to run. Thus, a
+\texttt{Dockerfile} consists of a sequence of instructions to copy files
+and install software. Each instruction adds a layer to the image, which
+can be cached across image builds for minimizing build and download
+times. Once an image is built or downloaded, it is then launched as a
+running instance known as a \emph{container}. The images have a main
 executable exposed as an ``entrypoint'' that is started when they are
-run as stateful containers, which are the running instances of Docker
-images. Further, containers can be modified, stopped, restarted and
-purged.
+run as stateful containers. Further, containers can be modified,
+stopped, restarted and purged.
 
 A visual analogy for building and running a container is provided in
 Figure~\ref{fig:analogy}. Akin to compiling source code for a
@@ -836,38 +837,36 @@ and their arguments to make clear what belongs together, especially when
 connecting multiple commands in a \texttt{RUN} instruction with
 \texttt{\&\&}. Use \texttt{\textbackslash{}} at the end of a line to
 break a single command into multiple lines. This will ensure that no
-single line gets too long to comfortably read. Content spread across
-more and shorter lines also improves readability of changes in version
-control systems. Further, use long versions of parameters for
-readability (e.g., \texttt{-\/-input} instead of \texttt{-i}). When you
-need to change a directory, use \texttt{WORKDIR}, because it not only
-creates the directory if it does not exist but also persists the change
-across multiple \texttt{RUN} instructions.
+single line gets too long to comfortably read. Further, use long
+versions of parameters for readability (e.g., \texttt{-\/-input} instead
+of \texttt{-i}). When you need to change a directory, use
+\texttt{WORKDIR}, because it not only creates the directory if it does
+not exist but also persists the change across multiple \texttt{RUN}
+instructions.
 
-Second, clarity of the steps within a Dockerfile is most important, and
-if it requires verbosity or adds to the final image size, that is an
-acceptable tradeoff. For example, if your container uses a script to run
-a complex install routine, instead of removing it from the container
-upon completion (a practice commonly seen in production
-\texttt{Dockerfile}s aiming at small image sizes, cf.~{[}12{]}), you
-should keep the script in the container for a future user to inspect;
-the script size is negligible compared to the image size. One common
-pattern you will encounter is a single and very lengthy \texttt{RUN}
-instruction chaining multiple commands to install software and clean up
-afterwards. For example (a) the instruction updates the database of
-available packages, installs a piece of software from a package
-repository, and purges the cache of the package manager, or (b) the
-instruction downloads a software's source archive, unpacks it, builds
-and installs the software, and then removes the downloaded archive and
-all temporary files. Although this pattern creates instructions that may
-be hard to read, it is very common and can even increase clarity within
-the image file system because installation and build artifacts are gone.
-In general, if your container is mostly software dependencies, you
-should not need to worry about image size because (a) your data is
-likely to have much larger storage requirements, and (b) transparency
-and inspectability outweigh storage concerns in data science. If you
-really need to reduce the size, you may look into using multiple
-containers (cf.~{[}12{]}) or multi-stage builds {[}39{]}.
+Second, clarity is nearly always more important than brevity. For
+example, if your container uses a script to run a complex install
+routine, instead of removing it from the container upon completion,
+which is commonly seen in production \texttt{Dockerfile}s aiming at
+small image sizes (cf.~{[}12{]}), you should keep the script in the
+container for a future user to inspect; the script size is negligible
+compared to the image size. One common pattern you will encounter is a
+single and very lengthy \texttt{RUN} instruction chaining multiple
+commands, which installs software and cleans up afterwards. For example
+(a) the instruction updates the database of available packages, installs
+a piece of software from a package repository, and purges the cache of
+the package manager, or (b) the instruction downloads a software's
+source archive, unpacks it, builds and installs the software, and then
+removes the downloaded archive and all temporary files. Although this
+pattern creates instructions that may be hard to read, it is very common
+and can even increase clarity within the image file system because
+installation and build artifacts are gone. In general, if your container
+is mostly software dependencies, you should not need to worry about
+image size because (a) your data is likely to have much larger storage
+requirements, and (b) transparency and inspectability outweigh storage
+concerns in data science. If you really need to reduce the size, you may
+look into using multiple containers (cf.~{[}12{]}) or multi-stage builds
+{[}39{]}.
 
 Depending on the programming language used, your project may already
 contain files to manage dependencies, and you may use a package manager

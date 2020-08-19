@@ -137,11 +137,12 @@ Containers are distinct from virtual machines or hypervisors, as they do not emu
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019].
-A `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
-Here, container images include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
+A `Dockerfile` is a machine- _and_ human-readable recipe, comparable to a `Makefile` [@wikipedia_contributors_make_2019], for building images.
+Here, container images are executable files that include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 Thus, a `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
-The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.
+Once an image is built or downloaded, it is then launched as a running instance known as a _container_.
+The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers.
 Further, containers can be modified, stopped, restarted and purged.
 
 A visual analogy for building and running a container is provided in Figure&nbsp;\ref{fig:analogy}.
