@@ -1,4 +1,6 @@
-# Ten simple rules for Writing Dockerfiles for Reproducible Research
+# Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science
+
+<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="summary.png" width="30%" align="right">
 
 <img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="figures/summary.png" width="30%" align="right">
 
@@ -7,7 +9,7 @@
 The manuscript is published as a preprint: **[https://osf.io/fsd7t](https://osf.io/fsd7t)**
 
 We welcome your feedback, e.g., by opening issues on this repository or with [OSF annotations](https://help.osf.io/hc/en-us/articles/360019738554-Annotate-a-Preprint).
-We especially welcome you help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
+We especially welcome your help by creating strong illustrating examples, see [issue #4](https://github.com/nuest/ten-simple-rules-dockerfiles/issues/4).
 
 [Ten Simple Rules Collection on PLOS](https://collections.plos.org/ten-simple-rules)
 
@@ -48,6 +50,16 @@ See the end of the `Dockerfile` for instructions.
 - Get all author's emails:
   ```bash
   cat *.Rmd | grep 'email:' | sed 's|    email: ||'
+  ```
+- [Work in progress!] Get a `.docx` file out of the Rmd so one can compare versions and generate marked-up copies of changes:
+  ```r
+  # https://github.com/davidgohel/officedown
+  library("officedown")
+  rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_format = officedown::rdocx_document(), output_file = "tsrd.docx")
+  
+  # https://noamross.github.io/redoc/articles/mixed-workflows-with-redoc.html
+  library("redoc")
+  rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_format = redoc::redoc(), output_file = "tsrd.docx")
   ```
 
 ## License
