@@ -381,7 +381,7 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the whitespace-preserving line breaks within the values, which were added for readability here but in practice would likely be longer lines.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the whitespace-preserving line breaks within the values (using the "\" character), which were added for readability here but in practice would likely be longer lines.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
