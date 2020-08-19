@@ -444,16 +444,14 @@ complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files
 that follow a particular format called \texttt{Dockerfile} {[}26{]}. A
-\texttt{Dockerfile} is a machine- \emph{and} human-readable recipe,
-comparable to a \texttt{Makefile} {[}27{]}, for building images. Here,
-container images are executable files that include the application,
-e.g., the programming language interpreter needed to run a workflow, and
-the system libraries required by an application to run. Thus, a
-\texttt{Dockerfile} consists of a sequence of instructions to copy files
-and install software. Each instruction adds a layer to the image, which
-can be cached across image builds for minimizing build and download
-times. Once an image is built or downloaded, it is then launched as a
-running instance known as a \emph{container}. The images have a main
+\texttt{Dockerfile} is a machine- \emph{and} human-readable recipe for
+building images, comparable to a \texttt{Makefile} {[}27{]}. Here,
+container images include the application, e.g., the programming language
+interpreter needed to run a workflow, and the system libraries required
+by an application to run. Thus, a \texttt{Dockerfile} consists of a
+sequence of instructions to copy files and install software. Each
+instruction adds a layer to the image, which can be cached across image
+builds for minimizing build and download times. The images have a main
 executable exposed as an ``entrypoint'' that is started when they are
 run as stateful containers. Further, containers can be modified,
 stopped, restarted and purged.
@@ -1001,15 +999,16 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the "\" character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
   org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), \
-    Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
-  org.opencontainers.image.url="https://github.com/nuest/ten-simple-rules" \
-  org.opencontainers.image.documentation="https://nuest.github.io/ \
-    ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf" \
+Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
+  org.opencontainers.image.url="\
+https://github.com/nuest/ten-simple-rules-dockerfiles" \
+  org.opencontainers.image.documentation="https://nuest.github.io/\
+ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf" \
   org.opencontainers.image.version="1.0.0"
 
 LABEL org.opencontainers.image.vendor="Ten Simple Institute, Uni of Rules" \
