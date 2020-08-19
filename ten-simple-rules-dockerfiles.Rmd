@@ -381,13 +381,13 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the whitespace-preserving line breaks within the values (using the "\" character), which were added for readability here but in practice would likely be longer lines.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the "\" character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
   org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), \
 Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
-  org.opencontainers.image.url="\ 
+  org.opencontainers.image.url="\
 https://github.com/nuest/ten-simple-rules-dockerfiles" \
   org.opencontainers.image.documentation="https://nuest.github.io/\
 ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf" \
