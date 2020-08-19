@@ -353,11 +353,8 @@ workflows using the popular \texttt{Dockerfile} format, summarised in
 Figure~\ref{fig:summary}.
 
 \begin{figure}[h]
-
-{\centering \includegraphics[width=0.5\linewidth]{summary} 
-
+{\centering \includegraphics[width=0.5\linewidth]{figure/summary} 
 }
-
 \caption{Summary of the ten simple rules for writing \texttt{Dockerfile}s for reproducible data science.}\label{fig:summary}
 \end{figure}
 
@@ -456,9 +453,8 @@ sequence of instructions to copy files and install software. Each
 instruction adds a layer to the image, which can be cached across image
 builds for minimizing build and download times. The images have a main
 executable exposed as an ``entrypoint'' that is started when they are
-run as stateful containers, which are the running instances of Docker
-images. Further, containers can be modified, stopped, restarted and
-purged.
+run as stateful containers. Further, containers can be modified,
+stopped, restarted and purged.
 
 A visual analogy for building and running a container is provided in
 Figure~\ref{fig:analogy}. Akin to compiling source code for a
@@ -470,11 +466,8 @@ Listing~\ref{lst:full} for a full \texttt{Dockerfile}, which we will
 refer to throughout this article.
 
 \begin{figure}[h]
-
-{\centering \includegraphics[width=1\linewidth]{analogy} 
-
+{\centering \includegraphics[width=1\linewidth]{figures/analogy} 
 }
-
 \caption{The workflow to create Docker containers by analogy. Containers begin with a \texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \texttt{docker run} command (analogous to running an instance of the compiled binary as a process).}\label{fig:analogy}
 \end{figure}
 
@@ -901,7 +894,7 @@ customisation option reduces clarity for data science workflows.
 \section{4. Document within the
 Dockerfile}\label{document-within-the-dockerfile}}
 
-\ztitlerefsetup{title=3} \zlabel{rule:document} \label{rule:document} \zrefused{rule:document}
+\ztitlerefsetup{title=4} \zlabel{rule:document} \label{rule:document} \zrefused{rule:document}
 
 \hypertarget{explain-in-comments}{%
 \subsection{Explain in comments}\label{explain-in-comments}}
@@ -939,14 +932,14 @@ comments that are useful to include in a \texttt{Dockerfile}.
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# RUN command spreading several lines
+# install required R packages; before log the used repository for better provenance in the build log
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
     here
 
 # this library must be installed from source to get version newer
-# than in sources
+# than in apt sources
 RUN git clone http://url.of/repo && \
   cd repo && \
   make build && \
@@ -1117,7 +1110,7 @@ transparency and computational reproducibility.
 versions}\label{specify-software-versions}}
 \addcontentsline{toc}{section}{5. Specify software versions}
 
-\ztitlerefsetup{title=6} \zlabel{rule:pinning} \label{rule:pinning} \zrefused{rule:pinning}
+\ztitlerefsetup{title=5} \zlabel{rule:pinning} \label{rule:pinning} \zrefused{rule:pinning}
 
 The reproducibility of your \texttt{Dockerfile} heavily depends on how
 well you define the versions of software to be installed in the image.
@@ -1166,6 +1159,33 @@ will not unnecessarily fix problems with a library that is no longer
 needed or include long-running installations. A test provided via a
 \texttt{HEALTHCHECK} {[}42{]}, can further ensure proper functioning of
 your container.
+
+\hypertarget{version-control}{%
+\subsection{Version Control}\label{version-control}}
+
+Software can often be installed directly from a version controlled
+repository (e.g., GitHub, GitLab, or Mercurial). It's recommended to
+checkout a specific version, tag, or commit to ensure pinning a version
+for the repository. For example, here is how to clone a specific release
+tag (\texttt{v3.6.1}) of the Singularity container software:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{RUN}\NormalTok{ git clone -b v3.6.1 https://github.com/hpcng/singularity}
+\end{Highlighting}
+\end{Shaded}
+
+In the case that you want to clone and checkout a specific commit, you
+can use the \texttt{checkout} command.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \CommentTok{# install steps go here}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{extension-packages-and-programming-language-modules}{%
 \subsection{Extension packages and programming language
@@ -1273,7 +1293,7 @@ image deviates from that, we suggest you document it precisely.
 \section*{6. Use version control}\label{use-version-control}}
 \addcontentsline{toc}{section}{6. Use version control}
 
-\ztitlerefsetup{title=9} \zlabel{rule:publish} \label{rule:publish} \zrefused{rule:publish}
+\ztitlerefsetup{title=6} \zlabel{rule:publish} \label{rule:publish} \zrefused{rule:publish}
 
 As plain text files, \texttt{Dockerfile}s are well suited for use with
 version control systems. Including a \texttt{Dockerfile} alongside your
@@ -1396,12 +1416,12 @@ the path to the current user's home directory, e.g.,
 
 How your container expects external resources to be mounted into it
 should be included in the example commands (see
-\hyperref[{rule:formatting}]{Rule~\ztitleref{rule:formatting}}). In
-these commands, you can also make sure to avoid issues with file
-permissions by using Docker's \texttt{-\/-user} option. For example, by
-default, writing a new file from inside the container will be owned by
-user \texttt{root} on your host, because that is the default user within
-the container.
+\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). In these
+commands, you can also make sure to avoid issues with file permissions
+by using Docker's \texttt{-\/-user} option. For example, by default,
+writing a new file from inside the container will be owned by user
+\texttt{root} on your host, because that is the default user within the
+container.
 
 \hypertarget{make-the-image-one-click-runnable}{%
 \section*{8. Make the image one-click
@@ -1450,11 +1470,11 @@ commands in a \texttt{Makefile} {[}27{]}. If you use a
 \hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}) and include
 instructions for its usage (see
 \hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). To support
-advanced custom configuration, it is helpful to expose settings via a
-configuration file, which can be bind mounted from the host {[}51{]},
+more complex configuration options, it is helpful to expose settings via
+a configuration file, which can be bind mounted from the host {[}51{]},
 via environment variables (see
-\hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} and {[}53{]}),
-or via wrappers using Docker, such as Kliko {[}54{]}.
+\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} and
+{[}53{]}), or via wrappers using Docker, such as Kliko {[}54{]}.
 
 \scriptsize
 
@@ -1583,7 +1603,7 @@ portable.
 \hypertarget{order-the-instructions}{%
 \section{9. Order the instructions}\label{order-the-instructions}}
 
-\ztitlerefsetup{title=5} \zlabel{rule:order} \label{rule:order} \zrefused{rule:order}
+\ztitlerefsetup{title=9} \zlabel{rule:order} \label{rule:order} \zrefused{rule:order}
 
 You will regularly build an image during development of your workflow.
 You can take advantage of \emph{build caching} to avoid execution of
