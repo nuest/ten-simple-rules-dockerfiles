@@ -850,31 +850,31 @@ need to change a directory, use \texttt{WORKDIR}, because it not only
 creates the directory if it does not exist but also persists the change
 across multiple \texttt{RUN} instructions.
 
-Second, clarity is nearly always more important than brevity. For
-example, if your container uses a script to run a complex install
-routine, instead of removing it from the container upon completion,
-which is commonly seen in production \texttt{Dockerfile}s aiming at
-small image sizes (cf.~{[}12{]}), you should keep the script in the
-container for a future user to inspect; the script size is negligible
-compared to the image size. Second, clarity of the steps within a
-Dockerfile is most important, and if it requires verbosity or adds to
-the final image size, that is an acceptable tradeoff. One common pattern
-you will encounter is a single and very lengthy \texttt{RUN} instruction
-chaining multiple commands, which installs software and cleans up
-afterwards. For example (a) the instruction updates the database of
-available packages, installs a piece of software from a package
-repository, and purges the cache of the package manager, or (b) the
-instruction downloads a software's source archive, unpacks it, builds
-and installs the software, and then removes the downloaded archive and
-all temporary files. Although this pattern creates instructions that may
-be hard to read, it is very common and can even increase clarity within
-the image file system because installation and build artifacts are gone.
-In general, if your container is mostly software dependencies, you
-should not need to worry about image size because (a) your data is
-likely to have much larger storage requirements, and (b) transparency
-and inspectability outweigh storage concerns in data science. If you
-really need to reduce the size, you may look into using multiple
-containers (cf.~{[}12{]}) or multi-stage builds {[}39{]}.
+Second, clarity of the steps within a Dockerfile is most important, and
+if it requires verbosity or adds to the final image size, that is an
+acceptable tradeoff. For example, if your container uses a script to run
+a complex install routine, instead of removing it from the container
+upon completion, which is commonly seen in production
+\texttt{Dockerfile}s aiming at small image sizes (cf.~{[}12{]}), you
+should keep the script in the container for a future user to inspect;
+the script size is negligible compared to the image size. One common
+pattern you will encounter is a single and very lengthy \texttt{RUN}
+instruction chaining multiple commands, which installs software and
+cleans up afterwards. For example (a) the instruction updates the
+database of available packages, installs a piece of software from a
+package repository, and purges the cache of the package manager, or (b)
+the instruction downloads a software's source archive, unpacks it,
+builds and installs the software, and then removes the downloaded
+archive and all temporary files. Although this pattern creates
+instructions that may be hard to read, it is very common and can even
+increase clarity within the image file system because installation and
+build artifacts are gone. In general, if your container is mostly
+software dependencies, you should not need to worry about image size
+because (a) your data is likely to have much larger storage
+requirements, and (b) transparency and inspectability outweigh storage
+concerns in data science. If you really need to reduce the size, you may
+look into using multiple containers (cf.~{[}12{]}) or multi-stage builds
+{[}39{]}.
 
 Depending on the programming language used, your project may already
 contain files to manage dependencies, and you may use a package manager
@@ -1425,12 +1425,12 @@ the path to the current user's home directory, e.g.,
 
 How your container expects external resources to be mounted into it
 should be included in the example commands (see
-\hyperref[{rule:formatting}]{Rule~\ztitleref{rule:formatting}}). In
-these commands, you can also make sure to avoid issues with file
-permissions by using Docker's \texttt{-\/-user} option. For example, by
-default, writing a new file from inside the container will be owned by
-user \texttt{root} on your host, because that is the default user within
-the container.
+\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). In these
+commands, you can also make sure to avoid issues with file permissions
+by using Docker's \texttt{-\/-user} option. For example, by default,
+writing a new file from inside the container will be owned by user
+\texttt{root} on your host, because that is the default user within the
+container.
 
 \hypertarget{make-the-image-one-click-runnable}{%
 \section*{8. Make the image one-click

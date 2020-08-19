@@ -613,7 +613,7 @@ docker run --mount type=bind,src=$(pwd)/article-x-supplement/data,dst=/input-dat
 
 \normalsize
 
-How your container expects external resources to be mounted into it should be included in the example commands (see \ruleref{rule:formatting}).
+How your container expects external resources to be mounted into it should be included in the example commands (see \ruleref{rule:document}).
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
@@ -636,7 +636,7 @@ However, tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have 
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;\ref{lst:runnerimage}.
 In any case, you should document different variants very well and potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
 If you use a `Makefile`, then keep it in the same repository (see \ruleref{rule:mount}) and include instructions for its usage (see \ruleref{rule:document}).
-To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see \ruleref{rule:pinning} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
+To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see \ruleref{rule:document} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
 \scriptsize
 
