@@ -1,6 +1,6 @@
 # Ten simple rules for Writing Dockerfiles for Reproducible Research
 
-<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="summary.png" width="30%" align="right">
+<img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="figures/summary.png" width="30%" align="right">
 
 [![DOI](https://img.shields.io/badge/DOI-10.31219%2Fosf.io%2Ffsd7t-blue)](https://doi.org/10.31219/osf.io/fsd7t)
 
