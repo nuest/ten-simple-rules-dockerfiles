@@ -69,6 +69,8 @@ header-includes:
   - \usepackage{listings}
   - \lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\ttfamily, identifierstyle=\color{black}\ttfamily, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
   - \lstset{language=docker, literate={ü}{{\"u}}1 {-}{-}1, showstringspaces=false}
+  - \usepackage[normalem]{ulem}
+  - \providecommand{\myedit}[2]{{\color{blue}#2 [#1]}}
 csl: plos.csl
 Submission notes:
  - The authors declare that no competing interests exist.
@@ -137,13 +139,14 @@ Containers are distinct from virtual machines or hypervisors, as they do not emu
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019].
-A `Dockerfile` is a machine- _and_ human-readable recipe, comparable to a `Makefile` [@wikipedia_contributors_make_2019], for building _images_.
-Here, images are executable files that include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
+A `Dockerfile` is a machine- _and_ human-readable recipe ~~for building images~~, comparable to a `Makefile` [@wikipedia_contributors_make_2019]\myedit{1.1}{, for building \emph{images}}.
+Here, images \myedit{1.1}{are executable files that} include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 Thus, a `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
-Once an image is built or downloaded, it is then launched as a running instance known as a _container_.
-The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers.
-Further, containers can be modified, stopped, restarted and purged.
+~~The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.~~
+\myedit{1.1}{Once an image is built or downloaded, it is then launched as a running instance known as a \emph{container}.
+The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers.}
+Further, containers can be modified, stopped, restarted, and purged.
 
 A visual analogy for building and running a container is provided in Figure&nbsp;\ref{fig:analogy}.
 Akin to compiling source code for a programming language, creating a container also starts with a plain text file (`Dockerfile`), which provides instructions for building an image.
@@ -217,7 +220,7 @@ jupyter-repo2docker https://github.com/norvig/pytudes
 The resulting container image installs the dependencies listed in the requirements file, and it provides an entrypoint to run a notebook server to interact with any existing workflows in the repository.
 Since `repo2docker` is used within [MyBinder.org](https://mybinder.org/), if you make sure your workflow is "Binder-ready," you and others can also obtain an online workspace with a single click.
 However, one precaution to consider is that the default command above will create a home for the current user, meaning that the container itself would not be ideal to share; instead, any researcher interested in interacting with the code inside should run `repo2docker` themselves and create their own container.
-Because `repo2docker` is deterministic, the environments are the same (see&nbsp;\ruleref{rule:pinning} for ensuring the same software versions).
+Because `repo2docker` is deterministic, the environments are the same (see&nbsp;~~Rule 6~~\myedit{2.2}{\ruleref{rule:pinning}} for ensuring the same software versions).
 
 Additional tools to assist with writing `Dockerfile`s include `containerit` [@nust_containerit_2019] and `dockta` [@stencila_dockta_2019].
 `containerit` automates the generation of a standalone `Dockerfile` for workflows in R.
@@ -236,7 +239,7 @@ Part of your project template should be a protocol for publishing the `Dockerfil
 A template is preferable to your own set of base images because of the maintenance efforts the base images require.
 Therefore, instead of building your own independent solution, consider contributing to existing suites of images (see \ruleref{rule:base}) and improving these for your needs.
 
-For any tool that you use, be sure to look at documentation for usage and configuration options, and look for options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
+For any tool that you use, be sure to look at documentation for usage and configuration options, and look for options to add metadata (e.g., labels see&nbsp;~~Rule 3~~\myedit{2.2}{\ruleref{rule:document}}).
 
 # 2. Build upon existing images {-}
 \rulelabel{2}{rule:base}
@@ -293,13 +296,13 @@ This means that you should use indentation, new lines, and comments to make your
 Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
 Use `\` at the end of a line to break a single command into multiple lines.
 This will ensure that no single line gets too long to comfortably read. 
-Content spread across more and shorter lines also improves readability of changes in version control systems.
+\myedit{1.2}{Content spread across more and shorter lines also improves readability of changes in version control systems.}
 Further, use long versions of parameters for readability (e.g., `--input` instead of `-i`).
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it does not exist but also persists the change across multiple `RUN` instructions.
 
-Second, clarity of the steps within a Dockerfile is most important, and if it requires verbosity or adds to the final image size, that is an acceptable tradeoff.
-For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion (a practice commonly seen in production `Dockerfile`s aiming at small image sizes, cf.&nbsp;@gruening_recommendations_2019), you should keep the script in the container for a future user to inspect; the script size is negligible compared to the image size.
-One common pattern you will encounter is a single and very lengthy `RUN` instruction chaining multiple commands to install software and clean up afterwards.
+Second, clarity ~~is nearly always more important than brevity~~\myedit{3.1}{of the steps within a Dockerfile is most important, and if it requires verbosity or adds to the final image size, that is an acceptable tradeoff}.
+For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion ~~,which is~~ \myedit{3.1}{(a practice} commonly seen in production `Dockerfile`s aiming at small image sizes, cf.&nbsp;@gruening_recommendations_2019 \myedit{3.1}{)}, you should keep the script in the container for a future user to inspect; the script size is negligible compared to the image size.
+One common pattern you will encounter is a single and very lengthy `RUN` instruction chaining multiple commands~~,which installs~~ \myedit{3.1}{to install} software and clean~~s~~ up afterwards.
 For example (a) the instruction updates the database of available packages, installs a piece of software from a package repository, and purges the cache of the package manager, or (b) the instruction downloads a software's source archive, unpacks it, builds and installs the software, and then removes the downloaded archive and all temporary files.
 Although this pattern creates instructions that may be hard to read, it is very common and can even increase clarity within the image file system because installation and build artifacts are gone.
 In general, if your container is mostly software dependencies, you should not need to worry about image size because (a) your data is likely to have much larger storage requirements, and (b) transparency and inspectability outweigh storage concerns in data science.
@@ -328,21 +331,22 @@ For example [this `Dockerfile` by Kaggle](https://github.com/Kaggle/docker-rstat
 If you copy instructions from another `Dockerfile`, acknowledge the source in a comment.
 Also, it can be helpful to include comments about commands that did not work so you do not repeat past mistakes.
 Further, if you find that you need to remember an undocumented step, that is an indication this step should be documented in the `Dockerfile`.
-All instructions can be grouped starting with a short comment, which also makes it easier to spot changes if your `Dockerfile` is managed in some version control system (see \ruleref{rule:publish}).
+All instructions can be grouped starting with a short comment, which also makes it easier to spot changes if your `Dockerfile` is managed in some version control system (see ~~Rule 9~~\myedit{2.2}{\ruleref{rule:publish}}).
 Listing&nbsp;\ref{lst:comments} shows a selection of typical kinds of comments that are useful to include in a `Dockerfile`.
 
 \scriptsize
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with examples for helpful comments.},breaklines=true,label={lst:comments}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with examples for helpful comments. \myedit{1.3}{}},breaklines=true,label={lst:comments}]
 ...
 
 # apt-get install specific version, use 'apt-cache madison <pkg>' 
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# install required R packages; before log the used repository for better provenance in the build log
+# install required R packages; before log the used repository
+# for better provenance in the build log
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
@@ -383,7 +387,7 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the "\" character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels\myedit{1.4}{; note the line breaks within the values (using the \texttt{\textbackslash} character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability}.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
@@ -485,17 +489,17 @@ When you install several system libraries, it is good practice to add comments a
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
 A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
 
-## Version Control
+## \myedit{2.1}{Version Control}
 
-Software can often be installed directly from a version controlled repository (e.g., GitHub, GitLab, or Mercurial). 
+\myedit{2.1}{Software can often be installed directly from a version controlled repository (e.g., GitHub, GitLab, or Mercurial). 
 It's recommended to checkout a specific version, tag, or commit to ensure pinning a version for the repository.
-For example, here is how to clone a specific release tag (`v3.6.1`) of the Singularity container software:
+For example, here is how to clone a specific release tag (`v3.6.1`) of the Singularity container software:}
 
 ```bash
 RUN git clone -b v3.6.1 https://github.com/hpcng/singularity
 ```
 
-In the case that you want to clone and checkout a specific commit, you can use the `checkout` command.
+\myedit{2.1}{In the case that you want to clone and checkout a specific commit, you can use the \texttt{checkout} command.}
 
 ```bash
 RUN git clone https://github.com/hpcng/singularity && \
@@ -542,7 +546,7 @@ RUN pip install -r requirements.txt
 
 \normalsize
 
-This modularisation may reduce readability, but provides more flexibility in facilitating different ways of building a reproducible environment, provided the dependency file is under version control in the same repository (see \ruleref{rule:publish}).
+This modularisation may reduce readability, but provides more flexibility in facilitating different ways of building a reproducible environment, provided the dependency file is under version control in the same repository (see ~~Rule 9~~\myedit{2.2}{\ruleref{rule:publish}}).
 You can also use package managers to install software from source code `COPY`ied into the image (see&nbsp;\ruleref{rule:mount}).
 Finally, you can use many package managers to install software from source obtained from external code management repositories, e.g., installing a tool from a specific version tag or commit hash.
 Be aware of the risk that such installations may later fail, especially when the external repositories are out of your control. However, these concerns can be mitigated by running the installation command with the full URL (including the specific version tag or commit hash), which is helpful in troubleshooting if problems arise.
@@ -615,7 +619,7 @@ docker run --mount type=bind,src=$(pwd)/article-x-supplement/data,dst=/input-dat
 
 \normalsize
 
-How your container expects external resources to be mounted into it should be included in the example commands (see \ruleref{rule:document}).
+How your container expects external resources to be mounted into it should be included in the example commands (see ~~Rule 3~~\myedit{2.2}{\ruleref{rule:document}}).
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
@@ -637,8 +641,8 @@ A possible weakness with using containers is that they can only provide one defa
 However, tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;\ref{lst:runnerimage}.
 In any case, you should document different variants very well and potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
-If you use a `Makefile`, then keep it in the same repository (see \ruleref{rule:mount}) and include instructions for its usage (see \ruleref{rule:document}).
-To support more complex configuration options, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see \ruleref{rule:document} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
+If you use a `Makefile`, then keep it in the same repository (see \ruleref{rule:mount}) and include instructions for its usage (see ~~Rule 3~~\myedit{2.2}{\ruleref{rule:document}}).
+To support ~~advanced custom configuration~~\myedit{}{more complex configuration options}, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see ~~Rule 6~~\myedit{2.2}{\ruleref{rule:document}} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
 \scriptsize
 
@@ -781,7 +785,7 @@ Third, you can export the image to file and deposit it in a public data reposito
 You should include instructions for how to import and run the workflow based on the image archive and add your own image tags using semantic versioning (see \ruleref{rule:base}) for clarity.
 Depositing the image next to other project files, i.e., data, code, and the used `Dockerfile`, in a public repository makes them likely to be preserved, but it is highly unlikely that over time you will be able to recreate it precisely from the accompanying `Dockerfile`.
 Publishing the image and the contained metadata therein (e.g., the Docker version used) may even allow future science historians to emulate the Docker environment.
-Sharing the actual image via a registry and a version-controlled `Dockerfile` together allows you to freely experiment and continue developing your workflow and keep the image up to date, e.g., updating versions of pinned dependencies (see \ruleref{rule:pinning}) and regular image building (see above).
+Sharing the actual image via a registry and a version-controlled `Dockerfile` together allows you to freely experiment and continue developing your workflow and keep the image up to date, e.g., updating versions of pinned dependencies (see ~~Rule 6~~\myedit{2.2}{\ruleref{rule:pinning}}) and regular image building (see above).
 
 Finally, for a sanity check and to foster even higher trust in the stability and documentation of your project, you can ask a colleague or community member to be your code copilot (see [https://twitter.com/Code_Copilot](https://twitter.com/Code_Copilot)) to interact with your workflow container on a machine of their own.
 You can do this shortly before submitting your reproducible workflow for peer-review, so you are well positioned for the future of scholarly communication and open science, where these may be standard practices required for publication [@eglen_codecheck_2019; @chen_open_2019; @schonbrodt_training_2019; @eglen_recent_2018].

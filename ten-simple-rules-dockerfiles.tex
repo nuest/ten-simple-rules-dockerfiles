@@ -210,6 +210,11 @@
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{cslreferences}%
+  {}%
+  {\par}
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -220,6 +225,8 @@
 \usepackage{listings}
 \lstdefinelanguage{docker}{keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER}, keywordstyle=\color{blue}\ttfamily, identifierstyle=\color{black}\ttfamily, sensitive=false, comment=[l]{\#}, commentstyle=\color{darkgray}\ttfamily, stringstyle=\color{red}\ttfamily, morestring=[b]', morestring=[b]"}
 \lstset{language=docker, literate={ü}{{\"u}}1 {-}{-}1, showstringspaces=false}
+\usepackage[normalem]{ulem}
+\providecommand{\myedit}[2]{{\color{blue}#2 [#1]}}
 
 
 
@@ -244,20 +251,27 @@
 % Title must be 250 characters or less.
 \begin{flushleft}
 {\Large
-\textbf\newline{Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+\textbf\newline{Ten Simple Rules for Writing Dockerfiles for
+Reproducible Data
+Science} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
 }
 \newline
 % Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
 \\
-Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics, University of Muenster, Muenster, Germany}}\textsuperscript{*},
-Vanessa Sochat\textsuperscript{\getAff{Stanford Research Computing Center, Stanford University, Stanford, CA,
-USA}},
-Ben Marwick\textsuperscript{\getAff{Department of Anthropology, University of Washington, Seattle, WA, USA}},
-Stephen J. Eglen\textsuperscript{\getAff{Department of Applied Mathematics and Theoretical Physics, University of
-Cambridge, Cambridge, Cambridgeshire, GB}},
+Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics,
+University of Muenster, Muenster, Germany}}\textsuperscript{*},
+Vanessa Sochat\textsuperscript{\getAff{Stanford Research Computing
+Center, Stanford University, Stanford, CA, USA}},
+Ben Marwick\textsuperscript{\getAff{Department of Anthropology,
+University of Washington, Seattle, WA, USA}},
+Stephen J. Eglen\textsuperscript{\getAff{Department of Applied
+Mathematics and Theoretical Physics, University of Cambridge, Cambridge,
+Cambridgeshire, GB}},
 Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}},
-Tony Hirst\textsuperscript{\getAff{Department of Computing and Communications, The Open University, GB}},
-Benjamin D. Evans\textsuperscript{\getAff{School of Psychological Science, University of Bristol, Bristol, GB}}\\
+Tony Hirst\textsuperscript{\getAff{Department of Computing and
+Communications, The Open University, GB}},
+Benjamin D. Evans\textsuperscript{\getAff{School of Psychological
+Science, University of Bristol, Bristol, GB}}\\
 \bigskip
 \bigskip
 * Corresponding author: daniel.nuest@uni-muenster.de\\
@@ -343,7 +357,7 @@ been demonstrated for capturing scientific notebooks {[}5{]} and
 reproducible workflows {[}6{]}.
 
 While several tutorials exist on how to use containers for reproducible
-research ({[}7--11{]} and Guening et~al. {[}12{]} give very helpful
+research ({[}7--11{]} and Guening et~al.~{[}12{]} give very helpful
 recommendations for packaging reusable software in a container), there
 is no detailed \emph{manual for how to write the actual instructions to
 create the containers for computational research} besides generic best
@@ -447,19 +461,21 @@ complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files
 that follow a particular format called \texttt{Dockerfile} {[}26{]}. A
-\texttt{Dockerfile} is a machine- \emph{and} human-readable recipe,
-comparable to a \texttt{Makefile} {[}27{]}, for building images. Here,
-container images are executable files that include the application,
+\texttt{Dockerfile} is a machine- \emph{and} human-readable recipe
+\sout{for building images}, comparable to a \texttt{Makefile}
+{[}27{]}{\color{blue}, for building \emph{images} [1.1]}. Here, images
+{\color{blue}are executable files that [1.1]} include the application,
 e.g., the programming language interpreter needed to run a workflow, and
 the system libraries required by an application to run. Thus, a
 \texttt{Dockerfile} consists of a sequence of instructions to copy files
 and install software. Each instruction adds a layer to the image, which
 can be cached across image builds for minimizing build and download
-times. Once an image is built or downloaded, it is then launched as a
-running instance known as a \emph{container}. The images have a main
-executable exposed as an ``entrypoint'' that is started when they are
-run as stateful containers. Further, containers can be modified,
-stopped, restarted and purged.
+times. \sout{The images have a main executable exposed as an
+``entrypoint'' that is started when they are run as stateful containers,
+which are the running instances of Docker images.}
+{\color{blue}Once an image is built or downloaded, it is then launched as a running instance known as a \emph{container}.
+The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers. [1.1]}
+Further, containers can be modified, stopped, restarted, and purged.
 
 A visual analogy for building and running a container is provided in
 Figure~\ref{fig:analogy}. Akin to compiling source code for a
@@ -651,7 +667,7 @@ with dependencies on the \href{https://pypi.org/}{Python Package Index}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{jupyter-repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
+\ExtensionTok{jupyter{-}repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
 \end{Highlighting}
 \end{Shaded}
 
@@ -669,8 +685,9 @@ meaning that the container itself would not be ideal to share; instead,
 any researcher interested in interacting with the code inside should run
 \texttt{repo2docker} themselves and create their own container. Because
 \texttt{repo2docker} is deterministic, the environments are the same
-(see~\hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} for
-ensuring the same software versions).
+(see~\sout{Rule
+6}{\color{blue}\hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} [2.2]}
+for ensuring the same software versions).
 
 Additional tools to assist with writing \texttt{Dockerfile}s include
 \texttt{containerit} {[}31{]} and \texttt{dockta} {[}32{]}.
@@ -713,7 +730,8 @@ these for your needs.
 
 For any tool that you use, be sure to look at documentation for usage
 and configuration options, and look for options to add metadata (e.g.,
-labels see~\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}).
+labels see~\sout{Rule
+3}{\color{blue}\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} [2.2]}).
 
 \hypertarget{build-upon-existing-images}{%
 \section*{2. Build upon existing
@@ -843,38 +861,40 @@ and their arguments to make clear what belongs together, especially when
 connecting multiple commands in a \texttt{RUN} instruction with
 \texttt{\&\&}. Use \texttt{\textbackslash{}} at the end of a line to
 break a single command into multiple lines. This will ensure that no
-single line gets too long to comfortably read. Content spread across
-more and shorter lines also improves readability of changes in version
-control systems. Further, use long versions of parameters for
-readability (e.g., \texttt{-\/-input} instead of \texttt{-i}). When you
-need to change a directory, use \texttt{WORKDIR}, because it not only
-creates the directory if it does not exist but also persists the change
-across multiple \texttt{RUN} instructions.
+single line gets too long to comfortably read.
+{\color{blue}Content spread across more and shorter lines also improves readability of changes in version control systems. [1.2]}
+Further, use long versions of parameters for readability (e.g.,
+\texttt{-\/-input} instead of \texttt{-i}). When you need to change a
+directory, use \texttt{WORKDIR}, because it not only creates the
+directory if it does not exist but also persists the change across
+multiple \texttt{RUN} instructions.
 
-Second, clarity of the steps within a Dockerfile is most important, and
-if it requires verbosity or adds to the final image size, that is an
-acceptable tradeoff. For example, if your container uses a script to run
-a complex install routine, instead of removing it from the container
-upon completion (a practice commonly seen in production
-\texttt{Dockerfile}s aiming at small image sizes, cf.~{[}12{]}), you
-should keep the script in the container for a future user to inspect;
-the script size is negligible compared to the image size. One common
-pattern you will encounter is a single and very lengthy \texttt{RUN}
-instruction chaining multiple commands to install software and clean up
-afterwards. For example (a) the instruction updates the database of
-available packages, installs a piece of software from a package
-repository, and purges the cache of the package manager, or (b) the
-instruction downloads a software's source archive, unpacks it, builds
-and installs the software, and then removes the downloaded archive and
-all temporary files. Although this pattern creates instructions that may
-be hard to read, it is very common and can even increase clarity within
-the image file system because installation and build artifacts are gone.
-In general, if your container is mostly software dependencies, you
-should not need to worry about image size because (a) your data is
-likely to have much larger storage requirements, and (b) transparency
-and inspectability outweigh storage concerns in data science. If you
-really need to reduce the size, you may look into using multiple
-containers (cf.~{[}12{]}) or multi-stage builds {[}39{]}.
+Second, clarity \sout{is nearly always more important than
+brevity}{\color{blue}of the steps within a Dockerfile is most important, and if it requires verbosity or adds to the final image size, that is an acceptable tradeoff [3.1]}.
+For example, if your container uses a script to run a complex install
+routine, instead of removing it from the container upon completion
+\sout{,which is} {\color{blue}(a practice [3.1]} commonly seen in
+production \texttt{Dockerfile}s aiming at small image sizes,
+cf.~{[}12{]} {\color{blue}) [3.1]}, you should keep the script in the
+container for a future user to inspect; the script size is negligible
+compared to the image size. One common pattern you will encounter is a
+single and very lengthy \texttt{RUN} instruction chaining multiple
+commands\sout{,which installs} {\color{blue}to install [3.1]} software
+and clean\sout{s} up afterwards. For example (a) the instruction updates
+the database of available packages, installs a piece of software from a
+package repository, and purges the cache of the package manager, or (b)
+the instruction downloads a software's source archive, unpacks it,
+builds and installs the software, and then removes the downloaded
+archive and all temporary files. Although this pattern creates
+instructions that may be hard to read, it is very common and can even
+increase clarity within the image file system because installation and
+build artifacts are gone. In general, if your container is mostly
+software dependencies, you should not need to worry about image size
+because (a) your data is likely to have much larger storage
+requirements, and (b) transparency and inspectability outweigh storage
+concerns in data science. If you really need to reduce the size, you may
+look into using multiple containers (cf.~{[}12{]}) or multi-stage builds
+{[}39{]}.
 
 Depending on the programming language used, your project may already
 contain files to manage dependencies, and you may use a package manager
@@ -926,8 +946,8 @@ need to remember an undocumented step, that is an indication this step
 should be documented in the \texttt{Dockerfile}. All instructions can be
 grouped starting with a short comment, which also makes it easier to
 spot changes if your \texttt{Dockerfile} is managed in some version
-control system (see
-\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}).
+control system (see \sout{Rule
+9}{\color{blue}\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}} [2.2]}).
 Listing~\ref{lst:comments} shows a selection of typical kinds of
 comments that are useful to include in a \texttt{Dockerfile}.
 
@@ -935,14 +955,15 @@ comments that are useful to include in a \texttt{Dockerfile}.
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with examples for helpful comments.},breaklines=true,label={lst:comments}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with examples for helpful comments. {\color{blue} [1.3]}},breaklines=true,label={lst:comments}]
 ...
 
 # apt-get install specific version, use 'apt-cache madison <pkg>' 
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# install required R packages; before log the used repository for better provenance in the build log
+# install required R packages; before log the used repository
+# for better provenance in the build log
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
@@ -1009,7 +1030,7 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the "\" character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels{\color{blue}; note the line breaks within the values (using the \texttt{\textbackslash} character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability [1.4]}.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
@@ -1170,30 +1191,27 @@ needed or include long-running installations. A test provided via a
 \texttt{HEALTHCHECK} {[}42{]}, can further ensure proper functioning of
 your container.
 
-\hypertarget{version-control}{%
-\subsection{Version Control}\label{version-control}}
+\hypertarget{section}{%
+\subsection{\texorpdfstring{{\color{blue}Version Control [2.1]}}{}}\label{section}}
 
-Software can often be installed directly from a version controlled
-repository (e.g., GitHub, GitLab, or Mercurial). It's recommended to
-checkout a specific version, tag, or commit to ensure pinning a version
-for the repository. For example, here is how to clone a specific release
-tag (\texttt{v3.6.1}) of the Singularity container software:
+{\color{blue}Software can often be installed directly from a version controlled repository (e.g., GitHub, GitLab, or Mercurial). 
+It's recommended to checkout a specific version, tag, or commit to ensure pinning a version for the repository.
+For example, here is how to clone a specific release tag (`v3.6.1`) of the Singularity container software: [2.1]}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ git clone -b v3.6.1 https://github.com/hpcng/singularity}
+\ExtensionTok{RUN}\NormalTok{ git clone {-}b v3.6.1 https://github.com/hpcng/singularity}
 \end{Highlighting}
 \end{Shaded}
 
-In the case that you want to clone and checkout a specific commit, you
-can use the \texttt{checkout} command.
+{\color{blue}In the case that you want to clone and checkout a specific commit, you can use the \texttt{checkout} command. [2.1]}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
-    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
-    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
-    \CommentTok{# install steps go here}
+\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
+    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
+    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
+    \CommentTok{\# install steps go here}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1241,9 +1259,9 @@ simplest to write the install steps and versions directly into the
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ pip install \textbackslash{}}
-\NormalTok{  geopy==1.20.0 \textbackslash{}}
-\NormalTok{  uszipcode==0.2.2}
+\ExtensionTok{RUN}\NormalTok{ pip install }\KeywordTok{\textbackslash{}}
+  \VariableTok{geopy=}\NormalTok{=}\ExtensionTok{1.20.0} \KeywordTok{\textbackslash{}}
+  \VariableTok{uszipcode=}\NormalTok{=}\ExtensionTok{0.2.2}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1258,7 +1276,7 @@ Alternatively, versions may be specified in a separate dependency file
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{COPY}\NormalTok{ requirements.txt .}
-\ExtensionTok{RUN}\NormalTok{ pip install -r requirements.txt}
+\ExtensionTok{RUN}\NormalTok{ pip install {-}r requirements.txt}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1267,9 +1285,9 @@ Alternatively, versions may be specified in a separate dependency file
 This modularisation may reduce readability, but provides more
 flexibility in facilitating different ways of building a reproducible
 environment, provided the dependency file is under version control in
-the same repository (see
-\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}}). You can also
-use package managers to install software from source code
+the same repository (see \sout{Rule
+9}{\color{blue}\hyperref[{rule:publish}]{Rule~\ztitleref{rule:publish}} [2.2]}).
+You can also use package managers to install software from source code
 \texttt{COPY}ied into the image
 (see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}). Finally, you
 can use many package managers to install software from source obtained
@@ -1410,28 +1428,28 @@ the path to the current user's home directory, e.g.,
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# mount directory}
-\ExtensionTok{docker}\NormalTok{ run --mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
+\CommentTok{\# mount directory}
+\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
 
-\CommentTok{# mount directory as read-only}
-\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
+\CommentTok{\# mount directory as read{-}only}
+\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
 
-\CommentTok{# mount multple directories, one with write access relative to current path (Linux)}
-\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article-x-supplement/data,dst=/input-data,readonly \textbackslash{}}
-\NormalTok{  --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output-data mycontainer}
+\CommentTok{\# mount multple directories, one with write access relative to current path (Linux)}
+\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article{-}x{-}supplement/data,dst=/input{-}data,readonly }\KeywordTok{\textbackslash{}}
+  \ExtensionTok{{-}{-}mount}\NormalTok{ type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output{-}data mycontainer}
 \end{Highlighting}
 \end{Shaded}
 
 \normalsize
 
 How your container expects external resources to be mounted into it
-should be included in the example commands (see
-\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). In these
-commands, you can also make sure to avoid issues with file permissions
-by using Docker's \texttt{-\/-user} option. For example, by default,
-writing a new file from inside the container will be owned by user
-\texttt{root} on your host, because that is the default user within the
-container.
+should be included in the example commands (see \sout{Rule
+3}{\color{blue}\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} [2.2]}).
+In these commands, you can also make sure to avoid issues with file
+permissions by using Docker's \texttt{-\/-user} option. For example, by
+default, writing a new file from inside the container will be owned by
+user \texttt{root} on your host, because that is the default user within
+the container.
 
 \hypertarget{make-the-image-one-click-runnable}{%
 \section*{8. Make the image one-click
@@ -1478,13 +1496,15 @@ different variants very well and potentially capture build and run
 commands in a \texttt{Makefile} {[}27{]}. If you use a
 \texttt{Makefile}, then keep it in the same repository (see
 \hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}) and include
-instructions for its usage (see
-\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). To support
-more complex configuration options, it is helpful to expose settings via
-a configuration file, which can be bind mounted from the host {[}51{]},
-via environment variables (see
-\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} and
-{[}53{]}), or via wrappers using Docker, such as Kliko {[}54{]}.
+instructions for its usage (see \sout{Rule
+3}{\color{blue}\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} [2.2]}).
+To support \sout{advanced custom
+configuration}{\color{blue}more complex configuration options []}, it is
+helpful to expose settings via a configuration file, which can be bind
+mounted from the host {[}51{]}, via environment variables (see
+\sout{Rule
+6}{\color{blue}\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} [2.2]}
+and {[}53{]}), or via wrappers using Docker, such as Kliko {[}54{]}.
 
 \scriptsize
 
@@ -1537,7 +1557,7 @@ few lines of the output of running a Jupyter Notebook server locally
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{docker}\NormalTok{ run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470}
+\ExtensionTok{docker}\NormalTok{ run {-}p 8888:8888 jupyter/datascience{-}notebook:7a0c7325e470}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1736,9 +1756,9 @@ Docker version used) may even allow future science historians to emulate
 the Docker environment. Sharing the actual image via a registry and a
 version-controlled \texttt{Dockerfile} together allows you to freely
 experiment and continue developing your workflow and keep the image up
-to date, e.g., updating versions of pinned dependencies (see
-\hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}}) and regular
-image building (see above).
+to date, e.g., updating versions of pinned dependencies (see \sout{Rule
+6}{\color{blue}\hyperref[{rule:pinning}]{Rule~\ztitleref{rule:pinning}} [2.2]})
+and regular image building (see above).
 
 Finally, for a sanity check and to foster even higher trust in the
 stability and documentation of your project, you can ask a colleague or
@@ -1828,6 +1848,7 @@ in form of text or discussions comments} are documented:
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
+\begin{cslreferences}
 \leavevmode\hypertarget{ref-marwick_how_2015}{}%
 1. Marwick B. How computers broke science -- and what we can do to fix
 it {[}Internet{]}. The Conversation. 2015. Available:
@@ -2164,9 +2185,9 @@ doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0
 Rules for Writing Dockerfiles for Reproducible Data Science
 {[}Internet{]}. Open Science Framework; 2020 Apr.
 doi:\href{https://doi.org/10.31219/osf.io/fsd7t}{10.31219/osf.io/fsd7t}
+\end{cslreferences}
 
 \nolinenumbers
 
 
 \end{document}
-
