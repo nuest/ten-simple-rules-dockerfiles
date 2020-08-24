@@ -162,8 +162,6 @@ While some may argue against publishing reproducibly, e.g., due to a lack of tim
 If a researcher can find and create containers or write a `Dockerfile` to address their most common use cases, then, arguably, sharing it would not make for extra work after this initial setup (cf.&nbsp;`README.md` of @marwick_madjebebe_2015).
 In fact, the `Dockerfile` itself represents powerful documentation to show from where data and code were derived, i.e., downloaded or installed, and, consequently, where a third party might obtain the data again.
 
-\clearpage
-
 \scriptsize
 
 \begin{lstlisting}[language=docker,caption={\texttt{Dockerfile} full example. The \texttt{Dockerfile} and all other files are published in the \texttt{full-demo} example, see Section~\nameref{examples}; the image \texttt{docker.io/nuest/datascidockerfiles:1.0.0} is a ready-to-use build of this example.},breaklines=true,label={lst:full}]
@@ -175,8 +173,6 @@ cat(readLines("examples/full-demo/Dockerfile"), sep = "\n")
 \end{lstlisting}
 
 \normalsize
-
-\newpage
 
 # 1. Use available tools {-}
 \rulelabel{1}{rule:tools}
@@ -553,8 +549,6 @@ It is common to use images with the default user `root`, which is required for i
 However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks) in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 We recommend ensuring that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
 
-\newpage <!-- preprint PDF only -->
-
 # 6. Use version control {-}
 \rulelabel{6}{rule:publish}
 
@@ -745,8 +739,6 @@ You should regularly re-build the image using the `--no-cache` option to learn a
 Such a re-build is also a good occasion to revisit the order of instructions, e.g., if you appended an instruction at the end to save time while iteratively developing the `Dockerfile`, and the formatting.
 You can add a version tag to the image before the re-build to make sure to keep a working environment at hand.
 A recommended ordering based on these considerations is as follows, and you can use comments to visually separate these sections in your file (cf. Listing&nbsp;\ref{lst:full}):
-
-\filbreak
 
 1. System libraries
 2. Language-specific libraries or modules

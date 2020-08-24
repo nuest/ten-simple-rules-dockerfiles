@@ -210,6 +210,11 @@
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newenvironment{cslreferences}%
+  {}%
+  {\par}
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -244,20 +249,27 @@
 % Title must be 250 characters or less.
 \begin{flushleft}
 {\Large
-\textbf\newline{Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+\textbf\newline{Ten Simple Rules for Writing Dockerfiles for
+Reproducible Data
+Science} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
 }
 \newline
 % Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
 \\
-Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics, University of Muenster, Muenster, Germany}}\textsuperscript{*},
-Vanessa Sochat\textsuperscript{\getAff{Stanford Research Computing Center, Stanford University, Stanford, CA,
-USA}},
-Ben Marwick\textsuperscript{\getAff{Department of Anthropology, University of Washington, Seattle, WA, USA}},
-Stephen J. Eglen\textsuperscript{\getAff{Department of Applied Mathematics and Theoretical Physics, University of
-Cambridge, Cambridge, Cambridgeshire, GB}},
+Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics,
+University of Muenster, Muenster, Germany}}\textsuperscript{*},
+Vanessa Sochat\textsuperscript{\getAff{Stanford Research Computing
+Center, Stanford University, Stanford, CA, USA}},
+Ben Marwick\textsuperscript{\getAff{Department of Anthropology,
+University of Washington, Seattle, WA, USA}},
+Stephen J. Eglen\textsuperscript{\getAff{Department of Applied
+Mathematics and Theoretical Physics, University of Cambridge, Cambridge,
+Cambridgeshire, GB}},
 Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}},
-Tony Hirst\textsuperscript{\getAff{Department of Computing and Communications, The Open University, GB}},
-Benjamin D. Evans\textsuperscript{\getAff{School of Psychological Science, University of Bristol, Bristol, GB}}\\
+Tony Hirst\textsuperscript{\getAff{Department of Computing and
+Communications, The Open University, GB}},
+Benjamin D. Evans\textsuperscript{\getAff{School of Psychological
+Science, University of Bristol, Bristol, GB}}\\
 \bigskip
 \bigskip
 * Corresponding author: daniel.nuest@uni-muenster.de\\
@@ -343,7 +355,7 @@ been demonstrated for capturing scientific notebooks {[}5{]} and
 reproducible workflows {[}6{]}.
 
 While several tutorials exist on how to use containers for reproducible
-research ({[}7--11{]} and Guening et~al. {[}12{]} give very helpful
+research ({[}7--11{]} and Guening et~al.~{[}12{]} give very helpful
 recommendations for packaging reusable software in a container), there
 is no detailed \emph{manual for how to write the actual instructions to
 create the containers for computational research} besides generic best
@@ -448,10 +460,10 @@ complexity from the researcher.
 To create Docker containers for specific workflows, we write text files
 that follow a particular format called \texttt{Dockerfile} {[}26{]}. A
 \texttt{Dockerfile} is a machine- \emph{and} human-readable recipe,
-comparable to a \texttt{Makefile} {[}27{]}, for building images. Here,
-container images are executable files that include the application,
-e.g., the programming language interpreter needed to run a workflow, and
-the system libraries required by an application to run. Thus, a
+comparable to a \texttt{Makefile} {[}27{]}, for building \emph{images}.
+Here, images are executable files that include the application, e.g.,
+the programming language interpreter needed to run a workflow, and the
+system libraries required by an application to run. Thus, a
 \texttt{Dockerfile} consists of a sequence of instructions to copy files
 and install software. Each instruction adds a layer to the image, which
 can be cached across image builds for minimizing build and download
@@ -507,8 +519,6 @@ fact, the \texttt{Dockerfile} itself represents powerful documentation
 to show from where data and code were derived, i.e., downloaded or
 installed, and, consequently, where a third party might obtain the data
 again.
-
-\clearpage
 
 \scriptsize
 
@@ -585,8 +595,6 @@ ENV DATA_SIZE 42
 
 \normalsize
 
-\newpage
-
 \hypertarget{use-available-tools}{%
 \section*{1. Use available tools}\label{use-available-tools}}
 \addcontentsline{toc}{section}{1. Use available tools}
@@ -651,7 +659,7 @@ with dependencies on the \href{https://pypi.org/}{Python Package Index}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{jupyter-repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
+\ExtensionTok{jupyter{-}repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1181,7 +1189,7 @@ tag (\texttt{v3.6.1}) of the Singularity container software:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ git clone -b v3.6.1 https://github.com/hpcng/singularity}
+\ExtensionTok{RUN}\NormalTok{ git clone {-}b v3.6.1 https://github.com/hpcng/singularity}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1190,10 +1198,10 @@ can use the \texttt{checkout} command.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
-    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
-    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
-    \CommentTok{# install steps go here}
+\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
+    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
+    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
+    \CommentTok{\# install steps go here}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1241,9 +1249,9 @@ simplest to write the install steps and versions directly into the
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ pip install \textbackslash{}}
-\NormalTok{  geopy==1.20.0 \textbackslash{}}
-\NormalTok{  uszipcode==0.2.2}
+\ExtensionTok{RUN}\NormalTok{ pip install }\KeywordTok{\textbackslash{}}
+  \VariableTok{geopy=}\NormalTok{=}\ExtensionTok{1.20.0} \KeywordTok{\textbackslash{}}
+  \VariableTok{uszipcode=}\NormalTok{=}\ExtensionTok{0.2.2}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1258,7 +1266,7 @@ Alternatively, versions may be specified in a separate dependency file
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{COPY}\NormalTok{ requirements.txt .}
-\ExtensionTok{RUN}\NormalTok{ pip install -r requirements.txt}
+\ExtensionTok{RUN}\NormalTok{ pip install {-}r requirements.txt}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1296,8 +1304,6 @@ especially for ``output'' files
 (see~\hyperref[{rule:mount}]{Rule~\ztitleref{rule:mount}}). We recommend
 ensuring that the image works without specifying any users, and, if your
 image deviates from that, we suggest you document it precisely.
-
-\newpage
 
 \hypertarget{use-version-control}{%
 \section*{6. Use version control}\label{use-version-control}}
@@ -1410,15 +1416,15 @@ the path to the current user's home directory, e.g.,
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# mount directory}
-\ExtensionTok{docker}\NormalTok{ run --mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
+\CommentTok{\# mount directory}
+\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
 
-\CommentTok{# mount directory as read-only}
-\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
+\CommentTok{\# mount directory as read{-}only}
+\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
 
-\CommentTok{# mount multple directories, one with write access relative to current path (Linux)}
-\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article-x-supplement/data,dst=/input-data,readonly \textbackslash{}}
-\NormalTok{  --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output-data mycontainer}
+\CommentTok{\# mount multple directories, one with write access relative to current path (Linux)}
+\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article{-}x{-}supplement/data,dst=/input{-}data,readonly }\KeywordTok{\textbackslash{}}
+  \ExtensionTok{{-}{-}mount}\NormalTok{ type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output{-}data mycontainer}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1537,7 +1543,7 @@ few lines of the output of running a Jupyter Notebook server locally
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{docker}\NormalTok{ run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470}
+\ExtensionTok{docker}\NormalTok{ run {-}p 8888:8888 jupyter/datascience{-}notebook:7a0c7325e470}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1641,8 +1647,6 @@ the image before the re-build to make sure to keep a working environment
 at hand. A recommended ordering based on these considerations is as
 follows, and you can use comments to visually separate these sections in
 your file (cf.~Listing~\ref{lst:full}):
-
-\filbreak
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1828,6 +1832,7 @@ in form of text or discussions comments} are documented:
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
+\begin{cslreferences}
 \leavevmode\hypertarget{ref-marwick_how_2015}{}%
 1. Marwick B. How computers broke science -- and what we can do to fix
 it {[}Internet{]}. The Conversation. 2015. Available:
@@ -2164,9 +2169,9 @@ doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0
 Rules for Writing Dockerfiles for Reproducible Data Science
 {[}Internet{]}. Open Science Framework; 2020 Apr.
 doi:\href{https://doi.org/10.31219/osf.io/fsd7t}{10.31219/osf.io/fsd7t}
+\end{cslreferences}
 
 \nolinenumbers
 
 
 \end{document}
-
