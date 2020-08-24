@@ -99,7 +99,7 @@ While several tutorials exist on how to use containers for reproducible research
 Here we introduce a set of recommendations for producing container configurations in the context of data science workflows using the popular `Dockerfile` format, summarised in Figure&nbsp;\ref{fig:summary}.
 
 ```{r summary, echo=FALSE, fig.cap="Summary of the ten simple rules for writing \\texttt{Dockerfile}s for reproducible data science.", out.width = "50%", fig.pos="h", fig.align="center"}
-knitr::include_graphics("summary.png")
+knitr::include_graphics("figures/summary.png")
 ```
 
 # Prerequisites & scope
@@ -137,11 +137,12 @@ Containers are distinct from virtual machines or hypervisors, as they do not emu
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019].
-A `Dockerfile` is a machine- _and_ human-readable recipe for building images, comparable to a `Makefile` [@wikipedia_contributors_make_2019].
-Here, container images include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
+A `Dockerfile` is a machine- _and_ human-readable recipe, comparable to a `Makefile` [@wikipedia_contributors_make_2019], for building _images_.
+Here, images are executable files that include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 Thus, a `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimizing build and download times.
-The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers, which are the running instances of Docker images.
+Once an image is built or downloaded, it is then launched as a running instance known as a _container_.
+The images have a main executable exposed as an "entrypoint" that is started when they are run as stateful containers.
 Further, containers can be modified, stopped, restarted and purged.
 
 A visual analogy for building and running a container is provided in Figure&nbsp;\ref{fig:analogy}.
@@ -150,7 +151,7 @@ Similar to using a compiled binary file to launch a program, the image is then r
 See Listing&nbsp;\ref{lst:full} for a full `Dockerfile`, which we will refer to throughout this article.
 
 ```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = "100%", fig.pos="h", fig.align="center"}
-knitr::include_graphics("analogy.png")
+knitr::include_graphics("figures/analogy.png")
 ```
 
 While Docker was the original technology to support the `Dockerfile` format, other container technologies now offer support for it, including [podman](https://podman.io/)/[buildah](https://github.com/containers/buildah) supported by RedHat, [kaniko](https://github.com/GoogleContainerTools/kaniko), [img](https://github.com/genuinetools/img), and [buildkit](https://github.com/moby/buildkit).
@@ -291,13 +292,14 @@ First, it is good practice to think of the `Dockerfile` as a human- _and_ machin
 This means that you should use indentation, new lines, and comments to make your `Dockerfile` well documented and readable.
 Specifically, carefully indent commands and their arguments to make clear what belongs together, especially when connecting multiple commands in a `RUN` instruction with `&&`.
 Use `\` at the end of a line to break a single command into multiple lines.
-This will ensure that no single line gets too long to comfortably read.
+This will ensure that no single line gets too long to comfortably read. 
+Content spread across more and shorter lines also improves readability of changes in version control systems.
 Further, use long versions of parameters for readability (e.g., `--input` instead of `-i`).
 When you need to change a directory, use `WORKDIR`, because it not only creates the directory if it does not exist but also persists the change across multiple `RUN` instructions.
 
-Second, clarity is nearly always more important than brevity.
-For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion, which is commonly seen in production `Dockerfile`s aiming at small image sizes (cf.&nbsp;@gruening_recommendations_2019), you should keep the script in the container for a future user to inspect; the script size is negligible compared to the image size.
-One common pattern you will encounter is a single and very lengthy `RUN` instruction chaining multiple commands, which installs software and cleans up afterwards.
+Second, clarity of the steps within a Dockerfile is most important, and if it requires verbosity or adds to the final image size, that is an acceptable tradeoff.
+For example, if your container uses a script to run a complex install routine, instead of removing it from the container upon completion (a practice commonly seen in production `Dockerfile`s aiming at small image sizes, cf.&nbsp;@gruening_recommendations_2019), you should keep the script in the container for a future user to inspect; the script size is negligible compared to the image size.
+One common pattern you will encounter is a single and very lengthy `RUN` instruction chaining multiple commands to install software and clean up afterwards.
 For example (a) the instruction updates the database of available packages, installs a piece of software from a package repository, and purges the cache of the package manager, or (b) the instruction downloads a software's source archive, unpacks it, builds and installs the software, and then removes the downloaded archive and all temporary files.
 Although this pattern creates instructions that may be hard to read, it is very common and can even increase clarity within the image file system because installation and build artifacts are gone.
 In general, if your container is mostly software dependencies, you should not need to worry about image size because (a) your data is likely to have much larger storage requirements, and (b) transparency and inspectability outweigh storage concerns in data science.
@@ -315,7 +317,7 @@ Convoluted `RUN` instructions can be acceptable to reduce the number of layers, 
 Although you will find `Dockerfile`s that use [_build-time variables_](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg) to dynamically change parameters at build time, such a customisation option reduces clarity for data science workflows.
 
 # 4. Document within the Dockerfile
-\rulelabel{3}{rule:document}
+\rulelabel{4}{rule:document}
 
 ## Explain in comments
 
@@ -340,14 +342,14 @@ Listing&nbsp;\ref{lst:comments} shows a selection of typical kinds of comments t
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# RUN command spreading several lines
+# install required R packages; before log the used repository for better provenance in the build log
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
     here
 
 # this library must be installed from source to get version newer
-# than in sources
+# than in apt sources
 RUN git clone http://url.of/repo && \
   cd repo && \
   make build && \
@@ -381,15 +383,16 @@ However, we encourage the use of the OCI schema in all new and unlabelled projec
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the "\" character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
   org.opencontainers.image.authors="Nüst (daniel.nuest@uni-muenster.de), \
-    Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
-  org.opencontainers.image.url="https://github.com/nuest/ten-simple-rules" \
-  org.opencontainers.image.documentation="https://nuest.github.io/ \
-    ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf" \
+Sochat, Marwick, Eglen, Head, Hirst, and Evans" \
+  org.opencontainers.image.url="\
+https://github.com/nuest/ten-simple-rules-dockerfiles" \
+  org.opencontainers.image.documentation="https://nuest.github.io/\
+ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf" \
   org.opencontainers.image.version="1.0.0"
 
 LABEL org.opencontainers.image.vendor="Ten Simple Institute, Uni of Rules" \
@@ -458,7 +461,7 @@ Usage instructions also provide a *de facto* way of testing that your container 
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
 # 5. Specify software versions {-}
-\rulelabel{6}{rule:pinning}
+\rulelabel{5}{rule:pinning}
 
 The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
 The more specifically you can define them the better, because using the desired version leads to reproducible builds.
@@ -481,6 +484,25 @@ Here are some examples of terminal commands that will list the currently install
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed (see Listing&nbsp;\ref{lst:full}).
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
 A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
+
+## Version Control
+
+Software can often be installed directly from a version controlled repository (e.g., GitHub, GitLab, or Mercurial). 
+It's recommended to checkout a specific version, tag, or commit to ensure pinning a version for the repository.
+For example, here is how to clone a specific release tag (`v3.6.1`) of the Singularity container software:
+
+```bash
+RUN git clone -b v3.6.1 https://github.com/hpcng/singularity
+```
+
+In the case that you want to clone and checkout a specific commit, you can use the `checkout` command.
+
+```bash
+RUN git clone https://github.com/hpcng/singularity && \
+    cd singularity && \
+    git checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 && \
+    # install steps go here
+```
 
 ## Extension packages and programming language modules
 
@@ -534,7 +556,7 @@ We recommend ensuring that the image works without specifying any users, and, if
 \newpage <!-- preprint PDF only -->
 
 # 6. Use version control {-}
-\rulelabel{9}{rule:publish}
+\rulelabel{6}{rule:publish}
 
 As plain text files, `Dockerfile`s are well suited for use with version control systems.
 Including a `Dockerfile` alongside your code and data is an effective way to consistently build your software, to show visitors to the repository how it is built and used, to solicit feedback and collaborate with your peers, and to increase the impact and sustainability of your work (cf.&nbsp;@emsley_framework_2018).
@@ -593,7 +615,7 @@ docker run --mount type=bind,src=$(pwd)/article-x-supplement/data,dst=/input-dat
 
 \normalsize
 
-How your container expects external resources to be mounted into it should be included in the example commands (see \ruleref{rule:formatting}).
+How your container expects external resources to be mounted into it should be included in the example commands (see \ruleref{rule:document}).
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
@@ -602,7 +624,7 @@ For example, by default, writing a new file from inside the container will be ow
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
 But they are also useful for a "headless" execution of full workflows.
-For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, and this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which included cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml#L18).
+For example, @verstegen_pluc_mozambique_2019 demonstrates a container for running an agent-based model with video files as outputs, and this article's [R Markdown](https://rmarkdown.rstudio.com/) source, which included cells with analysis code, is [rendered into a PDF in a container](https://github.com/nuest/ten-simple-rules-dockerfiles/blob/master/.travis.yml\#L18).
 A workflow that does not support headless execution may even be seen as irreproducible.
 
 These two usages can be configured by the `Dockerfile`'s author and exposed to the user based on the `Dockerfile`'s `ENTRYPOINT` and `CMD` instructions.
@@ -616,7 +638,7 @@ However, tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have 
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;\ref{lst:runnerimage}.
 In any case, you should document different variants very well and potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
 If you use a `Makefile`, then keep it in the same repository (see \ruleref{rule:mount}) and include instructions for its usage (see \ruleref{rule:document}).
-To support advanced custom configuration, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see \ruleref{rule:pinning} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
+To support more complex configuration options, it is helpful to expose settings via a configuration file, which can be bind mounted from the host [@verstegen_pluc_mozambique_2019], via environment variables (see \ruleref{rule:document} and @knoth_reproducibility_2017), or via wrappers using Docker, such as Kliko [@molenaar_klikoscientific_2018].
 
 \scriptsize
 
@@ -710,7 +732,7 @@ This variety of approaches renders seemingly more convenient uncontainerised env
 Just using one's local machine is only slightly more comfortable but much less reproducible and portable.
 
 # 9. Order the instructions
-\rulelabel{5}{rule:order}
+\rulelabel{9}{rule:order}
 
 You will regularly build an image during development of your workflow.
 You can take advantage of _build caching_ to avoid execution of time-consuming instructions, e.g., install from a remote resource or copying a file that gets cached.
