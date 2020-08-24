@@ -471,7 +471,7 @@ times. Once an image is built or downloaded, it is then launched as a
 running instance known as a \emph{container}. The images have a main
 executable exposed as an ``entrypoint'' that is started when they are
 run as stateful containers. Further, containers can be modified,
-stopped, restarted and purged.
+stopped, restarted, and purged.
 
 A visual analogy for building and running a container is provided in
 Figure~\ref{fig:analogy}. Akin to compiling source code for a
@@ -950,7 +950,8 @@ comments that are useful to include in a \texttt{Dockerfile}.
 # to see available versions
 RUN apt-get install python3-pandas=0.23.3+dfsg-4ubuntu1
 
-# install required R packages; before log the used repository for better provenance in the build log
+# install required R packages; before log the used repository
+# for better provenance in the build log
 RUN R -e 'getOption("repos")' && \
   install2.r \
     fortunes \
@@ -1017,7 +1018,7 @@ encourage the use of the OCI schema in all new and unlabelled projects.
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the "\" character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} with commonly used labels; note the line breaks within the values (using the \texttt{\textbackslash} character), which were added to limit line length, are not preceded by a space character, as this space would appear in the value, whereas the line breaks between keys and values are separated by whitespace for readability.},breaklines=true,label={lst:labels}]
 ...
 
 LABEL maintainer="D. Nüst <daniel.nuest@uni-muenster.de>" \
