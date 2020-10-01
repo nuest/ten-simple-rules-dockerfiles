@@ -13,6 +13,18 @@ We especially welcome your help by creating strong illustrating examples, see [i
 
 [Current draft as PDF](https://nuest.github.io/ten-simple-rules-dockerfiles/ten-simple-rules-dockerfiles.pdf)
 
+## Author contributions
+<!--PLOS asked to remove this from the manuscript-->
+
+DN conceived the idea and contributed to conceptualisation, methodology, and writing - original draft, review & editing, and validation.
+VS contributed to conceptualisation, methodology, and writing - original draft, and review & editing.
+BM contributed to writing – review & editing.
+SJE contributed to conceptualisation, writing – review & editing, and validation.
+THe contributed to conceptualisation.
+THi contributed to writing – review & editing.
+BDE contributed to conceptualisation, writing – review & editing, visualisation, and validation.
+This articles was written collaboratively on GitHub, where [contributions in form of text or discussions comments](https://github.com/nuest/ten-simple-rules-dockerfiles/graphs/contributors) are documented: [https://github.com/nuest/ten-simple-rules-dockerfiles/](https://github.com/nuest/ten-simple-rules-dockerfiles/).
+
 ## Run container for editing the document
 
 First, build the container. It will install the dependencies that you
