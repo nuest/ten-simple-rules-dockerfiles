@@ -5,39 +5,54 @@ author:
   - name: Daniel Nüst
     # https://github.com/nuest
     email: daniel.nuest@uni-muenster.de
-    affiliation: "Institute for Geoinformatics, University of Muenster, Muenster, Germany"
+    affiliation: ifgi
     corresponding: daniel.nuest@uni-muenster.de
     orcid: 0000-0002-0024-5046
   - name: Vanessa Sochat
     # https://github.com/vsoch
     email: vsochat@stanford.edu
-    affiliation: "Stanford Research Computing Center, Stanford University, Stanford, CA, USA"
+    affiliation: stancomp
     orcid: 0000-0002-4387-3819
   - name: Ben Marwick
     # https://github.com/benmarwick
-    affiliation: 'Department of Anthropology, University of Washington, Seattle, WA, USA'
+    affiliation: uowanthro
     orcid: 0000-0001-7879-4531
     email: bmarwick@uw.edu
   - name: Stephen J. Eglen
     # https://github.com/sje30
     email: sje30@cam.ac.uk
-    affiliation: "Department of Applied Mathematics and Theoretical Physics, University of Cambridge, Cambridge, Cambridgeshire, GB"
+    affiliation: mathcam
     orcid: 0000-0001-8607-8025
   - name: Tim Head
     # https://github.com/betatim
     email: betatim@gmail.com
-    affiliation: "Wild Tree Tech, Zurich, CH"
+    affiliation: wtt
     orcid: 0000-0003-0931-3698
   - name: Tony Hirst
     # https://github.com/psychemedia
     email: tony.hirst@open.ac.uk
-    affiliation: "Department of Computing and Communications, The Open University, GB"
+    affiliation: tou
     orcid: 0000-0001-6921-702X
   - name: Benjamin D. Evans
     # https://github.com/bdevans
     email: benjamin.evans@bristol.ac.uk
-    affiliation: "School of Psychological Science, University of Bristol, Bristol, GB"
+    affiliation: uobpsych
     orcid: 0000-0002-1734-6070
+address:
+  - code: ifgi
+    address: Institute for Geoinformatics, University of Münster, Münster, Germany
+  - code: stancomp
+    address: Stanford Research Computing Center, Stanford University, Stanford, California, USA
+  - code: uowanthro
+    address: Department of Anthropology, University of Washington, Seattle, Washington, USA
+  - code: mathcam
+    address: Department of Applied Mathematics and Theoretical Physics, University of Cambridge, Cambridge, Cambridgeshire, Great Britain
+  - code: wtt
+    address: Wild Tree Tech, Zurich, Switzerland
+  - code: tou
+    address: Department of Computing and Communications, The Open University, Great Britain
+  - code: uobpsych
+    address: School of Psychological Science, University of Bristol, Bristol, Great Britain
 abstract: |
   Computational science has been greatly improved by the use of containers for packaging software and data dependencies.
   In a scholarly context, the main drivers for using these containers are transparency and support of reproducibility; in turn, a workflow's reproducibility can be greatly affected by the choices that are made with respect to building containers.
