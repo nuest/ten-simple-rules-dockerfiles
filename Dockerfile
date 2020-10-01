@@ -12,6 +12,7 @@ RUN r -e 'tinytex::tlmgr_install(pkgs = c("changepage", \
     "forarray", \
     "xstring", \
     "listings", \
+    "latexdiff", \
     "ec"))'
     
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
