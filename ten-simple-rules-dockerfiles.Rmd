@@ -174,7 +174,7 @@ cat(readLines("examples/full-demo/Dockerfile"), sep = "\n")
 
 \normalsize
 
-# 1. Use available tools {-}
+# Rule 1: Use available tools {-}
 \rulelabel{1}{rule:tools}
 
 Rule 1 could informally be described as "Don't bother to write a Dockerfile!".
@@ -234,7 +234,7 @@ Therefore, instead of building your own independent solution, consider contribut
 
 For any tool that you use, be sure to look at documentation for usage and configuration options, and look for options to add metadata (e.g., labels see&nbsp;\ruleref{rule:document}).
 
-# 2. Build upon existing images {-}
+# Rule 2: Build upon existing images {-}
 \rulelabel{2}{rule:base}
 
 Many pre-built community and developer contributed Docker images are publically available for anyone to pull, run and extend, without having to replicate the image construction process. 
@@ -280,7 +280,7 @@ For details, we refer you to the documentation on automated builds, see [Docker 
 Do not `docker push` a locally built image, because that counteracts the considerations outlined above.
 If a pre-built image is provided in a public image registry, do not forget to direct the user to it in your documentation, e.g., in the `README` file or in an article.
 
-# 3. Format for clarity
+# Rule 3: Format for clarity
 \rulelabel{3}{rule:formatting}
 \rulelabel{3}{rule:clarity}
 
@@ -312,7 +312,7 @@ Convoluted `RUN` instructions can be acceptable to reduce the number of layers, 
 
 Although you will find `Dockerfile`s that use [_build-time variables_](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg) to dynamically change parameters at build time, such a customisation option reduces clarity for data science workflows.
 
-# 4. Document within the Dockerfile
+# Rule 4: Document within the Dockerfile
 \rulelabel{4}{rule:document}
 
 ## Explain in comments
@@ -457,7 +457,7 @@ Thus, usage instructions help others, because they quickly get them running your
 Usage instructions also provide a *de facto* way of testing that your container works in a way that others can try out.
 The `Dockerfile` alongside your documentation strategy is a demonstration of your careful work habits and good intentions for transparency and computational reproducibility.
 
-# 5. Specify software versions {-}
+# Rule 5: Specify software versions {-}
 \rulelabel{5}{rule:pinning}
 
 The reproducibility of your `Dockerfile` heavily depends on how well you define the versions of software to be installed in the image.
@@ -550,7 +550,7 @@ It is common to use images with the default user `root`, which is required for i
 However you may encounter base images running as a non-root user (e.g., in the Jupyter and Rocker image stacks) in order to avoid permission problems when mounting files into the container, especially for "output" files (see&nbsp;\ruleref{rule:mount}).
 We recommend ensuring that the image works without specifying any users, and, if your image deviates from that, we suggest you document it precisely.
 
-# 6. Use version control {-}
+# Rule 6: Use version control {-}
 \rulelabel{6}{rule:publish}
 
 As plain text files, `Dockerfile`s are well suited for use with version control systems.
@@ -566,7 +566,7 @@ Such approaches are often used when developing popular software packages for a b
 Furthermore, the commit messages in your version-controlled repository preserve a record of all changes to the `Dockerfile`, and you can use the same versions in tags for both the container's image and the git repository.
 
 
-# 7. Mount datasets at run time {-}
+# Rule 7: Mount datasets at run time {-}
 \rulelabel{7}{rule:mount}
 
 The role of containers is to provide the computing environment, not to encapsulate (potentially very large) datasets.
@@ -614,7 +614,7 @@ How your container expects external resources to be mounted into it should be in
 In these commands, you can also make sure to avoid issues with file permissions by using Docker's `--user` option.
 For example, by default, writing a new file from inside the container will be owned by user `root` on your host, because that is the default user within the container.
 
-# 8. Make the image one-click runnable {-}
+# Rule 8: Make the image one-click runnable {-}
 \rulelabel{8}{rule:interactive}
 
 Containers are very well suited for day-to-day development tasks (see also \ruleref{rule:usage}), because they support common interactive environments for data science and software development.
@@ -726,7 +726,7 @@ Other alternatives include bridge containers [@yaremenko_docker-x11-bridge_2019]
 This variety of approaches renders seemingly more convenient uncontainerised environments unnecessary.
 Just using one's local machine is only slightly more comfortable but much less reproducible and portable.
 
-# 9. Order the instructions
+# Rule 9: Order the instructions
 \rulelabel{9}{rule:order}
 
 You will regularly build an image during development of your workflow.
@@ -750,7 +750,7 @@ A recommended ordering based on these considerations is as follows, and you can 
 5. Labels
 6. Entrypoint and default command
 
-# 10. Regularly use and rebuild containers {-}
+# Rule 10: Regularly use and rebuild containers {-}
 \rulelabel{10}{rule:usage}
 
 Using containers for research workflows requires not only technical understanding but also an awareness of risks that can be managed effectively by following a number of good _habits_, discussed in this section.

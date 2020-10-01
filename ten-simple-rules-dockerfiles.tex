@@ -210,11 +210,6 @@
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newenvironment{cslreferences}%
-  {}%
-  {\par}
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -249,27 +244,20 @@
 % Title must be 250 characters or less.
 \begin{flushleft}
 {\Large
-\textbf\newline{Ten Simple Rules for Writing Dockerfiles for
-Reproducible Data
-Science} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
+\textbf\newline{Ten Simple Rules for Writing Dockerfiles for Reproducible Data Science} % Please use "sentence case" for title and headings (capitalize only the first word in a title (or heading), the first word in a subtitle (or subheading), and any proper nouns).
 }
 \newline
 % Insert author names, affiliations and corresponding author email (do not include titles, positions, or degrees).
 \\
-Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics,
-University of Muenster, Muenster, Germany}}\textsuperscript{*},
-Vanessa Sochat\textsuperscript{\getAff{Stanford Research Computing
-Center, Stanford University, Stanford, CA, USA}},
-Ben Marwick\textsuperscript{\getAff{Department of Anthropology,
-University of Washington, Seattle, WA, USA}},
-Stephen J. Eglen\textsuperscript{\getAff{Department of Applied
-Mathematics and Theoretical Physics, University of Cambridge, Cambridge,
-Cambridgeshire, GB}},
+Daniel Nüst\textsuperscript{\getAff{Institute for Geoinformatics, University of Muenster, Muenster, Germany}}\textsuperscript{*},
+Vanessa Sochat\textsuperscript{\getAff{Stanford Research Computing Center, Stanford University, Stanford, CA,
+USA}},
+Ben Marwick\textsuperscript{\getAff{Department of Anthropology, University of Washington, Seattle, WA, USA}},
+Stephen J. Eglen\textsuperscript{\getAff{Department of Applied Mathematics and Theoretical Physics, University of
+Cambridge, Cambridge, Cambridgeshire, GB}},
 Tim Head\textsuperscript{\getAff{Wild Tree Tech, Zurich, CH}},
-Tony Hirst\textsuperscript{\getAff{Department of Computing and
-Communications, The Open University, GB}},
-Benjamin D. Evans\textsuperscript{\getAff{School of Psychological
-Science, University of Bristol, Bristol, GB}}\\
+Tony Hirst\textsuperscript{\getAff{Department of Computing and Communications, The Open University, GB}},
+Benjamin D. Evans\textsuperscript{\getAff{School of Psychological Science, University of Bristol, Bristol, GB}}\\
 \bigskip
 \bigskip
 * Corresponding author: daniel.nuest@uni-muenster.de\\
@@ -355,7 +343,7 @@ been demonstrated for capturing scientific notebooks {[}5{]} and
 reproducible workflows {[}6{]}.
 
 While several tutorials exist on how to use containers for reproducible
-research ({[}7--11{]} and Guening et~al.~{[}12{]} give very helpful
+research ({[}7--11{]} and Guening et~al. {[}12{]} give very helpful
 recommendations for packaging reusable software in a container), there
 is no detailed \emph{manual for how to write the actual instructions to
 create the containers for computational research} besides generic best
@@ -595,9 +583,10 @@ ENV DATA_SIZE 42
 
 \normalsize
 
-\hypertarget{use-available-tools}{%
-\section*{1. Use available tools}\label{use-available-tools}}
-\addcontentsline{toc}{section}{1. Use available tools}
+\hypertarget{rule-1-use-available-tools}{%
+\section*{Rule 1: Use available
+tools}\label{rule-1-use-available-tools}}
+\addcontentsline{toc}{section}{Rule 1: Use available tools}
 
 \ztitlerefsetup{title=1} \zlabel{rule:tools} \label{rule:tools} \zrefused{rule:tools}
 
@@ -659,7 +648,7 @@ with dependencies on the \href{https://pypi.org/}{Python Package Index}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{jupyter{-}repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
+\ExtensionTok{jupyter-repo2docker}\NormalTok{ https://github.com/norvig/pytudes}
 \end{Highlighting}
 \end{Shaded}
 
@@ -723,10 +712,10 @@ For any tool that you use, be sure to look at documentation for usage
 and configuration options, and look for options to add metadata (e.g.,
 labels see~\hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}).
 
-\hypertarget{build-upon-existing-images}{%
-\section*{2. Build upon existing
-images}\label{build-upon-existing-images}}
-\addcontentsline{toc}{section}{2. Build upon existing images}
+\hypertarget{rule-2-build-upon-existing-images}{%
+\section*{Rule 2: Build upon existing
+images}\label{rule-2-build-upon-existing-images}}
+\addcontentsline{toc}{section}{Rule 2: Build upon existing images}
 
 \ztitlerefsetup{title=2} \zlabel{rule:base} \label{rule:base} \zrefused{rule:base}
 
@@ -837,8 +826,8 @@ If a pre-built image is provided in a public image registry, do not
 forget to direct the user to it in your documentation, e.g., in the
 \texttt{README} file or in an article.
 
-\hypertarget{format-for-clarity}{%
-\section{3. Format for clarity}\label{format-for-clarity}}
+\hypertarget{rule-3-format-for-clarity}{%
+\section{Rule 3: Format for clarity}\label{rule-3-format-for-clarity}}
 
 \ztitlerefsetup{title=3} \zlabel{rule:formatting} \label{rule:formatting} \zrefused{rule:formatting}
 \ztitlerefsetup{title=3} \zlabel{rule:clarity} \label{rule:clarity} \zrefused{rule:clarity}
@@ -908,9 +897,9 @@ Although you will find \texttt{Dockerfile}s that use
 variables}} to dynamically change parameters at build time, such a
 customisation option reduces clarity for data science workflows.
 
-\hypertarget{document-within-the-dockerfile}{%
-\section{4. Document within the
-Dockerfile}\label{document-within-the-dockerfile}}
+\hypertarget{rule-4-document-within-the-dockerfile}{%
+\section{Rule 4: Document within the
+Dockerfile}\label{rule-4-document-within-the-dockerfile}}
 
 \ztitlerefsetup{title=4} \zlabel{rule:document} \label{rule:document} \zrefused{rule:document}
 
@@ -1124,10 +1113,10 @@ testing that your container works in a way that others can try out. The
 demonstration of your careful work habits and good intentions for
 transparency and computational reproducibility.
 
-\hypertarget{specify-software-versions}{%
-\section*{5. Specify software
-versions}\label{specify-software-versions}}
-\addcontentsline{toc}{section}{5. Specify software versions}
+\hypertarget{rule-5-specify-software-versions}{%
+\section*{Rule 5: Specify software
+versions}\label{rule-5-specify-software-versions}}
+\addcontentsline{toc}{section}{Rule 5: Specify software versions}
 
 \ztitlerefsetup{title=5} \zlabel{rule:pinning} \label{rule:pinning} \zrefused{rule:pinning}
 
@@ -1190,7 +1179,7 @@ tag (\texttt{v3.6.1}) of the Singularity container software:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ git clone {-}b v3.6.1 https://github.com/hpcng/singularity}
+\ExtensionTok{RUN}\NormalTok{ git clone -b v3.6.1 https://github.com/hpcng/singularity}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1199,10 +1188,10 @@ can use the \texttt{checkout} command.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
-    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
-    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{\&\&} \KeywordTok{\textbackslash{}}
-    \CommentTok{\# install steps go here}
+\ExtensionTok{RUN}\NormalTok{ git clone https://github.com/hpcng/singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \BuiltInTok{cd}\NormalTok{ singularity }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \FunctionTok{git}\NormalTok{ checkout 8a92cf127a49118cab61579bb36b3d51ba5c6434 }\KeywordTok{&&} \KeywordTok{\textbackslash{}}
+    \CommentTok{# install steps go here}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1250,9 +1239,9 @@ simplest to write the install steps and versions directly into the
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{RUN}\NormalTok{ pip install }\KeywordTok{\textbackslash{}}
-  \VariableTok{geopy=}\NormalTok{=}\ExtensionTok{1.20.0} \KeywordTok{\textbackslash{}}
-  \VariableTok{uszipcode=}\NormalTok{=}\ExtensionTok{0.2.2}
+\ExtensionTok{RUN}\NormalTok{ pip install \textbackslash{}}
+\NormalTok{  geopy==1.20.0 \textbackslash{}}
+\NormalTok{  uszipcode==0.2.2}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1267,7 +1256,7 @@ Alternatively, versions may be specified in a separate dependency file
 \begin{Shaded}
 \begin{Highlighting}[]
 \ExtensionTok{COPY}\NormalTok{ requirements.txt .}
-\ExtensionTok{RUN}\NormalTok{ pip install {-}r requirements.txt}
+\ExtensionTok{RUN}\NormalTok{ pip install -r requirements.txt}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1306,9 +1295,10 @@ especially for ``output'' files
 ensuring that the image works without specifying any users, and, if your
 image deviates from that, we suggest you document it precisely.
 
-\hypertarget{use-version-control}{%
-\section*{6. Use version control}\label{use-version-control}}
-\addcontentsline{toc}{section}{6. Use version control}
+\hypertarget{rule-6-use-version-control}{%
+\section*{Rule 6: Use version
+control}\label{rule-6-use-version-control}}
+\addcontentsline{toc}{section}{Rule 6: Use version control}
 
 \ztitlerefsetup{title=6} \zlabel{rule:publish} \label{rule:publish} \zrefused{rule:publish}
 
@@ -1342,10 +1332,10 @@ repository preserve a record of all changes to the \texttt{Dockerfile},
 and you can use the same versions in tags for both the container's image
 and the git repository.
 
-\hypertarget{mount-datasets-at-run-time}{%
-\section*{7. Mount datasets at run
-time}\label{mount-datasets-at-run-time}}
-\addcontentsline{toc}{section}{7. Mount datasets at run time}
+\hypertarget{rule-7-mount-datasets-at-run-time}{%
+\section*{Rule 7: Mount datasets at run
+time}\label{rule-7-mount-datasets-at-run-time}}
+\addcontentsline{toc}{section}{Rule 7: Mount datasets at run time}
 
 \ztitlerefsetup{title=7} \zlabel{rule:mount} \label{rule:mount} \zrefused{rule:mount}
 
@@ -1417,15 +1407,15 @@ the path to the current user's home directory, e.g.,
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# mount directory}
-\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
+\CommentTok{# mount directory}
+\ExtensionTok{docker}\NormalTok{ run --mount type=bind,source=}\VariableTok{$HOME}\NormalTok{/project,target=/project mycontainer}
 
-\CommentTok{\# mount directory as read{-}only}
-\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
+\CommentTok{# mount directory as read-only}
+\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$HOME}\NormalTok{/project,dst=/workspace,readonly mycontainer}
 
-\CommentTok{\# mount multple directories, one with write access relative to current path (Linux)}
-\ExtensionTok{docker}\NormalTok{ run {-}{-}mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article{-}x{-}supplement/data,dst=/input{-}data,readonly }\KeywordTok{\textbackslash{}}
-  \ExtensionTok{{-}{-}mount}\NormalTok{ type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output{-}data mycontainer}
+\CommentTok{# mount multple directories, one with write access relative to current path (Linux)}
+\ExtensionTok{docker}\NormalTok{ run --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/article-x-supplement/data,dst=/input-data,readonly \textbackslash{}}
+\NormalTok{  --mount type=bind,src=}\VariableTok{$(}\BuiltInTok{pwd}\VariableTok{)}\NormalTok{/outputs,dst=/output-data mycontainer}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1440,10 +1430,11 @@ writing a new file from inside the container will be owned by user
 \texttt{root} on your host, because that is the default user within the
 container.
 
-\hypertarget{make-the-image-one-click-runnable}{%
-\section*{8. Make the image one-click
-runnable}\label{make-the-image-one-click-runnable}}
-\addcontentsline{toc}{section}{8. Make the image one-click runnable}
+\hypertarget{rule-8-make-the-image-one-click-runnable}{%
+\section*{Rule 8: Make the image one-click
+runnable}\label{rule-8-make-the-image-one-click-runnable}}
+\addcontentsline{toc}{section}{Rule 8: Make the image one-click
+runnable}
 
 \ztitlerefsetup{title=8} \zlabel{rule:interactive} \label{rule:interactive} \zrefused{rule:interactive}
 
@@ -1544,7 +1535,7 @@ few lines of the output of running a Jupyter Notebook server locally
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\ExtensionTok{docker}\NormalTok{ run {-}p 8888:8888 jupyter/datascience{-}notebook:7a0c7325e470}
+\ExtensionTok{docker}\NormalTok{ run -p 8888:8888 jupyter/datascience-notebook:7a0c7325e470}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1617,8 +1608,9 @@ uncontainerised environments unnecessary. Just using one's local machine
 is only slightly more comfortable but much less reproducible and
 portable.
 
-\hypertarget{order-the-instructions}{%
-\section{9. Order the instructions}\label{order-the-instructions}}
+\hypertarget{rule-9-order-the-instructions}{%
+\section{Rule 9: Order the
+instructions}\label{rule-9-order-the-instructions}}
 
 \ztitlerefsetup{title=9} \zlabel{rule:order} \label{rule:order} \zrefused{rule:order}
 
@@ -1675,10 +1667,11 @@ your file (cf.~Listing~\ref{lst:full}):
   Entrypoint and default command
 \end{enumerate}
 
-\hypertarget{regularly-use-and-rebuild-containers}{%
-\section*{10. Regularly use and rebuild
-containers}\label{regularly-use-and-rebuild-containers}}
-\addcontentsline{toc}{section}{10. Regularly use and rebuild containers}
+\hypertarget{rule-10-regularly-use-and-rebuild-containers}{%
+\section*{Rule 10: Regularly use and rebuild
+containers}\label{rule-10-regularly-use-and-rebuild-containers}}
+\addcontentsline{toc}{section}{Rule 10: Regularly use and rebuild
+containers}
 
 \ztitlerefsetup{title=10} \zlabel{rule:usage} \label{rule:usage} \zrefused{rule:usage}
 
@@ -1833,7 +1826,6 @@ in form of text or discussions comments} are documented:
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
-\begin{cslreferences}
 \leavevmode\hypertarget{ref-marwick_how_2015}{}%
 1. Marwick B. How computers broke science -- and what we can do to fix
 it {[}Internet{]}. The Conversation. 2015. Available:
@@ -2170,9 +2162,9 @@ doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0
 Rules for Writing Dockerfiles for Reproducible Data Science
 {[}Internet{]}. Open Science Framework; 2020 Apr.
 doi:\href{https://doi.org/10.31219/osf.io/fsd7t}{10.31219/osf.io/fsd7t}
-\end{cslreferences}
 
 \nolinenumbers
 
 
 \end{document}
+
