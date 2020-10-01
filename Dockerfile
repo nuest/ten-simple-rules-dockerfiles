@@ -12,9 +12,11 @@ RUN r -e 'tinytex::tlmgr_install(pkgs = c("changepage", \
     "forarray", \
     "xstring", \
     "listings", \
+    "ec", \
     "latexdiff", \
-    "ec"))'
-    
+    # needed for latexdiff:
+    "ulem"))'
+
 LABEL maintainer='D. Nüst <daniel.nuest@uni-muenster.de>' \
   org.opencontainers.image.authors='Nüst (daniel.nuest@uni-muenster.de), Sochat, Marwick, Eglen, Head, Hirst, and Evans' \
   org.opencontainers.image.url='https://github.com/nuest/ten-simple-rules' \

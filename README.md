@@ -71,6 +71,14 @@ See the end of the `Dockerfile` for instructions.
   library("redoc")
   rmarkdown::render("ten-simple-rules-dockerfiles.Rmd", output_format = redoc::redoc(), output_file = "tsrd.docx")
   ```
+- Compare with `latexdiff`
+  ```bash
+  # get a specific version of the text file
+  wget -O submission.v2.tex https://raw.githubusercontent.com/nuest/ten-simple-rules-dockerfiles/submission.v2/ten-simple-rules-dockerfiles.tex
+  # compare it with current version
+  latexdiff --graphics-markup=2 submission.v2.tex ten-simple-rules-dockerfiles.tex > diff.tex
+  # render diff.tex with RStudio
+  ```
 
 ## License
 
