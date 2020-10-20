@@ -457,19 +457,19 @@ complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files
 that follow a particular format called \texttt{Dockerfile} {[}26{]}. A
-\texttt{Dockerfile} is a machine- and human-readable recipe, comparable
-to a \texttt{Makefile} {[}27{]}, for building \textbf{images}. Here,
-images are executable files that include the application, e.g., the
-programming language interpreter needed to run a workflow, and the
-system libraries required by an application to run. Thus, a
-\texttt{Dockerfile} consists of a sequence of instructions to copy files
-and install software. Each instruction adds a layer to the image, which
-can be cached across image builds for minimising build and download
-times. Once an image is built or downloaded, it is then launched as a
-running instance known as a \textbf{container}. The images have a main
-executable exposed as an ``entrypoint'' that is started when they are
-run as stateful containers. Further, containers can be modified,
-stopped, restarted, and purged.
+\texttt{Dockerfile} is a machine- \textbf{and} human-readable recipe,
+comparable to a \texttt{Makefile} {[}27{]}, for building
+\textbf{images}. Here, images are executable files that include the
+application, e.g., the programming language interpreter needed to run a
+workflow, and the system libraries required by an application to run.
+Thus, a \texttt{Dockerfile} consists of a sequence of instructions to
+copy files and install software. Each instruction adds a layer to the
+image, which can be cached across image builds for minimising build and
+download times. Once an image is built or downloaded, it is then
+launched as a running instance known as a \textbf{container}. The images
+have a main executable exposed as an ``entrypoint'' that is started when
+they are run as stateful containers. Further, containers can be
+modified, stopped, restarted, and purged.
 
 A visual analogy for building and running a container is provided in
 Fig~\ref{fig:analogy}. Akin to compiling source code for a programming
@@ -1065,7 +1065,7 @@ and~\ref{lst:passparam}).
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} showing usage of environment variables with the `ENV` instruction.},breaklines=true,label={lst:envvars}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} showing usage of environment variables with the \texttt{ENV} instruction.},breaklines=true,label={lst:envvars}]
 ...
 
 # Define number of cores used by PowerfulAlgorithm
@@ -1174,8 +1174,8 @@ from the container, it will be easier to remove the system dependencies
 that are no longer needed, thereby reducing maintenance overhead: you
 will not unnecessarily fix problems with a library that is no longer
 needed or include long-running installations. A test provided via a
-\texttt{HEALTHCHECK} {[}42{]}, can further ensure proper functioning of
-your container.
+\href{https://docs.docker.com/engine/reference/builder/\#healthcheck}{\texttt{HEALTHCHECK}},
+can further ensure proper functioning of your container.
 
 \hypertarget{version-control}{%
 \subsection{Version Control}\label{version-control}}
@@ -1225,15 +1225,15 @@ languages in scientific programming:
 \begin{itemize}
 \tightlist
 \item
-  Python: \texttt{requirements.txt} (pip tool, {[}43{]}),
-  \texttt{environment.yml} (Conda, {[}44{]})
+  Python: \texttt{requirements.txt} (pip tool, {[}42{]}),
+  \texttt{environment.yml} (Conda, {[}43{]})
 \item
-  R: \texttt{DESCRIPTION} file format {[}45{]} and \texttt{r} (``little
-  R'', {[}46{]})
+  R: \texttt{DESCRIPTION} file format {[}44{]} and \texttt{r} (``little
+  R'', {[}45{]})
 \item
-  JavaScript: \texttt{package.json} of \texttt{npm} {[}47{]}
+  JavaScript: \texttt{package.json} of \texttt{npm} {[}46{]}
 \item
-  Julia: \texttt{Project.toml} and \texttt{Manifest.toml} {[}48{]}
+  Julia: \texttt{Project.toml} and \texttt{Manifest.toml} {[}47{]}
 \end{itemize}
 
 In some cases (e.g., Conda) the package manager is also able to make
@@ -1316,7 +1316,7 @@ version control systems. Including a \texttt{Dockerfile} alongside your
 code and data is an effective way to consistently build your software,
 to show visitors to the repository how it is built and used, to solicit
 feedback and collaborate with your peers, and to increase the impact and
-sustainability of your work (cf.~{[}49{]}).
+sustainability of your work (cf.~{[}48{]}).
 
 Most importantly, you should publish \textbf{all} files \texttt{COPY}ied
 into the image, e.g., test data or files for software installation from
@@ -1404,12 +1404,12 @@ for users.
 
 You can use the \texttt{-v}/\texttt{-\/-volume} or preferably
 \texttt{-\/-mount} flags to \texttt{docker\ run} to configure bind
-mounts of directories or files {[}50{]}, including options, as shown in
-the following examples. If the target path exists within the image, the
-bind mount will replace it for the started container. (Note,
-\texttt{\$HOME} is an environment variable in UNIX systems representing
-the path to the current user's home directory, e.g.,
-\texttt{/home/moby}, and \texttt{\$(pwd)} returns the current path.)
+mounts of directories or files, including options, as shown in the
+following examples. If the target path exists within the image, the bind
+mount will replace it for the started container. (Note, \texttt{\$HOME}
+is an environment variable in UNIX systems representing the path to the
+current user's home directory, e.g., \texttt{/home/moby}, and
+\texttt{\$(pwd)} returns the current path.)
 
 \footnotesize
 
@@ -1449,7 +1449,7 @@ Containers are very well suited for day-to-day development tasks (see
 also \hyperref[{rule:usage}]{Rule~\ztitleref{rule:usage}}), because they
 support common interactive environments for data science and software
 development. But they are also useful for a ``headless'' execution of
-full workflows. For example, {[}51{]} demonstrates a container for
+full workflows. For example, {[}49{]} demonstrates a container for
 running an agent-based model with video files as outputs, and this
 article's \href{https://rmarkdown.rstudio.com/}{R Markdown} source,
 which included cells with analysis code, is
@@ -1473,7 +1473,7 @@ write files is undesired. As the maintainer of the workflow, you should
 write clear instructions for how to properly interact with the
 container, both for yourself and others. A possible weakness with using
 containers is that they can only provide 1 default entrypoint and
-command. However, tools, e.g., The Scientific Filesystem {[}52{]}, have
+command. However, tools, e.g., The Scientific Filesystem {[}50{]}, have
 been developed to expose multiple entrypoints, environments, help
 messages, labels, and even install sequences. With plain Docker, you can
 override the defaults as part of the \texttt{docker\ run} command or in
@@ -1486,10 +1486,10 @@ commands in a \texttt{Makefile} {[}27{]}. If you use a
 instructions for its usage (see
 \hyperref[{rule:document}]{Rule~\ztitleref{rule:document}}). To support
 more complex configuration options, it is helpful to expose settings via
-a configuration file, which can be bind mounted from the host {[}51{]},
+a configuration file, which can be bind mounted from the host {[}49{]},
 via environment variables (see
 \hyperref[{rule:document}]{Rule~\ztitleref{rule:document}} and
-{[}53{]}), or via wrappers using Docker, such as Kliko {[}54{]}.
+{[}51{]}), or via wrappers using Docker, such as Kliko {[}52{]}.
 
 \scriptsize
 
@@ -1575,7 +1575,7 @@ may use that to validate correct functionality of an image in automated
 builds, e.g., by using a small toy example and checking the output by
 checking successful responses from HTTP endpoints provided by the
 container, such as with an HTTP response code of \texttt{200}, or by
-using a browser automation tool such as Selenium {[}55{]}.
+using a browser automation tool such as Selenium {[}53{]}.
 
 The following example runs a simple R command counting the lines in this
 article's source file. The file path is passed as an environment
@@ -1606,11 +1606,11 @@ docker run \
 If there is only a regular desktop application, the host's window
 manager can be connected to the container. Although this raises notable
 security issues, they can be addressed by using the ``X11 forwarding''
-natively supported by Singularity {[}56{]}, which can execute Docker
+natively supported by Singularity {[}54{]}, which can execute Docker
 containers, or by leveraging supporting tools such as \texttt{x11docker}
-{[}57{]}. Other alternatives include bridge containers {[}58{]} and
+{[}55{]}. Other alternatives include bridge containers {[}56{]} and
 exposing a regular desktop via the browser (e.g., for Jupyter Hub
-{[}59{]}). This variety of approaches renders seemingly more convenient
+{[}57{]}). This variety of approaches renders seemingly more convenient
 uncontainerised environments unnecessary. Just using one's local machine
 is only slightly more comfortable but much less reproducible and
 portable.
@@ -1696,7 +1696,7 @@ resources that produced the published results.
 First, it is a good habit to use your container every time you work on a
 project and not just as a final step during publication. If the
 container is the only platform you use, you can be highly confident that
-you have properly documented the computing environment {[}60{]}. You
+you have properly documented the computing environment {[}58{]}. You
 should prioritise this usage over others, e.g., non-interactive
 execution of a full workflow, because it gives you personally the
 highest value and does not limit your use or others' use of your data
@@ -1722,7 +1722,7 @@ good practice to provide a \texttt{Makefile} alongside your
 Furthermore, when you rebuild the image, you can take a fresh look at
 the \texttt{Dockerfile} and improve it over time, because it will be
 hard to apply all rules at once. Various linting tools, either on the
-command line {[}61{]} or as a web service {[}62{]}, are available and
+command line {[}59{]} or as a web service {[}60{]}, are available and
 can be integrated into your workflow.
 
 Third, you can export the image to file and deposit it in a public data
@@ -1753,7 +1753,7 @@ container on a machine of their own. You can do this shortly before
 submitting your reproducible workflow for peer-review, so you are well
 positioned for the future of scholarly communication and open science,
 where these may be standard practices required for publication
-{[}21,63--65{]}.
+{[}21,61--63{]}.
 
 \hypertarget{examples}{%
 \section{Examples}\label{examples}}
@@ -1781,7 +1781,7 @@ workflows provides incredibly useful and valuable transparency for a
 project. We encourage researchers to follow these steps taken by their
 peers to use \texttt{Dockerfile}s to practice reproducible research, and
 we encourage them to change the way they communicate towards
-``preproducibility'' {[}66{]}, which values openness, transparency and
+``preproducibility'' {[}64{]}, which values openness, transparency and
 honesty to find fascinating problems and advance science. So, we ask
 researchers, with their best efforts and with their current knowledge,
 to strive to write readable \texttt{Dockerfile}s for functional
@@ -1800,7 +1800,7 @@ research and scholarly collaboration and communication.
 \section*{Acknowledgements}\label{acknowledgements}}
 \addcontentsline{toc}{section}{Acknowledgements}
 
-We thank Dav Clark who provided feedback on the preprint {[}67{]} and
+We thank Dav Clark who provided feedback on the preprint {[}65{]} and
 Celeste~R. Brennecka from the Scientific Editing Service of the
 University of Münster for her editorial support.
 
@@ -1936,10 +1936,10 @@ System for Reusable Research Data Analyses. EPJ Web of Conferences.
 doi:\href{https://doi.org/10.1051/epjconf/201921406034}{10.1051/epjconf/201921406034}
 
 \leavevmode\hypertarget{ref-jupyter_binder_2018}{}%
-25. Jupyter P, Bussonnier M, Forde J, Freeman J, Granger B, Head T, et
-al. Binder 2.0 - Reproducible, interactive, sharable environments for
-science at scale. Proceedings of the 17th Python in Science Conference.
-2018; 113--120.
+25. Project Jupyter, Bussonnier M, Forde J, Freeman J, Granger B, Head
+T, et al. Binder 2.0 - Reproducible, interactive, sharable environments
+for science at scale. Proceedings of the 17th Python in Science
+Conference. 2018; 113--120.
 doi:\href{https://doi.org/10.25080/Majora-4af1f417-011}{10.25080/Majora-4af1f417-011}
 
 \leavevmode\hypertarget{ref-docker_inc_dockerfile_2019}{}%
@@ -2019,129 +2019,120 @@ Documentation. 2020. Available:
 {[}Internet{]}. GitHub. 2017. Available:
 \url{https://github.com/opencontainers/image-spec/blob/v1.0.1/annotations.md}
 
-\leavevmode\hypertarget{ref-docker_healthcheck_2020}{}%
-42. Docker Inc. Dockerfile reference, healthcheck {[}Internet{]}. Docker
-Documentation. 2020. Available:
-\url{https://docs.docker.com/engine/reference/builder/\#healthcheck}
-
 \leavevmode\hypertarget{ref-the_python_software_foundation_requirements_2019}{}%
-43. The Python Software Foundation. Requirements Files --- pip User
+42. The Python Software Foundation. Requirements Files --- pip User
 Guide {[}Internet{]}. 2019. Available:
 \url{https://pip.pypa.io/en/stable/user_guide/\#requirements-files}
 
 \leavevmode\hypertarget{ref-continuum_analytics_managing_2017}{}%
-44. Continuum Analytics. Managing environments --- conda documentation
+43. Continuum Analytics. Managing environments --- conda documentation
 {[}Internet{]}. 2017. Available:
 \url{https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html}
 
 \leavevmode\hypertarget{ref-r_core_team_description_1999}{}%
-45. R Core Team. The DESCRIPTION file in "writing r extensions"
+44. R Core Team. The DESCRIPTION file in "writing r extensions"
 {[}Internet{]}. 1999. Available:
 \url{https://cran.r-project.org/doc/manuals/r-release/R-exts.html\#The-DESCRIPTION-file}
 
 \leavevmode\hypertarget{ref-eddelbuettel_littler_2019}{}%
-46. Eddelbuettel D, Horner J. Littler: R at the command-line via 'r'
+45. Eddelbuettel D, Horner J. Littler: R at the command-line via 'r'
 {[}Internet{]}. 2019. Available:
 \url{https://CRAN.R-project.org/package=littler}
 
 \leavevmode\hypertarget{ref-npm_creating_2019}{}%
-47. npm. Creating a package.json file npm Documentation {[}Internet{]}.
+46. npm. Creating a package.json file npm Documentation {[}Internet{]}.
 2019. Available:
 \url{https://docs.npmjs.com/creating-a-package-json-file}
 
 \leavevmode\hypertarget{ref-julia_tomls_2019}{}%
-48. The Julia Language Contributors. 10. Project.Toml and Manifest.Toml
+47. The Julia Language Contributors. 10. Project.Toml and Manifest.Toml
 · Pkg.Jl {[}Internet{]}. 2019. Available:
 \url{https://julialang.github.io/Pkg.jl/v1/toml-files/}
 
 \leavevmode\hypertarget{ref-emsley_framework_2018}{}%
-49. Emsley I, De Roure D. A Framework for the Preservation of a Docker
+48. Emsley I, De Roure D. A Framework for the Preservation of a Docker
 Container International Journal of Digital Curation. International
 Journal of Digital Curation. 2018;12.
 doi:\href{https://doi.org/10.2218/ijdc.v12i2.509}{10.2218/ijdc.v12i2.509}
 
-\leavevmode\hypertarget{ref-docker_use_2019}{}%
-50. Docker Inc. Use bind mounts {[}Internet{]}. Docker Documentation.
-2019. Available: \url{https://docs.docker.com/storage/bind-mounts/}
-
 \leavevmode\hypertarget{ref-verstegen_pluc_mozambique_2019}{}%
-51. Verstegen JA. JudithVerstegen/PLUC\_Mozambique: First release of
+49. Verstegen JA. JudithVerstegen/PLUC\_Mozambique: First release of
 PLUC for Mozambique {[}Internet{]}. Zenodo; 2019.
 doi:\href{https://doi.org/10.5281/zenodo.3519987}{10.5281/zenodo.3519987}
 
 \leavevmode\hypertarget{ref-sochat_scientific_2018}{}%
-52. Sochat V. The Scientific Filesystem. GigaScience. 2018;7.
+50. Sochat V. The Scientific Filesystem. GigaScience. 2018;7.
 doi:\href{https://doi.org/10.1093/gigascience/giy023}{10.1093/gigascience/giy023}
 
 \leavevmode\hypertarget{ref-knoth_reproducibility_2017}{}%
-53. Knoth C, Nüst D. Reproducibility and Practical Adoption of GEOBIA
+51. Knoth C, Nüst D. Reproducibility and Practical Adoption of GEOBIA
 with Open-Source Software in Docker Containers. Remote Sensing. 2017;9:
 290. doi:\href{https://doi.org/10.3390/rs9030290}{10.3390/rs9030290}
 
 \leavevmode\hypertarget{ref-molenaar_klikoscientific_2018}{}%
-54. Molenaar G, Makhathini S, Girard JN, Smirnov O. Kliko---The
+52. Molenaar G, Makhathini S, Girard JN, Smirnov O. Kliko---The
 scientific compute container format. Astronomy and Computing. 2018;25:
 1--9.
 doi:\href{https://doi.org/10.1016/j.ascom.2018.08.003}{10.1016/j.ascom.2018.08.003}
 
 \leavevmode\hypertarget{ref-selenium_2019}{}%
-55. Selenium contributors. SeleniumHQ/selenium {[}Internet{]}. Selenium;
+53. Selenium contributors. SeleniumHQ/selenium {[}Internet{]}. Selenium;
 2019. Available: \url{https://github.com/SeleniumHQ/selenium}
 
 \leavevmode\hypertarget{ref-singularity_frequently_2019}{}%
-56. Singularity. Frequently Asked Questions Singularity {[}Internet{]}.
+54. Singularity. Frequently Asked Questions Singularity {[}Internet{]}.
 2019. Available:
 \url{http://singularity.lbl.gov/archive/docs/v2-2/faq\#can-i-run-x11-apps-through-singularity}
 
 \leavevmode\hypertarget{ref-viereck_x11docker_2019}{}%
-57. Viereck M. X11docker: Run GUI applications in Docker containers.
+55. Viereck M. X11docker: Run GUI applications in Docker containers.
 Journal of Open Source Software. 2019;4: 1349.
 doi:\href{https://doi.org/10.21105/joss.01349}{10.21105/joss.01349}
 
 \leavevmode\hypertarget{ref-yaremenko_docker-x11-bridge_2019}{}%
-58. Yaremenko E. JAremko/docker-x11-bridge {[}Internet{]}. 2019.
+56. Yaremenko E. JAremko/docker-x11-bridge {[}Internet{]}. 2019.
 Available: \url{https://github.com/JAremko/docker-x11-bridge}
 
 \leavevmode\hypertarget{ref-yuvipanda_jupyter-desktop-server_2019}{}%
-59. Panda Y. Yuvipanda/jupyter-desktop-server {[}Internet{]}. 2019.
+57. Panda Y. Yuvipanda/jupyter-desktop-server {[}Internet{]}. 2019.
 Available: \url{https://github.com/yuvipanda/jupyter-desktop-server}
 
 \leavevmode\hypertarget{ref-marwick_readme_2015}{}%
-60. Marwick B. README of 1989-excavation-report-Madjebebe. 2015;
+58. Marwick B. README of 1989-excavation-report-Madjebebe. 2015;
 doi:\href{https://doi.org/10.6084/m9.figshare.1297059}{10.6084/m9.figshare.1297059}
 
 \leavevmode\hypertarget{ref-dockerfile-lint}{}%
-61. A rule-based linter for dockerfiles {[}Internet{]}. 2020. Available:
+59. A rule-based linter for dockerfiles {[}Internet{]}. 2020. Available:
 \url{https://github.com/projectatomic/dockerfile_lint}
 
 \leavevmode\hypertarget{ref-hadolint}{}%
-62. Dockerfile linter {[}Internet{]}. 2020. Available:
+60. Dockerfile linter {[}Internet{]}. 2020. Available:
 \url{https://hadolint.github.io/hadolint/}
 
 \leavevmode\hypertarget{ref-eglen_codecheck_2019}{}%
-63. Eglen S, Nüst D. CODECHECK: An open-science initiative to facilitate
+61. Eglen S, Nüst D. CODECHECK: An open-science initiative to facilitate
 sharing of computer programs and results presented in scientific
 publications. Septentrio Conference Series. 2019;
 doi:\href{https://doi.org/10.7557/5.4910}{10.7557/5.4910}
 
 \leavevmode\hypertarget{ref-schonbrodt_training_2019}{}%
-64. Schönbrodt F. Training students for the Open Science future. Nature
+62. Schönbrodt F. Training students for the Open Science future. Nature
 Human Behaviour. 2019;3: 1031--1031.
 doi:\href{https://doi.org/10.1038/s41562-019-0726-z}{10.1038/s41562-019-0726-z}
 
 \leavevmode\hypertarget{ref-eglen_recent_2018}{}%
-65. Eglen SJ, Mounce R, Gatto L, Currie AM, Nobis Y. Recent developments
+63. Eglen SJ, Mounce R, Gatto L, Currie AM, Nobis Y. Recent developments
 in scholarly publishing to improve research practices in the life
 sciences. Emerging Topics in Life Sciences. 2018;2: 775--778.
 doi:\href{https://doi.org/10.1042/ETLS20180172}{10.1042/ETLS20180172}
 
 \leavevmode\hypertarget{ref-stark_before_2018}{}%
-66. Stark PB. Before reproducibility must come preproducibility
+64. Stark PB. Before reproducibility must come preproducibility
 {[}Internet{]}. Nature. 2018.
 doi:\href{https://doi.org/10.1038/d41586-018-05256-0}{10.1038/d41586-018-05256-0}
 
 \leavevmode\hypertarget{ref-nust_ten_2020}{}%
-67. Nüst D, Sochat V, Marwick B, Eglen S, Head T, Hirst T. Ten Simple
+65. Nüst D, Sochat V, Marwick B, Eglen S, Head T, Hirst T. Ten Simple
 Rules for Writing Dockerfiles for Reproducible Data Science
 {[}Internet{]}. Open Science Framework; 2020 Apr.
 doi:\href{https://doi.org/10.31219/osf.io/fsd7t}{10.31219/osf.io/fsd7t}

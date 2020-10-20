@@ -152,7 +152,7 @@ Containers are distinct from virtual machines or hypervisors, as they do not emu
 Several solutions for facilitating reproducible research are built on top of containers [@brinckman_computing_2018; @code_ocean_2019; @simko_reana_2019; @jupyter_binder_2018; @nust_opening_2017], but these solutions intentionally hide most of the complexity from the researcher.
 
 To create Docker containers for specific workflows, we write text files that follow a particular format called `Dockerfile` [@docker_inc_dockerfile_2019].
-A `Dockerfile` is a machine- and human-readable recipe, comparable to a `Makefile` [@wikipedia_contributors_make_2019], for building **images**.
+A `Dockerfile` is a machine- **and** human-readable recipe, comparable to a `Makefile` [@wikipedia_contributors_make_2019], for building **images**.
 Here, images are executable files that include the application, e.g., the programming language interpreter needed to run a workflow, and the system libraries required by an application to run.
 Thus, a `Dockerfile` consists of a sequence of instructions to copy files and install software.
 Each instruction adds a layer to the image, which can be cached across image builds for minimising build and download times.
@@ -432,7 +432,7 @@ For runtime environment variables, either to set a new variable or override one 
 
 \begin{minipage}{\linewidth}
 
-\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} showing usage of environment variables with the `ENV` instruction.},breaklines=true,label={lst:envvars}]
+\begin{lstlisting}[language=docker,caption={Partial \texttt{Dockerfile} showing usage of environment variables with the \texttt{ENV} instruction.},breaklines=true,label={lst:envvars}]
 ...
 
 # Define number of cores used by PowerfulAlgorithm
@@ -495,7 +495,7 @@ Here are some examples of terminal commands that will list the currently install
 
 When you install several system libraries, it is good practice to add comments about why the dependencies are needed (see Listing&nbsp;\ref{lst:full}).
 This way, if a piece of software is removed from the container, it will be easier to remove the system dependencies that are no longer needed, thereby reducing maintenance overhead: you will not unnecessarily fix problems with a library that is no longer needed or include long-running installations.
-A test provided via a `HEALTHCHECK` @docker_healthcheck_2020, can further ensure proper functioning of your container.
+A test provided via a [`HEALTHCHECK`](https://docs.docker.com/engine/reference/builder/#healthcheck), can further ensure proper functioning of your container.
 
 ## Version Control
 
@@ -605,7 +605,7 @@ When publishing your workspace, e.g., on Zenodo, having datasets outside of the 
 A mount can also be used to access **output data** from a container; this can be an extra mount or the same `data` directory.
 Alternatively, you can use the [`docker cp`](https://docs.docker.com/engine/reference/commandline/cp/) command to access files from a running or stopped container, but this requires a specific handling, e.g., naming the container when starting it or using multiple shells, which requires very detailed instructions for users.
 
-You can use the `-v`/`--volume` or preferably `--mount` flags to `docker run` to configure bind mounts of directories or files [@docker_use_2019], including options, as shown in the following examples.
+You can use the `-v`/`--volume` or preferably `--mount` flags to `docker run` to configure bind mounts of directories or files, including options, as shown in the following examples.
 If the target path exists within the image, the bind mount will replace it for the started container.
 (Note, `$HOME` is an environment variable in UNIX systems representing the path to the current user's home directory, e.g., `/home/moby`, and `$(pwd)` returns the current path.)
 
