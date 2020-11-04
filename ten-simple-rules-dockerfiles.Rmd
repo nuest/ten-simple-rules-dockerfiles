@@ -129,7 +129,7 @@ For this article, we focus on workflows that typically run on single machine, e.
 The reader might scope the data requirement to under a terabyte, and compute requirement to a machine with 16 cores running over the weekend.
 
 Although it is outside the scope of this article, we point readers to `docker-compose` [@docker-compose_2019] in the case where one might need container orchestration for multiple applications, e.g., web servers, databases, and worker containers. 
-A `docker-compose.yml` configuration file allows for defining mounts, environment variables, and exposed ports and helps users stick to "1 purpose per container", which often means 1 process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
+A `docker-compose.yml` configuration file allows for defining mounts, environment variables, and exposed ports and helps users stick to "one purpose per container", which often means one process running in the container, and to combine existing stable building blocks instead of bespoke massive containers for specific purposes.
 
 Because _"the number of unique research environments approximates the number of researchers"_ [@nust_opening_2017], sticking to conventions helps every researcher to understand, modify, and eventually write container recipes suitable for their needs.
 Even if they are not sure how the underlying technology actually works, researchers should leverage containerisation following good practices.
@@ -165,7 +165,7 @@ Akin to compiling source code for a programming language, creating a container a
 Similar to using a compiled binary file to launch a program, the image is then run to create a container instance.
 See Listing&nbsp;\ref{lst:full} for a full `Dockerfile`, which we will refer to throughout this article.
 
-```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch 1 or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = "100%", fig.pos="h", fig.align="center"}
+```{r analogy, echo=FALSE, fig.cap="The workflow to create Docker containers by analogy. Containers begin with a \\texttt{Dockerfile}, a recipe for building the computational environment (analogous to source code in a compiled programming language). This is used to build an image with the \\texttt{docker build} command, analogous to compiling the source code into an executable (binary) file. Finally, the image is used to launch one or more containers with the \\texttt{docker run} command (analogous to running an instance of the compiled binary as a process).", out.width = "100%", fig.pos="h", fig.align="center"}
 knitr::include_graphics("figures/analogy.tif")
 ```
 
@@ -320,7 +320,7 @@ Depending on the programming language used, your project may already contain fil
 This is a very good practice and helpful, though you should consider the externalisation of content to outside of the `Dockerfile` (see \ruleref{rule:mount}).
 Often, a single long `Dockerfile` with sections and helpful comments can be more understandable than a collection of separate files.
 
-Generally, aim to design the `RUN` instructions so that each performs 1 scoped action, e.g., download, compile, and install 1 tool.
+Generally, aim to design the `RUN` instructions so that each performs one scoped action, e.g., download, compile, and install one tool.
 This makes the lines of your `Dockerfile` a well-documented recipe for the user as well as a machine.
 Each instruction will result in a new layer, and reasonably grouped changes increase readability of the `Dockerfile` and facilitate inspection of the image, e.g., with tools like dive [@goodman_dive_2019].
 Convoluted `RUN` instructions can be acceptable to reduce the number of layers, but careful layout and consistent formatting should be applied.
@@ -643,7 +643,7 @@ It is considered good practice to have a combination of default entrypoint and c
 For example, a container known to be a workflow should execute the entrypoint to the workflow and perhaps use `--help` as the command to print out usage.
 The container entrypoint should **not** execute the workflow, as the user is likely to run the container for basic inspection, and starting an analysis as a surprise that might write files is undesired.
 As the maintainer of the workflow, you should write clear instructions for how to properly interact with the container, both for yourself and others.
-A possible weakness with using containers is that they can only provide 1 default entrypoint and command.
+A possible weakness with using containers is that they can only provide one default entrypoint and command.
 However, tools, e.g., The Scientific Filesystem [@sochat_scientific_2018], have been developed to expose multiple entrypoints, environments, help messages, labels, and even install sequences.
 With plain Docker, you can override the defaults as part of the `docker run` command or in an extra `Dockerfile` using the primary image as a base, as shown in Listing&nbsp;\ref{lst:runnerimage}.
 In any case, you should document different variants very well and potentially capture build and run commands in a `Makefile` [@wikipedia_contributors_make_2019].
@@ -747,7 +747,7 @@ Just using one's local machine is only slightly more comfortable but much less r
 You will regularly build an image during development of your workflow.
 You can take advantage of **build caching** to avoid execution of time-consuming instructions, e.g., install from a remote resource or copying a file that gets cached.
 Therefore, you should keep instructions in order of least likely to change to most likely to change.
-Docker will execute the instructions in the order that they appear in the `Dockerfile`; when 1 instruction is completed, the result is cached, and the build moves to the next one.
+Docker will execute the instructions in the order that they appear in the `Dockerfile`; when one instruction is completed, the result is cached, and the build moves to the next one.
 If you change something in the `Dockerfile` and rebuild the image, each instruction is inspected in turn.
 If it has not changed, the cached layer is used and the build progresses.
 Conversely, if the line has changed, that build step is executed afresh, and then every subsequent instruction will have to be executed in case the changed line influences a later instruction.
