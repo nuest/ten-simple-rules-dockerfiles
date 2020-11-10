@@ -2,7 +2,9 @@
 
 <img alt="Ten Simple Rules for Writing Dockerfiles for Reproducible Research - Summary" src="https://raw.githubusercontent.com/nuest/ten-simple-rules-dockerfiles/master/figures/summary.png" width="30%" align="right">
 
-[![DOI](https://img.shields.io/badge/DOI-10.31219%2Fosf.io%2Ffsd7t-blue)](https://doi.org/10.31219/osf.io/fsd7t)
+[![Article DOI](https://img.shields.io/badge/Article-10.1371%2Fjournal.pcbi.1008316-yellow)](https://doi.org/10.1371/journal.pcbi.1008316)
+
+[![Preprint DOI](https://img.shields.io/badge/Preprint-10.31219%2Fosf.io%2Ffsd7t-blue)](https://doi.org/10.31219/osf.io/fsd7t)
 
 The manuscript is published as a preprint: **[https://osf.io/fsd7t](https://osf.io/fsd7t)**
 
